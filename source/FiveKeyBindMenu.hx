@@ -35,9 +35,9 @@ class FiveKeyBindMenu extends FlxSubState
     var keyTextDisplay:FlxText;
     var keyWarning:FlxText;
     var warningTween:FlxTween;
-    var keyText:Array<String> = ["LEFT", "DOWN", "UP", "RIGHT", "MIDDLE"];
-    var defaultKeys:Array<String> = ["A", "S","W", "F","D"];
-    var defaultArrowKeys:Array<String> = ["LEFT", "DOWN", "UP", "RIGHT","SPACE"];
+    var keyText:Array<String> = ["LEFT", "DOWN", "MIDDLE", "UP", "RIGHT"];
+    var defaultKeys:Array<String> = ["A", "S","D","K", "L"];
+    var defaultArrowKeys:Array<String> = ["LEFT", "DOWN","SPACE", "UP", "RIGHT"];
 
     var defaultGpKeys:Array<String> = ["DPAD_LEFT", "DPAD_DOWN", "DPAD_UP", "DPAD_RIGHT"];
     var curSelected:Int = 0;

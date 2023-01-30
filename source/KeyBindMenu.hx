@@ -36,7 +36,7 @@ class KeyBindMenu extends FlxSubState
     var keyWarning:FlxText;
     var warningTween:FlxTween;
     var keyText:Array<String> = ["LEFT", "DOWN", "UP", "RIGHT"];
-    var defaultKeys:Array<String> = ["A", "S", "W", "D"];
+    var defaultKeys:Array<String> = ["A", "S", "K", "L"];
 
     var defaultGpKeys:Array<String> = ["DPAD_LEFT", "DPAD_DOWN", "DPAD_UP", "DPAD_RIGHT"];
     var curSelected:Int = 0;

@@ -16,10 +16,10 @@ class KeyBinds
 
     public static function resetBinds():Void{
 
-        FlxG.save.data.upBind = "W";
+        FlxG.save.data.upBind = "K";
         FlxG.save.data.downBind = "S";
         FlxG.save.data.leftBind = "A";
-        FlxG.save.data.rightBind = "D";
+        FlxG.save.data.rightBind = "L";
         FlxG.save.data.killBind = "R";
         FlxG.save.data.gpupBind = "DPAD_UP";
         FlxG.save.data.gpdownBind = "DPAD_DOWN";

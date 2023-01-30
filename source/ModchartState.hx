@@ -572,6 +572,19 @@ class ModchartState
 					PlayState.instance.changeStyle(style,mode);
 				});
 	
+				Lua_helper.add_callback(lua, "shakeCam", function(intensity:Float, duration:Float){
+					@:privateAccess
+					FlxG.camera.shake(intensity, duration);
+				});
+
+				Lua_helper.add_callback(lua, "flash", function(red:Int, green:Int, blue:Int, duration:Float){
+					@:privateAccess
+						FlxG.camera.flash(flixel.util.FlxColor.fromRGB(red, green, blue, 255), duration);
+				});
+
+				Lua_helper.add_callback(lua, "heal", function (heal:Float) {
+					PlayState.instance.health += heal;
+				});
 				// actors
 				
 				Lua_helper.add_callback(lua,"getRenderedNotes", function() {

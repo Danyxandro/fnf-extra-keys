@@ -183,6 +183,7 @@ class PlayState extends MusicBeatState
 	public var iconP1:HealthIcon; //making these public again because i may be stupid
 	public var iconP2:HealthIcon; //what could go wrong?
 	public var camHUD:FlxCamera;
+	public var cam3:FlxCamera;
 	public var camSustains:FlxCamera;
 	public var camNotes:FlxCamera;
 	var cs_reset:Bool = false;
@@ -270,6 +271,7 @@ class PlayState extends MusicBeatState
 
 	//Variables que hice yo
 	public var style:Array<String> = ["normal","normal"];
+	private var musica:FlxSoundAsset;
 
 	override public function create()
 	{
@@ -378,11 +380,15 @@ class PlayState extends MusicBeatState
 		camSustains.bgColor.alpha = 0;
 		camNotes = new FlxCamera();
 		camNotes.bgColor.alpha = 0;
+		cam3 = new FlxCamera();
+		camHUD.bgColor.alpha = 0;
+		cam3.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
 		FlxG.cameras.add(camSustains);
 		FlxG.cameras.add(camNotes);
+		FlxG.cameras.add(cam3);
 
 		camHUD.zoom = PlayStateChangeables.zoom;
 
@@ -1636,7 +1642,7 @@ class PlayState extends MusicBeatState
 						data = 8;
 				}
 			case 3: 
-				binds = [FlxG.save.data.F0Bind,FlxG.save.data.F1Bind, FlxG.save.data.F4Bind, FlxG.save.data.F2Bind, FlxG.save.data.F3Bind];
+				binds = [FlxG.save.data.F0Bind,FlxG.save.data.F1Bind, FlxG.save.data.F2Bind, FlxG.save.data.F3Bind, FlxG.save.data.F4Bind];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -1673,7 +1679,7 @@ class PlayState extends MusicBeatState
 						data = 7;
 				}
 			case 6: 
-				binds = [FlxG.save.data.F4Bind];
+				binds = [FlxG.save.data.F2Bind];
 			case 7: 
 				binds = [FlxG.save.data.leftBind, FlxG.save.data.rightBind];
 				switch(evt.keyCode) // arrow keys 
@@ -1685,7 +1691,7 @@ class PlayState extends MusicBeatState
 				}
 
 			case 8: 
-				binds = [FlxG.save.data.F0Bind, FlxG.save.data.F4Bind, FlxG.save.data.F3Bind];
+				binds = [FlxG.save.data.F0Bind, FlxG.save.data.F2Bind, FlxG.save.data.F4Bind];
 				switch(evt.keyCode) // arrow keys 
 				{
 					case 37:
@@ -1733,7 +1739,7 @@ class PlayState extends MusicBeatState
 						data = 8;
 				}
 			case 13: 
-				binds = [FlxG.save.data.leftBind,FlxG.save.data.downBind, FlxG.save.data.upBind, FlxG.save.data.rightBind, FlxG.save.data.N4Bind, null, null, null, null];
+				binds = [FlxG.save.data.F0Bind,FlxG.save.data.F1Bind, FlxG.save.data.F3Bind, FlxG.save.data.F4Bind, FlxG.save.data.F2Bind, null, null, null, null];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -1772,7 +1778,7 @@ class PlayState extends MusicBeatState
 						data = 8;
 				}
 			case 16: 
-				binds = [null, null, null, null, FlxG.save.data.N4Bind, null, null, null, null];
+				binds = [null, null, null, null, FlxG.save.data.F2Bind, null, null, null, null];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -1798,7 +1804,7 @@ class PlayState extends MusicBeatState
 						data = 3;
 				}
 			case 18: 
-				binds = [FlxG.save.data.leftBind, null, null, FlxG.save.data.rightBind, FlxG.save.data.N4Bind, null, null, null, null];
+				binds = [FlxG.save.data.F0Bind, null, null, FlxG.save.data.F4Bind, FlxG.save.data.F2Bind, null, null, null, null];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -1882,7 +1888,7 @@ class PlayState extends MusicBeatState
 						data = 8;
 				}
 			case 3: 
-				binds = [FlxG.save.data.F0Bind,FlxG.save.data.F1Bind, FlxG.save.data.F4Bind, FlxG.save.data.F2Bind, FlxG.save.data.F3Bind];
+				binds = [FlxG.save.data.F0Bind,FlxG.save.data.F1Bind, FlxG.save.data.F2Bind, FlxG.save.data.F3Bind, FlxG.save.data.F4Bind];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -1919,7 +1925,7 @@ class PlayState extends MusicBeatState
 						data = 7;
 				}
 			case 6: 
-				binds = [FlxG.save.data.F4Bind];
+				binds = [FlxG.save.data.F2Bind];
 			case 7: 
 				binds = [FlxG.save.data.leftBind, FlxG.save.data.rightBind];
 				switch(evt.keyCode) // arrow keys 
@@ -1931,7 +1937,7 @@ class PlayState extends MusicBeatState
 				}
 
 			case 8: 
-				binds = [FlxG.save.data.F0Bind, FlxG.save.data.F4Bind, FlxG.save.data.F3Bind];
+				binds = [FlxG.save.data.F0Bind, FlxG.save.data.F2Bind, FlxG.save.data.F4Bind];
 				switch(evt.keyCode) // arrow keys 
 				{
 					case 37:
@@ -1979,7 +1985,7 @@ class PlayState extends MusicBeatState
 						data = 8;
 				}
 			case 13: 
-				binds = [FlxG.save.data.leftBind,FlxG.save.data.downBind, FlxG.save.data.upBind, FlxG.save.data.rightBind, FlxG.save.data.N4Bind, null, null, null, null];
+				binds = [FlxG.save.data.F0Bind,FlxG.save.data.F1Bind, FlxG.save.data.F3Bind, FlxG.save.data.F4Bind, FlxG.save.data.F2Bind, null, null, null, null];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -2018,7 +2024,7 @@ class PlayState extends MusicBeatState
 						data = 8;
 				}
 			case 16: 
-				binds = [null, null, null, null, FlxG.save.data.N4Bind, null, null, null, null];
+				binds = [null, null, null, null, FlxG.save.data.F2Bind, null, null, null, null];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -2044,7 +2050,7 @@ class PlayState extends MusicBeatState
 						data = 3;
 				}
 			case 18: 
-				binds = [FlxG.save.data.leftBind, null, null, FlxG.save.data.rightBind, FlxG.save.data.N4Bind, null, null, null, null];
+				binds = [FlxG.save.data.F0Bind, null, null, FlxG.save.data.F4Bind, FlxG.save.data.F2Bind, null, null, null, null];
 				switch(evt.keyCode) // arrow keys
 				{
 					case 37:
@@ -2153,7 +2159,7 @@ class PlayState extends MusicBeatState
 
 		if (!paused)
 		{
-			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+			FlxG.sound.playMusic(musica, 1, false);
 		}
 
 		if (FlxG.save.data.noteSplash)
@@ -2248,8 +2254,28 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
+		if(openfl.utils.Assets.exists(Paths.inst(PlayState.SONG.song))){
+			musica = Paths.inst(PlayState.SONG.song);
+			trace("loaded default music");
+		}else{
+			SONG.validScore = false;
+			var archivo:String = "assets/songs/" + PlayState.SONG.song.toLowerCase() + "/Inst.ogg";
+			if(FileSystem.exists(archivo) )
+				musica = openfl.media.Sound.fromFile(archivo);
+			else
+				musica = Paths.inst("tutorial");
+		}
+
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			if(openfl.utils.Assets.exists(Paths.voices(PlayState.SONG.song)))
+				vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			else{
+				var archivo:String = "assets/songs/" + PlayState.SONG.song.toLowerCase() + "/Voices.ogg";
+				if(FileSystem.exists(archivo) )
+					vocals = new FlxSound().loadEmbedded(openfl.media.Sound.fromFile(archivo));
+				else
+					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			}
 		else
 			vocals = new FlxSound();
 
@@ -3648,17 +3674,17 @@ class PlayState extends MusicBeatState
 					case 2: 
 						hold = [controls.N0, controls.N1, controls.N2, controls.N3, controls.N4, controls.N5, controls.N6, controls.N7, controls.N8];
 					case 3: 
-						hold = [controls.F0,controls.F1, controls.F4, controls.F2, controls.F3];
+						hold = [controls.F0,controls.F1, controls.F2, controls.F3, controls.F4];
 					case 4: 
 						hold = [controls.L1, controls.U1, controls.R1, controls.N4, controls.L2, controls.D1, controls.R2];
 					case 5: 
 						hold = [controls.N0, controls.N1, controls.N2, controls.N3, controls.N5, controls.N6, controls.N7, controls.N8];
 					case 6: 
-						hold = [controls.F4];
+						hold = [controls.F2];
 					case 7: 
 						hold = [controls.LEFT, controls.RIGHT];
 					case 8: 
-						hold = [controls.F0, controls.F4, controls.F3];
+						hold = [controls.F0, controls.F2, controls.F4];
 
 					case 10: //changing mid song (mania + 10, seemed like the best way to make it change without creating more switch statements)
 						hold = [controls.LEFT, controls.DOWN, controls.UP, controls.RIGHT,false,false,false,false,false];
@@ -3667,17 +3693,17 @@ class PlayState extends MusicBeatState
 					case 12: 
 						hold = [controls.N0, controls.N1, controls.N2, controls.N3, controls.N4, controls.N5, controls.N6, controls.N7, controls.N8];
 					case 13: 
-						hold = [controls.LEFT, controls.DOWN, controls.UP, controls.RIGHT, controls.N4,false,false,false,false];
+						hold = [controls.F0, controls.F1, controls.F3, controls.F4, controls.F2,false,false,false,false];
 					case 14: 
 						hold = [controls.L1, controls.D1, controls.U1, controls.R1, controls.N4, controls.L2, false, false, controls.R2];
 					case 15:
 						hold = [controls.N0, controls.N1, controls.N2, controls.N3, false, controls.N5, controls.N6, controls.N7, controls.N8];
 					case 16: 
-						hold = [false, false, false, false, controls.N4, false, false, false, false];
+						hold = [false, false, false, false, controls.F2, false, false, false, false];
 					case 17: 
 						hold = [controls.LEFT, false, false, controls.RIGHT, false, false, false, false, false];
 					case 18: 
-						hold = [controls.LEFT, false, false, controls.RIGHT, controls.N4, false, false, false, false];
+						hold = [controls.F0, false, false, controls.F4, controls.F2, false, false, false, false];
 				}
 				var holdArray:Array<Bool> = hold;
 
@@ -4826,20 +4852,20 @@ class PlayState extends MusicBeatState
 							controls.N8_R
 						];
 					case 3: 
-						//hold = [FlxG.save.data.F0,FlxG.save.data.F1, FlxG.save.data.F4, FlxG.save.data.F2, FlxG.save.data.F3];
+						//hold = [FlxG.save.data.F0,FlxG.save.data.F1, FlxG.save.data.F2, FlxG.save.data.F3, FlxG.save.data.F4];
 						press = [
 							controls.F0_P,
 							controls.F1_P,
-							controls.F4_P,
 							controls.F2_P,
-							controls.F3_P
+							controls.F3_P,
+							controls.F4_P
 						];
 						release = [
 							controls.F0_R,
 							controls.F1_R,
-							controls.F4_R,
 							controls.F2_R,
-							controls.F3_R
+							controls.F3_R,
+							controls.F4_R
 						];
 					case 4: 
 						//hold = [controls.L1, controls.U1, controls.R1, controls.N4, controls.L2, controls.D1, controls.R2];
@@ -4884,12 +4910,12 @@ class PlayState extends MusicBeatState
 							controls.N8_R
 						];
 					case 6: 
-						//hold = [controls.N4];
+						//hold = [controls.F2];
 						press = [
-							controls.F4_P
+							controls.F2_P
 						];
 						release = [
-							controls.F4_R
+							controls.F2_R
 						];
 					case 7: 
 					//	hold = [controls.LEFT, controls.RIGHT];
@@ -4902,16 +4928,16 @@ class PlayState extends MusicBeatState
 							controls.RIGHT_R
 						];
 					case 8: 
-						//hold = [controls.LEFT, controls.N4, controls.RIGHT];
+						//hold = [controls.F0, controls.F2, controls.F4];
 						press = [
 							controls.F0_P,
-							controls.F4_P,
-							controls.F3_P
+							controls.F2_P,
+							controls.F4_P
 						];
 						release = [
 							controls.F0_R,
-							controls.F4_R,
-							controls.F3_R
+							controls.F2_R,
+							controls.F4_R
 						];
 					case 10: //changing mid song (mania + 10, seemed like the best way to make it change without creating more switch statements)
 						press = [controls.LEFT_P, controls.DOWN_P, controls.UP_P, controls.RIGHT_P,false,false,false,false,false];

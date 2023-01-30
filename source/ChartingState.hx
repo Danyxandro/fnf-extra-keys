@@ -730,10 +730,35 @@ class ChartingState extends MusicBeatState
 			// vocals.stop();
 		}
 
-		FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
+		//FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
 
 		// WONT WORK FOR TUTORIAL OR TEST SONG!!! REDO LATER
-		vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		//vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		var cancion:String = daSong.toLowerCase();
+
+		if(openfl.utils.Assets.exists(Paths.inst(daSong)))
+			FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
+		else{
+			var archivo:String = "assets/songs/" + cancion + "/Inst.ogg";
+			if(sys.FileSystem.exists(archivo) )
+				FlxG.sound.playMusic(openfl.media.Sound.fromFile(archivo), 1, false);
+			else
+				FlxG.sound.playMusic(Paths.inst("tutorial"), 1, false);
+		}
+
+		if(_song.needsVoices){
+			if(openfl.utils.Assets.exists(Paths.voices(daSong)))
+				vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+			else{
+				var archivo:String = "assets/songs/" + cancion + "/Voices.ogg";
+				if(sys.FileSystem.exists(archivo) )
+					vocals = new FlxSound().loadEmbedded(openfl.media.Sound.fromFile(archivo));
+				else
+					vocals = new FlxSound().loadEmbedded(Paths.voices(cancion));
+			}
+		}else{
+			vocals = new FlxSound();
+		}
 		FlxG.sound.list.add(vocals);
 
 		FlxG.sound.music.pause();
@@ -1529,7 +1554,7 @@ class ChartingState extends MusicBeatState
 				var daStrumTime = i[0];
 				var daSus = i[2];
 				var daType = i[3];
-				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]));
+				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]),null,false,daType);
 				note.sustainLength = daSus;
 				note.noteType = daType;
 				note.setGraphicSize(GRID_SIZE, GRID_SIZE);

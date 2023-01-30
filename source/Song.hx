@@ -69,7 +69,29 @@ class Song
 		
 		trace('loading ' + folderLowercase + '/' + jsonInput.toLowerCase());
 
-		var rawJson = Assets.getText(Paths.json(folderLowercase + '/' + jsonInput.toLowerCase())).trim();
+		var cancion:String = jsonInput.toLowerCase();
+		var subfix:String = "";
+
+		if(jsonInput.toLowerCase().endsWith("-easy")){
+			cancion = jsonInput.toLowerCase().substring(0,cancion.length-5);
+			subfix = "-easy";
+		}
+		if(jsonInput.toLowerCase().endsWith("-hard")){
+			cancion = jsonInput.toLowerCase().substring(0,cancion.length-5);
+			subfix = "-hard";
+		}
+
+		var rawJson:String = "";
+
+		if(openfl.utils.Assets.exists(Paths.json(folderLowercase + '/' + jsonInput.toLowerCase() ) ) )
+			rawJson = Assets.getText(Paths.json(folderLowercase + '/' + jsonInput.toLowerCase())).trim();
+		else{
+			var ruta:String = "assets/data/" + cancion + "/" + jsonInput.toLowerCase() +".json";
+			if(sys.FileSystem.exists(ruta) ){
+				rawJson = sys.io.File.getContent( ruta ).trim();
+			}else
+				rawJson = Assets.getText(Paths.json('tutorial/tutorial' + subfix)).trim();				
+		}
 
 		while (!rawJson.endsWith("}"))
 		{
