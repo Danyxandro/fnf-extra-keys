@@ -85,7 +85,7 @@ class Note extends FlxSprite
 	{
 		swagWidth = 160 * 0.7; //factor not the same as noteScale
 		noteScale = 0.7;
-		pixelnoteScale = 1;
+		pixelnoteScale = 1.12;
 		mania = 0;
 		if (PlayState.SONG.mania == 1)
 		{

@@ -26,6 +26,15 @@ class ModchartState
 	//public static var shaders:Array<LuaShader> = null;
 
 	public static var lua:State = null;
+	private var ids:Map<String,Int> = [PlayState.SONG.player2 => 0];
+	private var idsBF:Map<String,Int> = [PlayState.SONG.player1 => 0];
+	public var gfs:Map<String, Int> = [PlayState.gf.curCharacter => 0];
+	private var sprites:Map<String, FlxSprite> = [];
+	private var curChar = 0;
+	private var curBF = 0;
+	private var curGF = 0;
+	private var flags:Array<Bool> = [false,false];
+	private var allowChanging:Bool = true;
 
 	function callLua(func_name : String, args : Array<Dynamic>, ?type : String) : Dynamic
 	{
@@ -235,22 +244,28 @@ class ModchartState
 
 	public static var luaSprites:Map<String,FlxSprite> = [];
 
-	function changeDadCharacter(id:String)
-	{				var olddadx = PlayState.dad.x;
-					var olddady = PlayState.dad.y;
-					PlayState.instance.removeObject(PlayState.dad);
-					PlayState.dad = new Character(olddadx, olddady, id);
-					PlayState.instance.addObject(PlayState.dad);
-					PlayState.instance.iconP2.animation.play(id);
+	function changeDadCharacter(id:String,?swap:Bool = true,?noteStyle:String)
+	{
+		if(PlayState.instance.animatedIcons["default2"].animation.getByName(id) != null){
+			changeIcon(id,false);
+		}else
+			changeIcon(id,false,true);
+		PlayState.instance.setColorBar(false,id);
+		if(noteStyle != null){
+			PlayState.instance.changeStyle(noteStyle,2);
+		}
 	}
 
-	function changeBoyfriendCharacter(id:String)
-	{				var oldboyfriendx = PlayState.boyfriend.x;
-					var oldboyfriendy = PlayState.boyfriend.y;
-					PlayState.instance.removeObject(PlayState.boyfriend);
-					PlayState.boyfriend = new Boyfriend(oldboyfriendx, oldboyfriendy, id);
-					PlayState.instance.addObject(PlayState.boyfriend);
-					PlayState.instance.iconP2.animation.play(id);
+	function changeBoyfriendCharacter(id:String,?swap:Bool = true,?noteStyle:String)
+	{
+		if(PlayState.instance.animatedIcons["default1"].animation.getByName(id) != null){
+			changeIcon(id,true);
+		}else
+			changeIcon(id,true,true);
+		PlayState.instance.setColorBar(true,id);
+		if(noteStyle != null){
+			PlayState.instance.changeStyle(noteStyle,1);
+		}
 	}
 	function changeMania(newMania:Int)
 	{
@@ -419,6 +434,48 @@ class ModchartState
 				setVar("mustHit", false);
 
 				setVar("strumLineY", PlayState.instance.strumLine.y);
+
+				setVar("dadFadeAlpha", 0.001);
+				setVar("bfFadeAlpha", 0.001);
+				setVar("gfFadeAlpha", 0.001);
+				flags[0] = PlayState.instance.iconP1.isCustom;
+				flags[1] = PlayState.instance.iconP2.isCustom;
+
+				var character:String = PlayState.SONG.player1;
+				if(PlayState.instance.iconP1.isCustom){
+					PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+					PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+					PlayState.instance.animatedIcons[character].alpha = 0.001;
+					PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+				}
+				character = PlayState.SONG.player2;
+				if(PlayState.instance.iconP2.isCustom){
+					PlayState.instance.animatedIcons[character+"2"] = new HealthIcon(character,false);
+					PlayState.instance.animatedIcons[character+"2"].y = PlayState.instance.iconP2.y;
+					PlayState.instance.animatedIcons[character+"2"].alpha = 0.001;
+					PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character+"2"]);
+				}
+				if(PlayStateChangeables.flip){
+					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerChars.members[0]);
+					idsBF.set("bf-" + PlayState.SONG.player1, 0);
+					if(PlayState.SONG.player2 == "dad"){
+						luaSprites.set("daddy", PlayState.instance.layerBFs.members[0]);
+						ids.set("daddy",0);
+					}else{
+						luaSprites.set(PlayState.SONG.player1, PlayState.instance.layerBFs.members[0]);
+						ids.set(PlayState.SONG.player1, 0);
+					}
+				}else{
+					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerBFs.members[0]);
+					idsBF.set("bf-" + PlayState.SONG.player1, 0);
+					if(PlayState.SONG.player2 == "dad"){
+						luaSprites.set("daddy", PlayState.instance.layerChars.members[0]);
+						ids.set("daddy",0);
+					}else{
+						luaSprites.set(PlayState.SONG.player1, PlayState.instance.layerChars.members[0]);
+						ids.set(PlayState.SONG.player1, 0);
+					}
+				}
 				
 				// callbacks
 	
@@ -567,6 +624,24 @@ class ModchartState
 
 				//custom
 
+				Lua_helper.add_callback(lua, "loadCharacter", function(character:String,x:Float,y:Float,?isPlayer:Bool = false,?sync:Bool = false){
+					if(isPlayer){
+						if(PlayState.instance.animatedIcons["default1"].animation.getByName(character) == null){
+							PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+							PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+							PlayState.instance.animatedIcons[character].alpha = 0.001;
+							PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+						}
+					}else{
+						if(PlayState.instance.animatedIcons["default2"].animation.getByName(character) == null){
+							PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+							PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+							PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+							PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+						}
+					}
+				});
+
 				Lua_helper.add_callback(lua, "changeNoteStyle", function(style:String,?mode:Int=0)
 				{
 					PlayState.instance.changeStyle(style,mode);
@@ -585,6 +660,19 @@ class ModchartState
 				Lua_helper.add_callback(lua, "heal", function (heal:Float) {
 					PlayState.instance.health += heal;
 				});
+
+				Lua_helper.add_callback(lua,"setAntialiasing", function(anti:Bool,id:String){
+					getActorByName(id).antialiasing = anti;
+				});
+
+				Lua_helper.add_callback(lua,"setColorBar", function(isPlayer:Bool,character:String):Void {
+					PlayState.instance.setColorBar(isPlayer,character);
+				});
+
+				Lua_helper.add_callback(lua,"setRGBColorBar", function(isPlayer:Bool,red:Int,green:Int,blue:Int):Void {
+					PlayState.instance.setRGBColorBar(isPlayer,red,green,blue);
+				});
+
 				// actors
 				
 				Lua_helper.add_callback(lua,"getRenderedNotes", function() {
@@ -965,6 +1053,42 @@ class ModchartState
 					trace("Adding strum" + i);
 				}
     }
+
+	public function changeIcon(char:String, isPlayer, ?isCustom:Bool = false){
+		if(isPlayer){
+			if(isCustom){
+				PlayState.instance.iconP1.alpha = 0.001;
+				PlayState.instance.animatedIcons[char].alpha = 1;
+				PlayState.instance.iconP1 = PlayState.instance.animatedIcons[char];
+				flags[0] = true;
+			}else{
+				if(flags[0]){
+					PlayState.instance.iconP1.alpha = 0.001;
+					PlayState.instance.animatedIcons["default1"].alpha = 1;
+					PlayState.instance.iconP1 = PlayState.instance.animatedIcons["default1"];
+					flags[0] = false;
+				}
+			}
+			PlayState.instance.iconP1.char = char;
+			PlayState.instance.iconP1.animation.play(char);
+		}else{
+			if(isCustom){
+				PlayState.instance.iconP2.alpha = 0.001;
+				PlayState.instance.animatedIcons[char + "2"].alpha = 1;
+				PlayState.instance.iconP2 = PlayState.instance.animatedIcons[char + "2"];
+				flags[1] = true;
+			}else{
+				if(flags[1]){
+					PlayState.instance.iconP2.alpha = 0.001;
+					PlayState.instance.animatedIcons["default2"].alpha = 1;
+					PlayState.instance.iconP2 = PlayState.instance.animatedIcons["default2"];
+					flags[1] = false;
+				}
+			}
+			PlayState.instance.iconP2.char = char;
+			PlayState.instance.iconP2.animation.play(char);
+		}
+	}
 
     public function executeState(name,args:Array<Dynamic>)
     {

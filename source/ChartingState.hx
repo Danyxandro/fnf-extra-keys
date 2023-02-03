@@ -93,6 +93,7 @@ class ChartingState extends MusicBeatState
 	var vocals:FlxSound;
 	var player2:Character = new Character(0,0, "dad");
 	var player1:Boyfriend = new Boyfriend(0,0, "bf");
+	private var iconLayer:FlxTypedGroup<HealthIcon> = new FlxTypedGroup<HealthIcon>();
 	var leftIcon:HealthIcon;
 	var rightIcon:HealthIcon;
 	var keyAmmo:Array<Int> = [4, 6, 9, 5, 7, 8, 1, 2, 3];
@@ -100,6 +101,16 @@ class ChartingState extends MusicBeatState
 	var claps:Array<Note> = [];
 
 	var selectedType:Int = 0;
+
+	private var m_check = new FlxUICheckBox(10, 165, null, null, "6", 100);
+	private var m_check2 = new FlxUICheckBox(10, 225, null, null, "9", 100);
+	private var m_check3 = new FlxUICheckBox(10, 145, null, null, "5", 100);
+	private var m_check4 = new FlxUICheckBox(10, 185, null, null, "7", 100);
+	private var m_check5 = new FlxUICheckBox(10, 205, null, null, "8", 100);
+	private var m_check6 = new FlxUICheckBox(10, 65, null, null, "1", 100);
+	private var m_check7 = new FlxUICheckBox(10, 85, null, null, "2", 100);
+	private var m_check8 = new FlxUICheckBox(10, 105, null, null, "3", 100);
+	private var m_check0 = new FlxUICheckBox(10, 125, null, null, "4", 100);
 
 	override function create()
 	{
@@ -113,21 +124,6 @@ class ChartingState extends MusicBeatState
 		gridBGBelow = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16);
 		add(gridBGBelow);
 		gridBGBelow.y += gridBG.height;
-
-
-		leftIcon = new HealthIcon('bf');
-		rightIcon = new HealthIcon('dad');
-		leftIcon.scrollFactor.set(1, 1);
-		rightIcon.scrollFactor.set(1, 1);
-
-		leftIcon.setGraphicSize(0, 45);
-		rightIcon.setGraphicSize(0, 45);
-
-		add(leftIcon);
-		add(rightIcon);
-
-		leftIcon.setPosition(0, -100);
-		rightIcon.setPosition(gridBG.width / 2, -100);
 
 		gridBlackLine = new FlxSprite(gridBG.x + gridBG.width / 2).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
 		add(gridBlackLine);
@@ -156,6 +152,21 @@ class ChartingState extends MusicBeatState
 				validScore: false
 			};
 		}
+
+		leftIcon = new HealthIcon(_song.player1);
+		rightIcon = new HealthIcon(_song.player2);
+		leftIcon.scrollFactor.set(1, 1);
+		rightIcon.scrollFactor.set(1, 1);
+
+		leftIcon.setGraphicSize(0, 45);
+		rightIcon.setGraphicSize(0, 45);
+
+		iconLayer.add(leftIcon);
+		iconLayer.add(rightIcon);
+		add(iconLayer);
+
+		leftIcon.setPosition(0, -100);
+		rightIcon.setPosition(gridBG.width / 2, -100);
 
 		FlxG.mouse.visible = true;
 		FlxG.save.bind('seven', 'danyxandro');
@@ -322,7 +333,7 @@ class ChartingState extends MusicBeatState
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 			{
 				_song.player1 = characters[Std.parseInt(character)];
-				updateHeads();
+				updateHeads(1);
 			});
 			player1DropDown.selectedLabel = _song.player1;
 	
@@ -331,7 +342,7 @@ class ChartingState extends MusicBeatState
 			var player2DropDown = new FlxUIDropDownMenu(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 			{
 				_song.player2 = characters[Std.parseInt(character)];
-				updateHeads();
+				updateHeads(2);
 			});
 			player2DropDown.selectedLabel = _song.player2;
 	
@@ -380,7 +391,10 @@ class ChartingState extends MusicBeatState
 			updateNoteUI();
 			updateGrid();
 		});
-		noteStyle2DropDown.selectedLabel = _song.noteStyle2;
+		if(_song.noteStyle2 == null)
+			noteStyle2DropDown.selectedLabel = _song.noteStyle;
+		else
+			noteStyle2DropDown.selectedLabel = _song.noteStyle2;
 
 		var noteStyle2Label = new FlxText(140,280,64,'Note Skin 2');
 
@@ -584,10 +598,6 @@ class ChartingState extends MusicBeatState
 		stepperGlitchNote.name = 'glitch_note';*/
 
 
-
-
-
-		var m_check = new FlxUICheckBox(10, 165, null, null, "6", 100);
 		m_check.checked = (_song.mania == 1);
 		m_check.callback = function()
 		{
@@ -595,11 +605,18 @@ class ChartingState extends MusicBeatState
 			if (m_check.checked)
 			{
 				_song.mania = 1;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
 			trace('vos sos puto');
 		};
 
-		var m_check2 = new FlxUICheckBox(10, 225, null, null, "9", 100);
 		m_check2.checked = (_song.mania == 2);
 		m_check2.callback = function()
 		{
@@ -607,10 +624,17 @@ class ChartingState extends MusicBeatState
 			if (m_check2.checked)
 			{
 				_song.mania = 2;
+				m_check.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
-			trace('vos sos puto otra vez no weí');
+			trace('vos sos puto otra vez no wei');
 		};
-		var m_check3 = new FlxUICheckBox(10, 145, null, null, "5", 100);
 		m_check3.checked = (_song.mania == 3);
 		m_check3.callback = function()
 		{
@@ -618,10 +642,17 @@ class ChartingState extends MusicBeatState
 			if (m_check3.checked)
 			{
 				_song.mania = 3;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
 			trace('5 keys pog');
 		};
-		var m_check4 = new FlxUICheckBox(10, 185, null, null, "7", 100);
 		m_check4.checked = (_song.mania == 4);
 		m_check4.callback = function()
 		{
@@ -629,10 +660,17 @@ class ChartingState extends MusicBeatState
 			if (m_check4.checked)
 			{
 				_song.mania = 4;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
 			trace('7 keys pog');
 		};
-		var m_check5 = new FlxUICheckBox(10, 205, null, null, "8", 100);
 		m_check5.checked = (_song.mania == 5);
 		m_check5.callback = function()
 		{
@@ -640,21 +678,37 @@ class ChartingState extends MusicBeatState
 			if (m_check5.checked)
 			{
 				_song.mania = 5;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
 			trace('8 keys pog');
 		};
-		var m_check6 = new FlxUICheckBox(10, 65, null, null, "1", 100);
-		m_check6.checked = (_song.mania == 5); 
+		
+		m_check6.checked = (_song.mania == 6); 
 		m_check6.callback = function()
 		{
 			_song.mania = 0;
 			if (m_check6.checked)
 			{
 				_song.mania = 6;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
-			trace('1 keys pog');
+			trace('1 key pog');
 		};
-		var m_check7 = new FlxUICheckBox(10, 85, null, null, "2", 100);
+		
 		m_check7.checked = (_song.mania == 7);
 		m_check7.callback = function()
 		{
@@ -662,22 +716,37 @@ class ChartingState extends MusicBeatState
 			if (m_check7.checked)
 			{
 				_song.mania = 7;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check8.checked = false;
+				m_check0.checked = false;
 			}
 			trace('2 keys pog');
 		};
-		var m_check8 = new FlxUICheckBox(10, 105, null, null, "3", 100);
-		m_check8.checked = (_song.mania == 5);
+		
+		m_check8.checked = (_song.mania == 8);
 		m_check8.callback = function()
 		{
 			_song.mania = 0;
 			if (m_check8.checked)
 			{
 				_song.mania = 8;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check0.checked = false;
 			}
 			trace('3 keys pog');
 		};
 
-		var m_check0 = new FlxUICheckBox(10, 125, null, null, "4", 100);
 		m_check0.checked = (_song.mania == 0);
 		m_check0.callback = function()
 		{
@@ -685,6 +754,14 @@ class ChartingState extends MusicBeatState
 			if (m_check0.checked)
 			{
 				_song.mania = 0;
+				m_check.checked = false;
+				m_check2.checked = false;
+				m_check3.checked = false;
+				m_check4.checked = false;
+				m_check5.checked = false;
+				m_check6.checked = false;
+				m_check7.checked = false;
+				m_check8.checked = false;
 			}
 			trace('4 keys cringe');
 		};
@@ -958,16 +1035,16 @@ class ChartingState extends MusicBeatState
 				gridBGBelow = FlxGridOverlay.create(S_GRID_SIZE, GRID_SIZE, S_GRID_SIZE * 16, GRID_SIZE * 16);
 				add(gridBGBelow);
 			}
-		if (_song.mania == 4 && gridBG.width != GRID_SIZE * 14)
+		if (_song.mania == 4 && gridBG.width != S_GRID_SIZE * 14)
 			{
 				remove(gridBG);
-				gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 14, GRID_SIZE * 16);
+				gridBG = FlxGridOverlay.create(S_GRID_SIZE, GRID_SIZE, S_GRID_SIZE * 14, GRID_SIZE * 16);
 				add(gridBG);
 				remove(gridBGAbove);
-				gridBGAbove = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 14, GRID_SIZE * 16);
+				gridBGAbove = FlxGridOverlay.create(S_GRID_SIZE, GRID_SIZE, S_GRID_SIZE * 14, GRID_SIZE * 16);
 				add(gridBGAbove);
 				remove(gridBGBelow);
-				gridBGBelow = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 14, GRID_SIZE * 16);
+				gridBGBelow = FlxGridOverlay.create(S_GRID_SIZE, GRID_SIZE, S_GRID_SIZE * 14, GRID_SIZE * 16);
 				add(gridBGBelow);
 			}
 		if (_song.mania == 1 && gridBG.width != GRID_SIZE * 12)
@@ -1043,10 +1120,10 @@ class ChartingState extends MusicBeatState
 				add(gridBGBelow);
 			}
 		gridBlackLine.x = gridBG.x + gridBG.width / 2;
-		leftIcon.setPosition(0, -100);
-		rightIcon.setPosition(gridBG.width / 2, -100);
+		/*leftIcon.setPosition(0, -100);
+		rightIcon.setPosition(gridBG.width / 2, -100);*/
 		UI_box.x = FlxG.width / 2;// + 160 * _song.mania;
-		UI_box.y = 20;
+		UI_box.y = 100; //20;
 		if (_song.mania != 0)
 		{
 			UI_box.x = FlxG.width / 2 + 160;// + 160 * _song.mania;
@@ -1065,7 +1142,7 @@ class ChartingState extends MusicBeatState
 		_song.song = typingShit.text;
 
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime(curSection)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps));
-		if (_song.mania == 2 || _song.mania == 5) strumLine.x = -70;
+		if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4) strumLine.x = -70;
 		else strumLine.x = -300;
 
 		if (playClaps)
@@ -1146,7 +1223,7 @@ class ChartingState extends MusicBeatState
 			&& FlxG.mouse.y < gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps))
 		{
 			var arX = Math.floor(FlxG.mouse.x / GRID_SIZE) * GRID_SIZE;
-			if (_song.mania == 2 || _song.mania == 5) arX = Math.floor(FlxG.mouse.x / S_GRID_SIZE) * S_GRID_SIZE;
+			if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4) arX = Math.floor(FlxG.mouse.x / S_GRID_SIZE) * S_GRID_SIZE;
 			dummyArrow.x = arX;
 			if (FlxG.keys.pressed.SHIFT)
 				dummyArrow.y = FlxG.mouse.y;
@@ -1413,9 +1490,9 @@ class ChartingState extends MusicBeatState
 		updateHeads();
 	}
 
-	function updateHeads():Void
+	function updateHeads(?mode:Int):Void
 	{
-		if (check_mustHitSection.checked)
+		/*if (check_mustHitSection.checked)
 		{
 			leftIcon.animation.play(_song.player1);
 			rightIcon.animation.play(_song.player2);
@@ -1424,6 +1501,40 @@ class ChartingState extends MusicBeatState
 		{
 			leftIcon.animation.play(_song.player2);
 			rightIcon.animation.play(_song.player1);
+		}*/
+		switch(mode){
+			case 1:
+				iconLayer.remove(leftIcon);
+				iconLayer.remove(rightIcon);
+				leftIcon = new HealthIcon(_song.player1);
+				leftIcon.scrollFactor.set(1, 1);
+				leftIcon.setGraphicSize(0, 45);
+				leftIcon.setPosition(0, -100);
+				iconLayer.add(leftIcon);
+				iconLayer.add(rightIcon);
+			case 2:
+				iconLayer.remove(leftIcon);
+				iconLayer.remove(rightIcon);
+				rightIcon = new HealthIcon(_song.player2);
+				rightIcon.scrollFactor.set(1, 1);
+				rightIcon.setGraphicSize(0, 45);
+				rightIcon.setPosition(gridBG.width / 2, -100);
+				iconLayer.add(leftIcon);
+				iconLayer.add(rightIcon);
+		};
+		if (check_mustHitSection.checked)
+		{
+			/*leftIcon.animation.play(_song.player1);
+			rightIcon.animation.play(_song.player2);*/
+			leftIcon.x = 0;
+			rightIcon.x = gridBG.width / 2;
+		}
+		else
+		{
+			/*leftIcon.animation.play(_song.player2);
+			rightIcon.animation.play(_song.player1);*/
+			rightIcon.x = 0;
+			leftIcon.x = gridBG.width / 2;
 		}
 	}
 
@@ -1520,7 +1631,7 @@ class ChartingState extends MusicBeatState
 					note.x = Math.floor(daNoteInfo * GRID_SIZE);
 					note.y = Math.floor(getYfromStrum((daStrumTime - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection + sectionArray[ii]].lengthInSteps)));
 		
-					if (_song.mania == 2 || _song.mania == 5)
+					if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4)
 					{
 						note.setGraphicSize(S_GRID_SIZE, GRID_SIZE);
 						note.x = Math.floor(daNoteInfo * S_GRID_SIZE);
@@ -1553,7 +1664,7 @@ class ChartingState extends MusicBeatState
 				var daNoteInfo = i[1];
 				var daStrumTime = i[0];
 				var daSus = i[2];
-				var daType = i[3];
+				var daType:Int = i[3];
 				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]),null,false,daType);
 				note.sustainLength = daSus;
 				note.noteType = daType;
@@ -1566,7 +1677,7 @@ class ChartingState extends MusicBeatState
 				note.x = Math.floor(daNoteInfo * GRID_SIZE);
 				note.y = Math.floor(getYfromStrum((daStrumTime - sectionStartTime(curSection)) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
 	
-				if (_song.mania == 2 || _song.mania == 5)
+				if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4)
 				{
 					note.setGraphicSize(S_GRID_SIZE, GRID_SIZE);
 					note.x = Math.floor(daNoteInfo * S_GRID_SIZE);
@@ -1614,7 +1725,7 @@ class ChartingState extends MusicBeatState
 					note.y = Math.floor(getAboveYfromStrum((daStrumTime - sectionStartTime(curSection - 1)) % (Conductor.stepCrochet * _song.notes[curSection - 1].lengthInSteps)));
 					//note.y += gridBG.height;
 		
-					if (_song.mania == 2 || _song.mania == 5)
+					if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4)
 					{
 						note.setGraphicSize(S_GRID_SIZE, GRID_SIZE);
 						note.x = Math.floor(daNoteInfo * S_GRID_SIZE);
@@ -1661,7 +1772,7 @@ class ChartingState extends MusicBeatState
 				note.y = Math.floor(getBelowYfromStrum((daStrumTime - sectionStartTime(curSection + 1)) % (Conductor.stepCrochet * _song.notes[curSection + 1].lengthInSteps)));
 				//note.y += gridBG.height;
 	
-				if (_song.mania == 2 || _song.mania == 5)
+				if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4)
 				{
 					note.setGraphicSize(S_GRID_SIZE, GRID_SIZE);
 					note.x = Math.floor(daNoteInfo * S_GRID_SIZE);
@@ -1835,7 +1946,7 @@ class ChartingState extends MusicBeatState
 
 
 
-		if (_song.mania == 2 || _song.mania == 5)
+		if (_song.mania == 2 || _song.mania == 5 || _song.mania == 4)
 		{
 			var noteData = Math.floor(FlxG.mouse.x / S_GRID_SIZE);
 		}

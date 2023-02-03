@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="Eder Jr.png"><SubTexture name="Eder Jr Eder Jr 10000" x="0" y="0" width="64" height="86" frameX="0" frameY="0" frameWidth="64" frameHeight="86" />
+<SubTexture name="Eder Jr Eder Jr 20000" x="64" y="0" width="64" height="86" frameX="0" frameY="0" frameWidth="64" frameHeight="86" />
+<SubTexture name="Eder Jr Eder Jr 30000" x="128" y="0" width="64" height="86" frameX="0" frameY="0" frameWidth="64" frameHeight="86" />
+<SubTexture name="Eder Jr Eder Jr 40000" x="192" y="0" width="64" height="86" frameX="0" frameY="0" frameWidth="64" frameHeight="86" />
+<SubTexture name="Eder Jr Eder Jr 50000" x="0" y="86" width="64" height="86" frameX="0" frameY="0" frameWidth="64" frameHeight="86" />
+<SubTexture name="Eder Jr Eder Jr 60000" x="64" y="86" width="64" height="86" frameX="0" frameY="0" frameWidth="64" frameHeight="86" />
+</TextureAtlas>

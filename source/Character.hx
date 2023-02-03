@@ -4,6 +4,10 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import lime.utils.Assets;
+import haxe.Json;
 
 using StringTools;
 
@@ -18,6 +22,17 @@ class Character extends FlxSprite
 	public var holdTimer:Float = 0;
 
 	public var isPlayingAsBF:Bool;
+
+	private var flag:Bool = true;
+	private var fase:Int = 0;
+	private var sync = false;
+
+	public var flyingOffset:Float = 0;
+	public var cameraPosition:Array<Float> = [0.0, 0.0];
+	public var isCustom:Bool = false;
+	public var hasFocus:Bool = true;
+	public var colorCode:Array<Int> = [];
+	public var isDancingIdle:Bool = false;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
@@ -161,7 +176,16 @@ class Character extends FlxSprite
 				addOffset("singLEFT", 130, -10);
 				addOffset("singDOWN", -50, -130);
 
-				playAnim('danceRight');
+				if(!isPlayer)
+					playAnim('danceRight');
+				else{
+					addOffset("singUP", -40, 26);
+					addOffset("singRIGHT", 40, -13);
+					addOffset("singLEFT", 40, -13);
+					addOffset("singDOWN", -30, -140);
+					playAnim('idle');
+				}
+				isDancingIdle = true;
 			case 'mom':
 				tex = Paths.getSparrowAtlas('characters/Mom_Assets');
 				frames = tex;
@@ -179,6 +203,13 @@ class Character extends FlxSprite
 				addOffset("singRIGHT", 10, -60);
 				addOffset("singLEFT", 250, -23);
 				addOffset("singDOWN", 20, -160);
+
+				if(isPlayer){
+					addOffset("singUP", -16, 71);
+					addOffset("singRIGHT", 170, -60);
+					addOffset("singLEFT", -20, -23);
+					addOffset("singDOWN", 20, -160);
+				}
 
 				playAnim('idle');
 
@@ -199,6 +230,13 @@ class Character extends FlxSprite
 				addOffset("singRIGHT", 10, -60);
 				addOffset("singLEFT", 250, -23);
 				addOffset("singDOWN", 20, -160);
+
+				if(isPlayer){
+					addOffset("singUP", -16, 71);
+					addOffset("singRIGHT", 170, -60);
+					addOffset("singLEFT", -20, -23);
+					addOffset("singDOWN", 20, -160);
+				}
 
 				playAnim('idle');
 			case 'monster':
@@ -239,10 +277,19 @@ class Character extends FlxSprite
 				animation.addByPrefix('singDOWN', 'Pico Down Note0', 24, false);
 				if (isPlayer)
 				{
+					curCharacter = "bf-pico";
 					animation.addByPrefix('singLEFT', 'Pico NOTE LEFT0', 24, false);
 					animation.addByPrefix('singRIGHT', 'Pico Note Right0', 24, false);
 					animation.addByPrefix('singRIGHTmiss', 'Pico Note Right Miss', 24, false);
 					animation.addByPrefix('singLEFTmiss', 'Pico NOTE LEFT miss', 24, false);
+					addOffset("singUP", 11, 21);
+					addOffset("singRIGHT", -44, -3);
+					addOffset("singLEFT", 65, -12);
+					addOffset("singDOWN", 80, -83);
+					addOffset("singUPmiss", 11, 61);
+					addOffset("singRIGHTmiss", -44, 37);
+					addOffset("singLEFTmiss", 65, 28);
+					addOffset("singDOWNmiss", 80, -43);
 				}
 				else
 				{
@@ -251,20 +298,20 @@ class Character extends FlxSprite
 					animation.addByPrefix('singRIGHT', 'Pico NOTE LEFT0', 24, false);
 					animation.addByPrefix('singRIGHTmiss', 'Pico NOTE LEFT miss', 24, false);
 					animation.addByPrefix('singLEFTmiss', 'Pico Note Right Miss', 24, false);
+					addOffset("singUP", -29, 27);
+					addOffset("singRIGHT", -68, -7);
+					addOffset("singLEFT", 65, 9);
+					addOffset("singDOWN", 200, -70);
+					addOffset("singUPmiss", -19, 67);
+					addOffset("singRIGHTmiss", -60, 41);
+					addOffset("singLEFTmiss", 62, 64);
+					addOffset("singDOWNmiss", 210, -28);
 				}
 
 				animation.addByPrefix('singUPmiss', 'pico Up note miss', 24);
 				animation.addByPrefix('singDOWNmiss', 'Pico Down Note MISS', 24);
 
 				addOffset('idle');
-				addOffset("singUP", -29, 27);
-				addOffset("singRIGHT", -68, -7);
-				addOffset("singLEFT", 65, 9);
-				addOffset("singDOWN", 200, -70);
-				addOffset("singUPmiss", -19, 67);
-				addOffset("singRIGHTmiss", -60, 41);
-				addOffset("singLEFTmiss", 62, 64);
-				addOffset("singDOWNmiss", 210, -28);
 
 				playAnim('idle');
 
@@ -295,6 +342,7 @@ class Character extends FlxSprite
 
 				animation.addByPrefix('scared', 'BF idle shaking', 24);
 
+				if(isPlayer){
 				addOffset('idle', -5);
 				addOffset("singUP", -29, 27);
 				addOffset("singRIGHT", -38, -7);
@@ -310,6 +358,25 @@ class Character extends FlxSprite
 				addOffset('deathLoop', 37, 5);
 				addOffset('deathConfirm', 37, 69);
 				addOffset('scared', -4);
+				}else{
+					animation.addByPrefix('singLEFTmiss', 'BF NOTE RIGHT MISS', 24, false);
+					animation.addByPrefix('singRIGHTmiss', 'BF NOTE LEFT MISS', 24, false);
+					animation.addByPrefix('singLEFT', 'BF NOTE RIGHT0', 24, false);
+					animation.addByPrefix('singRIGHT', 'BF NOTE LEFT0', 24, false);
+					addOffset('idle', 0);
+					addOffset("singUP", 0, 27);
+					addOffset("singRIGHT", -40, -5);
+					addOffset("singLEFT", 44, -6);
+					addOffset("singDOWN", -30, -50);
+					addOffset("singUPmiss", 0, 27);
+					addOffset("singRIGHTmiss", -30, 18);
+					addOffset("singLEFTmiss", 40, 20);
+					addOffset("singDOWNmiss", -20, -19);
+					addOffset("hey", 3, 4);
+					addOffset('scared');
+
+					this.y += 350;
+				}
 
 				playAnim('idle');
 
@@ -330,6 +397,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('hey', 'BF HEY', 24, false);
 				animation.addByPrefix('singHey', 'BF HEY', 24, false);
 
+				if(isPlayer){
 				addOffset('idle', -5);
 				addOffset("singUP", -29, 27);
 				addOffset("singRIGHT", -38, -7);
@@ -341,6 +409,25 @@ class Character extends FlxSprite
 				addOffset("singDOWNmiss", -11, -19);
 				addOffset("hey", 7, 4);
 				addOffset("singHey", 7, 4);
+				}else{
+					animation.addByPrefix('singLEFTmiss', 'BF NOTE RIGHT MISS', 24, false);
+					animation.addByPrefix('singRIGHTmiss', 'BF NOTE LEFT MISS', 24, false);
+					animation.addByPrefix('singLEFT', 'BF NOTE RIGHT0', 24, false);
+					animation.addByPrefix('singRIGHT', 'BF NOTE LEFT0', 24, false);
+					addOffset('idle', 0);
+					addOffset("singUP", 0, 27);
+					addOffset("singRIGHT", -40, -5);
+					addOffset("singLEFT", 44, -6);
+					addOffset("singDOWN", -30, -50);
+					addOffset("singUPmiss", 0, 27);
+					addOffset("singRIGHTmiss", -30, 18);
+					addOffset("singLEFTmiss", 40, 20);
+					addOffset("singDOWNmiss", -20, -19);
+					addOffset("hey", 3, 4);
+					addOffset('scared');
+
+					this.y += 350;
+				}
 
 				playAnim('idle');
 
@@ -358,6 +445,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
 				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
 
+				if(isPlayer){
 				addOffset('idle', -5);
 				addOffset("singUP", -29, 27);
 				addOffset("singRIGHT", -38, -7);
@@ -368,6 +456,22 @@ class Character extends FlxSprite
 				addOffset("singLEFTmiss", 12, 24);
 				addOffset("singDOWNmiss", -11, -19);
 				playAnim('idle');
+				}else{
+					animation.addByPrefix('singLEFTmiss', 'BF NOTE RIGHT MISS', 24, false);
+					animation.addByPrefix('singRIGHTmiss', 'BF NOTE LEFT MISS', 24, false);
+					animation.addByPrefix('singLEFT', 'BF NOTE RIGHT0', 24, false);
+					animation.addByPrefix('singRIGHT', 'BF NOTE LEFT0', 24, false);
+					addOffset('idle', -5);
+					addOffset("singUP", 0, 27);
+					addOffset("singRIGHT", -30, -7);
+					addOffset("singLEFT", 50, -6);
+					addOffset("singDOWN", -20, -50);
+					addOffset("singUPmiss", 0, 27);
+					addOffset("singRIGHTmiss", -30, 21);
+					addOffset("singLEFTmiss", 40, 24);
+					addOffset("singDOWNmiss", -30, -19);
+					this.y += 350;
+				}
 
 				flipX = true;
 			case 'bf-pixel':
@@ -382,6 +486,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHTmiss', 'BF RIGHT MISS', 24, false);
 				animation.addByPrefix('singDOWNmiss', 'BF DOWN MISS', 24, false);
 
+				if(isPlayer){
 				addOffset('idle');
 				addOffset("singUP");
 				addOffset("singRIGHT");
@@ -391,6 +496,23 @@ class Character extends FlxSprite
 				addOffset("singRIGHTmiss");
 				addOffset("singLEFTmiss");
 				addOffset("singDOWNmiss");
+				}else{
+					animation.addByPrefix('singRIGHT', 'BF LEFT NOTE', 24, false);
+					animation.addByPrefix('singLEFT', 'BF RIGHT NOTE', 24, false);
+					animation.addByPrefix('singRIGHTmiss', 'BF LEFT MISS', 24, false);
+					animation.addByPrefix('singLEFTmiss', 'BF RIGHT MISS', 24, false);
+					addOffset('idle');
+					addOffset("singUP",6,0);
+					addOffset("singRIGHT",10,0);
+					addOffset("singLEFT");
+					addOffset("singDOWN");
+					addOffset("singUPmiss");
+					addOffset("singRIGHTmiss");
+					addOffset("singLEFTmiss");
+					addOffset("singDOWNmiss");
+					this.x += 220;
+					this.y += 500;
+				}
 
 				setGraphicSize(Std.int(width * 6));
 				updateHitbox();
@@ -513,24 +635,25 @@ class Character extends FlxSprite
 				frames = tex;
 				animation.addByPrefix('idle', 'Tankman Idle Dance', 24, true);
 				animation.addByPrefix('singUP', 'Tankman UP note', 24, false);
+				animation.addByPrefix('singRIGHT','Tankman Note Left', 24, false);
+				animation.addByPrefix('singLEFT', 'Tankman Right Note', 24, false);
 				if (isPlayer) {
-					animation.addByPrefix('singLEFT','Tankman Note Left', 24, false);
-					animation.addByPrefix('singRIGHT', 'Tankman Right Note', 24, false);
-					curCharacter = "bf-tankman";
+					/*animation.addByPrefix('singLEFT','Tankman Note Left', 24, false);
+					animation.addByPrefix('singRIGHT', 'Tankman Right Note', 24, false);*/
+					addOffset('singLEFT',-12, -227);
+					addOffset('singRIGHT', 90, -214);
 				} else {
-					animation.addByPrefix('singRIGHT','Tankman Note Left', 24, false);
-					animation.addByPrefix('singLEFT', 'Tankman Right Note', 24, false);
+					addOffset('singRIGHT',-12, -227);
+					addOffset('singLEFT', 90, -214);
 				}
     
 				animation.addByPrefix('singDOWN', 'Tankman DOWN note', 24, false);
 				animation.addByPrefix('singUP-alt', 'TANKMAN UGH', 24, false);
-				//animation.addByPrefix('singDOWN-alt', 'PRETTY GOOD', 24, true);
+				animation.addByPrefix('singDOWN-alt', 'PRETTY GOOD', 24, true);
 				animation.addByPrefix('prettygood', 'PRETTY GOOD', 24, false);
 
 				addOffset('idle',0,-200);
 				addOffset('singUP', 50, -144);
-				addOffset('singRIGHT',-12, -227);
-				addOffset('singLEFT', 90, -214);
 				addOffset('singDOWN', 80, -300);
 				addOffset('singUP-alt', -15, -207);
 				addOffset('singDOWN-alt', 0, -185);
@@ -592,6 +715,160 @@ class Character extends FlxSprite
 				playAnim('idle');
 
 				flipX = true;
+			case 'keen-flying':
+				flyingOffset = 75;
+				var tex = Paths.getSparrowAtlas('characters/KeenFlying',"shared");
+				frames = tex;
+				animation.addByPrefix('idle', "Keen instancia", 24, true);
+				animation.addByPrefix('singUP', "Keen Up instancia", 24, false);
+				animation.addByPrefix('singDOWN', "Keen down instancia", 24, false);
+				animation.addByPrefix('singLEFT', 'Keen left instancia', 24, false);
+				animation.addByPrefix('singRIGHT', 'Keen right instancia', 24, false);
+				antialiasing = true;
+
+				if(isPlayer){
+					addOffset("idle", 0, 0);
+					addOffset("singUP", 33, 43);
+					addOffset("singRIGHT", 24, 35);
+					addOffset("singLEFT", 42, 47);
+					addOffset("singDOWN", 45, 27);
+					this.y -= 350;
+				}else{
+					addOffset("idle", 0, 0);
+					addOffset("singUP", 40, 44);
+					addOffset("singRIGHT", 46, 36);
+					addOffset("singLEFT", 50, 40);
+					addOffset("singDOWN", 52, 30);
+					this.x -= 180;
+				}
+
+				/*addOffset('idle', 200, -100);
+				addOffset("singUP", 250, -60);
+				addOffset("singRIGHT", 229, -63);
+				addOffset("singLEFT", 245, -70);
+				addOffset("singDOWN", 248, -72);
+
+				if(isPlayer){
+					this.x+=220;
+					this.y-= 450;
+				}*/
+
+				flipX=true;
+				playAnim('idle');
+			case 'eder-jr':
+				tex = Paths.getSparrowAtlas('characters/Eder_Jr', 'shared');
+				frames = tex;
+				animation.addByPrefix('idle', 'Eder Jr Eder Jr', 24,true);
+				this.scale.set(6, 6);
+				this.updateHitbox();
+				antialiasing = false;
+
+				if(isPlayer){
+					addOffset('idle',0,0);
+				}else{
+					/*for (ar in offsetsJson){
+						addOffset(ar[0],ar[1],ar[2]);
+					}*/
+					addOffset('idle',0,0);
+				}
+				this.sync = false;
+				this.x += 200;
+				this.y += 470;
+
+				playAnim('idle');
+			default:
+				var routePNG:String = "assets/shared/images/characters/" + curCharacter + "/" + curCharacter + ".png";
+				var routeXML:String = "assets/shared/images/characters/" + curCharacter + "/" + curCharacter + ".xml";
+				var routeOffsets:String = "assets/shared/images/characters/" + curCharacter + "/" + curCharacter + ".json";
+				var vuelo:Float = 0;
+
+				if(sys.FileSystem.exists(routePNG) && sys.FileSystem.exists(routeXML) && sys.FileSystem.exists(routeOffsets)){
+					var datos = Json.parse(sys.io.File.getContent(routeOffsets).trim());
+					trace(datos);
+					tex = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile(routePNG), sys.io.File.getContent(routeXML));
+					frames = tex;
+					var animations:Array<Dynamic> = [];
+					animations = datos.animations;
+					for (anim in animations){
+						if(anim.indices != null && anim.indices.lenght > 0){
+							animation.addByIndices(anim.anim, anim.name, anim.indices, "", anim.fps, anim.loop);
+						}else{
+							animation.addByPrefix(anim.anim, anim.name, anim.fps, anim.loop);
+						}
+						if(isPlayer && anim.offsetsPlayer != null){
+							addOffset(anim.anim, anim.offsetsPlayer[0], anim.offsetsPlayer[1]);
+						}else
+							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+					}
+					antialiasing = !datos.no_antialiasing;
+					if(datos.camera_position != null)
+						cameraPosition = datos.camera_position;
+					if(isPlayer && datos.playerCameraPosition != null){
+						cameraPosition = datos.playerCameraPosition;
+					}
+					if(datos.scale != 1){
+						this.scale.set(datos.scale,datos.scale);
+						this.updateHitbox();
+					}
+					if(datos.healthbar_colors != null){
+						this.colorCode = [datos.healthbar_colors[0],datos.healthbar_colors[1],datos.healthbar_colors[2]];
+					}
+					if(datos.playerPosition != null && isPlayer){
+						this.x += datos.playerPosition[0];
+						this.y += datos.playerPosition[1];
+					}else{
+						if(datos.position != null){
+							this.x += datos.position[0];
+							this.y += datos.position[1];
+						}
+					}
+					if(datos.flying_offset != 0)
+						vuelo = datos.flying_offset;
+					this.flyingOffset = vuelo;
+					this.flipX = !!datos.flip_x;
+					isCustom = true;
+
+					playAnim("idle");
+				}else{
+					this.curCharacter = "eder-jr";
+					tex = Paths.getSparrowAtlas('characters/Eder_Jr', 'shared');
+					frames = tex;
+					animation.addByPrefix('idle', 'Eder Jr Eder Jr', 24,true);
+					this.scale.set(6, 6);
+					this.updateHitbox();
+					antialiasing = false;
+
+					if(isPlayer){
+						addOffset('idle',0,0);
+					}else{
+						addOffset('idle',0,0);
+					}
+					this.sync = false;
+					this.x += 200;
+					this.y += 470;
+
+					playAnim('idle');
+				}
+		}//Fin del switch
+
+		if(curCharacter.toLowerCase().startsWith('gf') || curCharacter == "speakers"){
+			if(animation.getByName('hey') == null && animation.getByName('cheer') != null){
+				animation.add("hey",animation.getByName('cheer').frames,24,false);
+				if(animOffsets['hey'] != null){
+					addOffset('hey', animOffsets['cheer'][0], animOffsets['cheer'][1]);
+				}
+			}
+		}else{
+			if(animation.getByName('hey') == null && animation.getByName('singUP') != null){
+				animation.add("hey",animation.getByName('singUP').frames,24,false);
+				if(animOffsets['singUP'] != null){
+					addOffset('hey', animOffsets['singUP'][0], animOffsets['singUP'][1]);
+				}
+			}
+			if(animation.getByName('hey') != null){
+				animation.add("singHey",animation.getByName('hey').frames,24,false);
+				addOffset('singHey', animOffsets['hey'][0], animOffsets['hey'][1]);
+			}
 		}
 
 		dance();
@@ -601,12 +878,16 @@ class Character extends FlxSprite
 			flipX = !flipX;
 
 			// Doesn't flip for BF, since his are already in the right place???
-			if (!curCharacter.startsWith('bf'))
+			if (!curCharacter.startsWith('bf') && curCharacter != "eder-jr")
 			{
 				// var animArray
 				var oldRight = animation.getByName('singRIGHT').frames;
 				animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
 				animation.getByName('singLEFT').frames = oldRight;
+				var offsetR = animOffsets.get('singRIGHT');
+				var offsetL = animOffsets.get('singLEFT');
+				addOffset("singRIGHT", offsetL[0], offsetL[1]);
+				addOffset("singLEFT", offsetR[0], offsetR[1]);
 
 				// IF THEY HAVE MISS ANIMATIONS??
 				if (animation.getByName('singRIGHTmiss') != null)
@@ -614,6 +895,10 @@ class Character extends FlxSprite
 					var oldMiss = animation.getByName('singRIGHTmiss').frames;
 					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
 					animation.getByName('singLEFTmiss').frames = oldMiss;
+					var offsetR = animOffsets.get('singRIGHTmiss');
+					var offsetL = animOffsets.get('singLEFTmiss');
+					addOffset("singRIGHTmiss", offsetL[0], offsetL[1]);
+					addOffset("singLEFTmiss", offsetR[0], offsetR[1]);
 				}
 			}
 		}
@@ -623,7 +908,7 @@ class Character extends FlxSprite
 	{
 		if (!isPlayingAsBF)
 		{
-			if (curCharacter.startsWith('bf') && !isPlayer)
+			if (/*curCharacter.startsWith('bf') && !*/isPlayer)
 				{
 					if (animation.curAnim.name.startsWith('sing'))
 					{
@@ -672,8 +957,48 @@ class Character extends FlxSprite
 					playAnim('danceRight');
 		}
 
+		if(flyingOffset > 0){
+			if(flag){
+				flag = false;
+				switch(fase){
+					case 0:
+						FlxTween.tween(this, {y: this.y-flyingOffset}, 1.5, {
+							ease: FlxEase.quadInOut,
+							onComplete: function(twn:FlxTween)
+							{
+								fase = 1;
+								flag = true;
+							}
+						});
+					case 1:
+						FlxTween.tween(this, {y: this.y+flyingOffset}, 1.5, {
+							ease: FlxEase.quadInOut,
+							onComplete: function(twn:FlxTween)
+							{
+								fase = 0;
+								flag = true;
+							}
+						});
+				}
+			} //fin del if
+		}
+
+		if(this.isDancingIdle){
+			if((!isPlayingAsBF && isPlayer) || (isPlayingAsBF && !isPlayer)){
+				if(!animation.curAnim.name.startsWith('sing') && !animation.curAnim.name.startsWith('dance') && animation.curAnim.finished){
+					dance();
+				}
+			}
+		}else{
+			if((!isPlayingAsBF && isPlayer) || (isPlayingAsBF && !isPlayer)){
+				if(!animation.curAnim.name.startsWith('sing') && animation.curAnim.name != "idle" && animation.curAnim.finished){
+					dance();
+				}
+			}
+		}
+
 		super.update(elapsed);
-	}
+	}//Fin del update
 
 	private var danced:Bool = false;
 
@@ -729,15 +1054,22 @@ class Character extends FlxSprite
 							playAnim('danceLeft');
 					}
 
-				case 'spooky':
+				/*case 'spooky':
 					danced = !danced;
 
 					if (danced)
 						playAnim('danceRight');
 					else
-						playAnim('danceLeft');
+						playAnim('danceLeft');*/
 				default:
-					playAnim('idle');
+					if(isDancingIdle){
+						danced = !danced;
+						if (danced)
+							playAnim('danceRight');
+						else
+							playAnim('danceLeft');
+					}else
+						playAnim('idle');
 			}
 		}
 	}
