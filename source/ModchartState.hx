@@ -218,14 +218,20 @@ class ModchartState
 		switch(id)
 		{
 			case 'boyfriend':
-                @:privateAccess
+                @:privateAccess{
+				if(FlxG.save.data.flip)
+					return PlayState.dad;
 				return PlayState.boyfriend;
+				}
 			case 'girlfriend':
                 @:privateAccess
 				return PlayState.gf;
 			case 'dad':
-                @:privateAccess
+                @:privateAccess{
+				if(FlxG.save.data.flip)
+					return PlayState.boyfriend;
 				return PlayState.dad;
+				}
 		}
 		// lua objects or what ever
 		if (luaSprites.get(id) == null)
@@ -246,10 +252,47 @@ class ModchartState
 
 	function changeDadCharacter(id:String,?swap:Bool = true,?noteStyle:String)
 	{
-		if(PlayState.instance.animatedIcons["default2"].animation.getByName(id) != null){
-			changeIcon(id,false);
-		}else
-			changeIcon(id,false,true);
+		if(FlxG.save.data.flip){
+			if(idsBF[id] != null && !PlayState.instance.layerPlayChars.members[idsBF[id]].isSynchronous()){
+				if(idsBF[id] != curBF){
+					PlayState.instance.layerPlayChars.members[idsBF[id]].active = true;
+					PlayState.instance.layerPlayChars.members[idsBF[id]].hasFocus = true;
+					PlayState.instance.layerPlayChars.members[idsBF[id]].alpha = 1;
+					PlayState.instance.layerPlayChars.members[curBF].hasFocus = false;
+					if(swap){
+						PlayState.instance.layerPlayChars.members[curBF].alpha = getVar("dadFadeAlpha","float");
+						PlayState.instance.layerPlayChars.members[curBF].active = false;
+					}
+					curBF = idsBF[id];
+					PlayState.instance.bfID = idsBF[id];
+					PlayState.boyfriend = PlayState.instance.layerPlayChars.members[idsBF[id]];
+					changeIcon(id,false, PlayState.instance.layerPlayChars.members[idsBF[id]].isCustom);
+				}
+			}
+		}else{
+			if(ids[id] != null && !PlayState.instance.layerChars.members[ids[id]].isSynchronous()){
+				if(ids[id] != curChar){
+					PlayState.instance.layerChars.members[ids[id]].active = true;
+					PlayState.instance.layerChars.members[ids[id]].hasFocus = true;
+					PlayState.instance.layerChars.members[ids[id]].alpha = 1;
+					PlayState.instance.layerChars.members[curChar].hasFocus = false;
+					if(swap){
+						PlayState.instance.layerChars.members[curChar].alpha = getVar("dadFadeAlpha","float");
+						PlayState.instance.layerChars.members[curChar].active = false;
+					}
+					curChar = ids[id];
+					PlayState.instance.dadID = ids[id];
+					PlayState.dad = PlayState.instance.layerChars.members[ids[id]];
+					changeIcon(id,false, PlayState.instance.layerChars.members[ids[id]].isCustom);
+				}
+			}
+		}
+		if(!PlayStateChangeables.allowChanging){
+			if(PlayState.instance.animatedIcons["default2"].animation.getByName(id) != null){
+				changeIcon(id,false);
+			}else
+				changeIcon(id,false,true);
+		}
 		PlayState.instance.setColorBar(false,id);
 		if(noteStyle != null){
 			PlayState.instance.changeStyle(noteStyle,2);
@@ -258,15 +301,65 @@ class ModchartState
 
 	function changeBoyfriendCharacter(id:String,?swap:Bool = true,?noteStyle:String)
 	{
-		if(PlayState.instance.animatedIcons["default1"].animation.getByName(id) != null){
-			changeIcon(id,true);
-		}else
-			changeIcon(id,true,true);
+		if(!FlxG.save.data.flip){
+			if(idsBF[id] != null && !PlayState.instance.layerBFs.members[idsBF[id]].isSynchronous()){
+				if(idsBF[id] != curBF){
+					PlayState.instance.layerBFs.members[idsBF[id]].active = true;
+					PlayState.instance.layerBFs.members[idsBF[id]].hasFocus = true;
+					PlayState.instance.layerBFs.members[idsBF[id]].alpha = 1;
+					PlayState.instance.layerBFs.members[curBF].hasFocus = false;
+					if(swap){
+						PlayState.instance.layerBFs.members[curBF].alpha = getVar("bfFadeAlpha","float");
+						PlayState.instance.layerBFs.members[curBF].active = false;
+					}
+					curBF = idsBF[id];
+					PlayState.instance.bfID = idsBF[id];
+					PlayState.boyfriend = PlayState.instance.layerBFs.members[idsBF[id]];
+					changeIcon(id,true, PlayState.instance.layerBFs.members[idsBF[id]].isCustom);
+				}
+			}
+		}else{
+			if(ids[id] != null && !PlayState.instance.layerFakeBFs.members[ids[id]].isSynchronous()){
+				if(ids[id] != curChar){
+					PlayState.instance.layerFakeBFs.members[ids[id]].active = true;
+					PlayState.instance.layerFakeBFs.members[ids[id]].hasFocus = true;
+					PlayState.instance.layerFakeBFs.members[ids[id]].alpha = 1;
+					PlayState.instance.layerFakeBFs.members[curChar].hasFocus = false;
+					if(swap){
+						PlayState.instance.layerFakeBFs.members[curChar].alpha = getVar("bfFadeAlpha","float");
+						PlayState.instance.layerFakeBFs.members[curChar].active = false;
+					}
+					curChar = ids[id];
+					PlayState.instance.dadID = ids[id];
+					PlayState.dad = PlayState.instance.layerFakeBFs.members[ids[id]];
+					changeIcon(id,true, PlayState.instance.layerFakeBFs.members[ids[id]].isCustom);
+				}
+			}
+		}
+		if(!PlayStateChangeables.allowChanging){
+			if(PlayState.instance.animatedIcons["default1"].animation.getByName(id) != null){
+				changeIcon(id,true);
+			}else
+				changeIcon(id,true,true);
+		}
 		PlayState.instance.setColorBar(true,id);
 		if(noteStyle != null){
 			PlayState.instance.changeStyle(noteStyle,1);
 		}
 	}
+
+	function changeGirlfriendCharacter(id:String)
+	{
+		if(gfs[id] != null){
+			PlayState.instance.layerGF.members[curGF].active = false;
+			PlayState.instance.layerGF.members[curGF].alpha = getVar("gfFadeAlpha","float");
+			curGF = gfs[id];
+			PlayState.instance.layerGF.members[curGF].active = true;
+			PlayState.instance.layerGF.members[curGF].alpha = 1;
+			PlayState.gf = PlayState.instance.layerGF.members[curGF];
+		}
+	}
+
 	function changeMania(newMania:Int)
 	{
 		PlayState.instance.switchMania(newMania);
@@ -440,6 +533,7 @@ class ModchartState
 				setVar("gfFadeAlpha", 0.001);
 				flags[0] = PlayState.instance.iconP1.isCustom;
 				flags[1] = PlayState.instance.iconP2.isCustom;
+				allowChanging = PlayStateChangeables.allowChanging;
 
 				var character:String = PlayState.SONG.player1;
 				if(PlayState.instance.iconP1.isCustom){
@@ -456,14 +550,14 @@ class ModchartState
 					PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character+"2"]);
 				}
 				if(PlayStateChangeables.flip){
-					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerChars.members[0]);
-					idsBF.set("bf-" + PlayState.SONG.player1, 0);
+					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerFakeBFs.members[0]);
+					ids.set("bf-" + PlayState.SONG.player1, 0);
 					if(PlayState.SONG.player2 == "dad"){
-						luaSprites.set("daddy", PlayState.instance.layerBFs.members[0]);
-						ids.set("daddy",0);
+						luaSprites.set("daddy", PlayState.instance.layerPlayChars.members[0]);
+						idsBF.set("daddy",0);
 					}else{
-						luaSprites.set(PlayState.SONG.player1, PlayState.instance.layerBFs.members[0]);
-						ids.set(PlayState.SONG.player1, 0);
+						luaSprites.set(PlayState.SONG.player2, PlayState.instance.layerPlayChars.members[0]);
+						idsBF.set(PlayState.SONG.player2, 0);
 					}
 				}else{
 					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerBFs.members[0]);
@@ -472,8 +566,8 @@ class ModchartState
 						luaSprites.set("daddy", PlayState.instance.layerChars.members[0]);
 						ids.set("daddy",0);
 					}else{
-						luaSprites.set(PlayState.SONG.player1, PlayState.instance.layerChars.members[0]);
-						ids.set(PlayState.SONG.player1, 0);
+						luaSprites.set(PlayState.SONG.player2, PlayState.instance.layerChars.members[0]);
+						ids.set(PlayState.SONG.player2, 0);
 					}
 				}
 				
@@ -486,6 +580,8 @@ class ModchartState
 				Lua_helper.add_callback(lua,"changeDadCharacter", changeDadCharacter);
 
 				Lua_helper.add_callback(lua,"changeBoyfriendCharacter", changeBoyfriendCharacter);
+
+				Lua_helper.add_callback(lua,"changeGirlfriendCharacter", changeGirlfriendCharacter);
 
 				Lua_helper.add_callback(lua,"changeMania", changeMania);
 	
@@ -625,21 +721,258 @@ class ModchartState
 				//custom
 
 				Lua_helper.add_callback(lua, "loadCharacter", function(character:String,x:Float,y:Float,?isPlayer:Bool = false,?sync:Bool = false){
-					if(isPlayer){
-						if(PlayState.instance.animatedIcons["default1"].animation.getByName(character) == null){
-							PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
-							PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
-							PlayState.instance.animatedIcons[character].alpha = 0.001;
-							PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+					if(allowChanging){
+						if(isPlayer){
+							if(FlxG.save.data.flip){
+								var bf:Character = new Character(x,y,character,true,sync);
+								trace("loaded rival (bf side): " + character);
+								PlayState.instance.layerFakeBFs.add(bf);
+								ids[character] = PlayState.instance.layerFakeBFs.members.length-1;
+								luaSprites.set("bf-" + character, PlayState.instance.layerFakeBFs.members[idsBF[character]]);
+								bf.active = false;
+								bf.hasFocus = false;
+								bf.alpha = getVar("bfFadeAlpha","float");
+								if(bf.isCustom){
+									PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+									PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+									PlayState.instance.animatedIcons[character].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+									if(!PlayState.instance.colorsMap.exists(character) && bf.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(bf.colorCode[0],bf.colorCode[1],bf.colorCode[2]));
+								}
+							}else{
+								var bf:Boyfriend = new Boyfriend(x,y,character,true,sync);
+								trace("loaded player: " + character);
+								PlayState.instance.layerBFs.add(bf);
+								idsBF[character] = PlayState.instance.layerBFs.members.length-1;
+								luaSprites.set("bf-" + character, PlayState.instance.layerBFs.members[idsBF[character]]);
+								bf.active = false;
+								bf.hasFocus = false;
+								bf.alpha = getVar("bfFadeAlpha","float");
+								if(bf.isCustom){
+									PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+									PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+									PlayState.instance.animatedIcons[character].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+									if(!PlayState.instance.colorsMap.exists(character) && bf.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(bf.colorCode[0],bf.colorCode[1],bf.colorCode[2]));
+								}
+							}
+						}else{
+							if(FlxG.save.data.flip){
+								var char:Boyfriend = new Boyfriend(x,y,character,false,sync);
+								trace("loaded bf? (rival side): " + character);
+								PlayState.instance.layerPlayChars.add(char);
+								idsBF[character] = PlayState.instance.layerPlayChars.members.length-1;
+								if(character == "dad")
+									luaSprites.set("daddy", PlayState.instance.layerPlayChars.members[idsBF[character]]);
+								else
+									luaSprites.set(character, PlayState.instance.layerPlayChars.members[idsBF[character]]);
+								char.active = false;
+								char.hasFocus = false;
+								//char.alpha = 0.5;
+								char.alpha = getVar("dadFadeAlpha","float");
+								if(char.isCustom){
+									PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+									PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+									PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+									if(!PlayState.instance.colorsMap.exists(character) && char.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(char.colorCode[0],char.colorCode[1],char.colorCode[2]));
+								}
+							}else{
+								var char:Character = new Character(x,y,character,false,sync);
+								trace("loaded rival: " + character);
+								PlayState.instance.layerChars.add(char);
+								ids[character] = PlayState.instance.layerChars.members.length-1;
+								if(character == "dad")
+									luaSprites.set("daddy", PlayState.instance.layerChars.members[ids[character]]);
+								else
+									luaSprites.set(character, PlayState.instance.layerChars.members[ids[character]]);
+								char.active = false;
+								char.hasFocus = false;
+								char.alpha = getVar("dadFadeAlpha","float");
+								if(char.isCustom){
+									PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+									PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+									PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+									if(!PlayState.instance.colorsMap.exists(character) && char.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(char.colorCode[0],char.colorCode[1],char.colorCode[2]));
+								}
+							}
 						}
-					}else{
-						if(PlayState.instance.animatedIcons["default2"].animation.getByName(character) == null){
-							PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
-							PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
-							PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
-							PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+					}else{					
+						if(isPlayer){
+							if(PlayState.instance.animatedIcons["default1"].animation.getByName(character) == null){
+								PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+								PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+								PlayState.instance.animatedIcons[character].alpha = 0.001;
+								PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+							}
+						}else{
+							if(PlayState.instance.animatedIcons["default2"].animation.getByName(character) == null){
+								PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+								PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+								PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+								PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+							}
 						}
 					}
+					return character;
+				});
+
+				Lua_helper.add_callback(lua, "loadGirlfriend", function(personaje:String, x:Float, y:Float){
+					if(allowChanging){
+						var char = new Character(x,y,personaje);
+						char.active = false;
+						char.alpha = getVar("gfFadeAlpha","float");
+						char.scrollFactor.set(0.95, 0.95);
+						PlayState.instance.layerGF.add(char);
+						gfs[personaje] = PlayState.instance.layerGF.members.length-1;
+						luaSprites.set(personaje, PlayState.instance.layerGF.members[gfs[personaje]]);
+					}
+					return personaje;
+				});
+
+				Lua_helper.add_callback(lua, "swapBF", function(id:String,?swap:Bool = true,?noteStyle:String){
+					if(FlxG.save.data.flip){
+						if(ids[id] != null){
+						PlayState.instance.layerFakeBFs.members[ids[id]].alpha = 1;
+						if(swap){
+							PlayState.instance.layerFakeBFs.members[curChar].alpha = getVar("dadFadeAlpha","float");
+							PlayState.instance.layerFakeBFs.members[curChar].active = false;
+						}
+						curChar = ids[id];
+						PlayState.instance.layerFakeBFs.members[ids[id]].active = true;
+						PlayState.instance.dadID = ids[id];
+						changeIcon(id,true,PlayState.instance.layerFakeBFs.members[ids[id]].isCustom);
+					}
+					}else{
+						if(idsBF[id] != null){
+							if(swap){
+								PlayState.instance.layerBFs.members[curBF].alpha = getVar("bfFadeAlpha","float");
+								PlayState.instance.layerBFs.members[curBF].active = false;
+							}
+							PlayState.instance.layerBFs.members[idsBF[id]].alpha = 1;
+							PlayState.instance.layerBFs.members[idsBF[id]].active = true;
+							curBF = idsBF[id];
+							PlayState.instance.bfID = idsBF[id];
+							changeIcon(id,true,PlayState.instance.layerBFs.members[idsBF[id]].isCustom);
+						}
+					}
+					if(!allowChanging){
+						if(PlayState.instance.animatedIcons["default1"].animation.getByName(id) != null)
+							changeIcon(id,true);
+						else
+							changeIcon(id,true,true);
+					}
+					PlayState.instance.setColorBar(true,id);
+					if(noteStyle != null){
+						PlayState.instance.changeStyle(noteStyle,1);
+					}
+				});
+
+				Lua_helper.add_callback(lua, "swapDad", function(id:String,?swap:Bool = true,?noteStyle:String){
+					if(FlxG.save.data.flip){
+						if(idsBF[id] != null){
+							if(swap){
+								PlayState.instance.layerPlayChars.members[curBF].alpha = getVar("bfFadeAlpha","float");
+								PlayState.instance.layerPlayChars.members[curBF].active = false;
+							}
+							PlayState.instance.layerPlayChars.members[idsBF[id]].alpha = 1;
+							PlayState.instance.layerPlayChars.members[idsBF[id]].active = true;
+							curBF = idsBF[id];
+							PlayState.instance.bfID = idsBF[id];
+							changeIcon(id,false,PlayState.instance.layerPlayChars.members[idsBF[id]].isCustom);
+						}
+					}else{
+						if(ids[id] != null){
+							PlayState.instance.layerChars.members[ids[id]].alpha = 1;
+							if(swap){
+								PlayState.instance.layerChars.members[curChar].alpha = getVar("dadFadeAlpha","float");
+								PlayState.instance.layerChars.members[curChar].active = false;
+							}
+							curChar = ids[id];
+							PlayState.instance.layerChars.members[ids[id]].active = true;
+							PlayState.instance.dadID = ids[id];
+							changeIcon(id,false,PlayState.instance.layerChars.members[ids[id]].isCustom);
+						}
+					}
+					if(!allowChanging){
+						if(PlayState.instance.animatedIcons["default2"].animation.getByName(id) != null)
+							changeIcon(id,false);
+						else
+							changeIcon(id,false,true);
+					}
+					PlayState.instance.setColorBar(false,id);
+					if(noteStyle != null){
+						PlayState.instance.changeStyle(noteStyle,2);
+					}
+				});
+
+				Lua_helper.add_callback(lua, "visibleChar", function(id:String,visible:Bool,isPlayer:Bool){
+					if(FlxG.save.data.flip){
+						if(isPlayer){
+							if(visible){
+								if(ids[id] != null){
+									PlayState.instance.layerFakeBFs.members[ids[id]].alpha = 1;
+									PlayState.instance.layerFakeBFs.members[ids[id]].active = true;
+								}
+							}else{
+								if(ids[id] != null){
+									PlayState.instance.layerFakeBFs.members[ids[id]].alpha = getVar("bfFadeAlpha","float");
+									PlayState.instance.layerFakeBFs.members[ids[id]].active = false;
+								}
+							}
+						}else{
+							if(visible){
+								if(idsBF[id] != null){
+									PlayState.instance.layerPlayChars.members[idsBF[id]].alpha = 1;
+									PlayState.instance.layerPlayChars.members[idsBF[id]].active = true;
+								}
+							}else{
+								if(idsBF[id] != null){
+									PlayState.instance.layerPlayChars.members[idsBF[id]].alpha =getVar("dadFadeAlpha","float");
+									PlayState.instance.layerPlayChars.members[idsBF[id]].active = false;
+								}
+							}
+						}
+					}else{
+						if(isPlayer){
+							if(visible){
+								if(idsBF[id] != null){
+									PlayState.instance.layerBFs.members[idsBF[id]].alpha = 1;
+									PlayState.instance.layerBFs.members[idsBF[id]].active = true;
+								}
+							}else{
+								if(idsBF[id] != null){
+									PlayState.instance.layerBFs.members[idsBF[id]].alpha = getVar("bfFadeAlpha","float");
+									PlayState.instance.layerBFs.members[idsBF[id]].active = false;
+								}
+							}
+						}else{
+							if(visible){
+								if(ids[id] != null){
+									PlayState.instance.layerChars.members[ids[id]].alpha = 1;
+									PlayState.instance.layerChars.members[ids[id]].active = true;
+								}
+							}else{
+								if(ids[id] != null){
+									PlayState.instance.layerChars.members[ids[id]].alpha =getVar("dadFadeAlpha","float");
+									PlayState.instance.layerChars.members[ids[id]].active = false;
+								}
+							}
+						}
+					}//fin del data.flip
+				});
+
+				Lua_helper.add_callback(lua, "allowCharacterChanging", function():Bool{
+					return allowChanging;
+				});
+
+				Lua_helper.add_callback(lua, "setCharacterChanging", function(setting:Bool){
+					allowChanging = setting;
 				});
 
 				Lua_helper.add_callback(lua, "changeNoteStyle", function(style:String,?mode:Int=0)
@@ -661,6 +994,10 @@ class ModchartState
 					PlayState.instance.health += heal;
 				});
 
+				Lua_helper.add_callback(lua, "getHealth", function () {
+					return PlayState.instance.health;
+				});
+
 				Lua_helper.add_callback(lua,"setAntialiasing", function(anti:Bool,id:String){
 					getActorByName(id).antialiasing = anti;
 				});
@@ -671,6 +1008,42 @@ class ModchartState
 
 				Lua_helper.add_callback(lua,"setRGBColorBar", function(isPlayer:Bool,red:Int,green:Int,blue:Int):Void {
 					PlayState.instance.setRGBColorBar(isPlayer,red,green,blue);
+				});
+
+				Lua_helper.add_callback(lua,"setFlyingOffset", function(id:String, isPlayer:Bool, amount:Float){
+					if(FlxG.save.data.flip){
+						if(isPlayer){
+							if(ids[id] != null)
+								PlayState.instance.layerFakeBFs.members[ids[id]].flyingOffset = amount;
+						}else{
+							if(idsBF[id] != null)
+								PlayState.instance.layerPlayChars.members[idsBF[id]].flyingOffset = amount;
+						}
+					}else{
+						if(isPlayer){
+							if(idsBF[id] != null)
+								PlayState.instance.layerBFs.members[idsBF[id]].flyingOffset = amount;
+						}else{
+							if(ids[id] != null)
+								PlayState.instance.layerChars.members[ids[id]].flyingOffset = amount;
+						}
+					}
+				});
+
+				Lua_helper.add_callback(lua, "setScrollFactor", function(x:Float,y:Float,id:String){
+					getActorByName(id).scrollFactor.set(x,y);
+				});
+
+				Lua_helper.add_callback(lua,"setDefaultCamZoom", function(zoomAmount:Float) {
+					//FlxG.camera.zoom = zoomAmount;
+					@:privateAccess
+					PlayState.instance.defaultCamZoom = zoomAmount;
+				});
+
+				Lua_helper.add_callback(lua,"setBotplaytextVisible", function(visible:Bool) {
+					//FlxG.camera.zoom = zoomAmount;
+					@:privateAccess
+						PlayState.instance.botPlayState.visible = visible;
 				});
 
 				// actors

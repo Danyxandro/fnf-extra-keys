@@ -277,7 +277,9 @@ class PlayState extends MusicBeatState
 	private var barColors:Array<FlxColor> = [0xFFFF0000, 0xFF66FF33];
 	public var colorsMap:Map<String,FlxColor> = [];
 	public var layerChars:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
-	public var layerBFs:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
+	public var layerBFs:FlxTypedGroup<Boyfriend> = new FlxTypedGroup<Boyfriend>();
+	public var layerFakeBFs:FlxTypedGroup<Character>;
+	public var layerPlayChars:FlxTypedGroup<Boyfriend>;
 	public var layerGF:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
 	public var layerBG:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
 	public var dadID:Int = 0;
@@ -319,6 +321,10 @@ class PlayState extends MusicBeatState
 		PlayStateChangeables.randomSection = FlxG.save.data.randomSection;
 		PlayStateChangeables.randomMania = FlxG.save.data.randomMania;
 		PlayStateChangeables.randomNoteTypes = FlxG.save.data.randomNoteTypes;
+		if(PlayStateChangeables.allowChanging)
+			PlayStateChangeables.allowChanging = FlxG.save.data.enableCharchange;
+		else
+			PlayStateChangeables.allowChanging = false;
 
 		// pre lowercasing the song name (create)
 		var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
@@ -1020,6 +1026,16 @@ class PlayState extends MusicBeatState
 
 			add(layerChars);
 			add(layerBFs);
+			if(FlxG.save.data.flip && executeModchart){
+				layerFakeBFs = new FlxTypedGroup<Character>();
+				layerPlayChars = new FlxTypedGroup<Boyfriend>();
+				layerChars.remove(dad);
+				layerBFs.remove(boyfriend);
+				layerFakeBFs.add(dad);
+				layerPlayChars.add(boyfriend);
+				add(layerPlayChars);
+				add(layerFakeBFs);
+			}
 		}
 
 
@@ -2433,12 +2449,10 @@ class PlayState extends MusicBeatState
 
 
 				var gottaHitNote:Bool = section.mustHitSection;
-				var useStyle1:Bool = section.mustHitSection;
 
 				if (songNotes[1] >= mn)
 				{
 					gottaHitNote = !section.mustHitSection;
-					useStyle1 = !section.mustHitSection;
 				}
 				if (PlayStateChangeables.randomNotes)
 				{
@@ -2551,7 +2565,7 @@ class PlayState extends MusicBeatState
 					daType = newNoteType;
 				}
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, daType, false, false, useStyle1);
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, daType, false, false, gottaHitNote);
 
 				var fuckYouNote:Note; //note type placed next to other note
 
@@ -2597,7 +2611,7 @@ class PlayState extends MusicBeatState
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true, daType, false, false, useStyle1);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true, daType, false, false, gottaHitNote);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
 
@@ -3426,7 +3440,16 @@ class PlayState extends MusicBeatState
 
 			if (PlayStateChangeables.flip)
 			{
-				if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != dad.getMidpoint().x - 100)
+				var dadChar:Character;
+				var bfChar:Boyfriend;
+				if(executeModchart){
+					 dadChar = layerFakeBFs.members[dadID];
+					 bfChar = layerPlayChars.members[bfID];
+				}else{
+					dadChar = layerChars.members[dadID];
+					bfChar = layerBFs.members[bfID];
+				}
+				if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != dadChar.getMidpoint().x - 100)
 					{
 						var offsetX = 0;
 						var offsetY = 0;
@@ -3440,41 +3463,43 @@ class PlayState extends MusicBeatState
 						}
 						#end
 		
-						camFollow.setPosition(dad.getMidpoint().x - 100 + offsetX, dad.getMidpoint().y - 100 + offsetY);
+						camFollow.setPosition(dadChar.getMidpoint().x - 100 + offsetX, dadChar.getMidpoint().y - 100 + offsetY);
 
 						// camFollow.setPosition(lucky.getMidpoint().x - 120, lucky.getMidpoint().y + 210);
 						switch (curStage)
 						{
 							case 'limo':
-								camFollow.x = dad.getMidpoint().x - 300;
+								camFollow.x = dadChar.getMidpoint().x - 300;
 							case 'mall':
-								camFollow.y = dad.getMidpoint().y - 200;
+								camFollow.y = dadChar.getMidpoint().y - 200;
 							case 'school':
-								camFollow.x = dad.getMidpoint().x - 200;
-								camFollow.y = dad.getMidpoint().y - 200;
+								camFollow.x = dadChar.getMidpoint().x - 200;
+								camFollow.y = dadChar.getMidpoint().y - 200;
 							case 'schoolEvil':
-								camFollow.x = dad.getMidpoint().x - 200;
-								camFollow.y = dad.getMidpoint().y - 200;
+								camFollow.x = dadChar.getMidpoint().x - 200;
+								camFollow.y = dadChar.getMidpoint().y - 200;
 						}
 
-						switch(dad.curCharacter){
+						switch(dadChar.curCharacter){
 							case 'tankman':
-								camFollow.y = dad.getMidpoint().y + 100;
+								camFollow.y = dadChar.getMidpoint().y + 100;
 							case 'keen-flying':
-								camFollow.y = dad.getMidpoint().y - 100;
-								camFollow.x = dad.getMidpoint().x - 350;
+								camFollow.y = dadChar.getMidpoint().y - 100;
+								camFollow.x = dadChar.getMidpoint().x - 350;
+							case 'eder-jr':
+								camFollow.y = dadChar.getMidpoint().y - 285;
 							default:
 								camFollow.x -= dad.cameraPosition[0];
 								camFollow.y += dad.cameraPosition[1];
 						}
-						if(dad.flyingOffset > 0 && canPause)
+						if(dadChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
 		
 						if (dad.curCharacter == 'mom')
 							vocals.volume = 1;
 					}
 		
-					if (camFollow.x != boyfriend.getMidpoint().x + 150 && !PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
+					if (camFollow.x != bfChar.getMidpoint().x + 150 && !PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
 					{
 						var offsetX = 0;
 						var offsetY = 0;
@@ -3487,36 +3512,40 @@ class PlayState extends MusicBeatState
 							offsetY = luaModchart.getVar("followYOffset", "float");
 						}
 						#end
-						camFollow.setPosition(boyfriend.getMidpoint().x + 150 + offsetX, boyfriend.getMidpoint().y - 100 + offsetY);
+						camFollow.setPosition(bfChar.getMidpoint().x + 150 + offsetX, bfChar.getMidpoint().y - 100 + offsetY);
 		
 
-						switch (boyfriend.curCharacter)
+						switch (bfChar.curCharacter)
 						{
 							case 'mom':
-								camFollow.y = boyfriend.getMidpoint().y;
+								camFollow.y = bfChar.getMidpoint().y;
 							case 'senpai':
-								camFollow.y = boyfriend.getMidpoint().y - 430;
-								camFollow.x = boyfriend.getMidpoint().x - 100;
+								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.x = bfChar.getMidpoint().x - 100;
 							case 'senpai-angry':
-								camFollow.y = boyfriend.getMidpoint().y - 430;
-								camFollow.x = boyfriend.getMidpoint().x - 100;
+								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.x = bfChar.getMidpoint().x - 100;
 							case 'tankman':
-								camFollow.y = boyfriend.getMidpoint().y + 100;
+								camFollow.y = bfChar.getMidpoint().y + 100;
 							case 'keen-flying':
-								camFollow.y = boyfriend.getMidpoint().y - 100;
-								camFollow.x = boyfriend.getMidpoint().x + 350;
+								camFollow.y = bfChar.getMidpoint().y - 100;
+								camFollow.x = bfChar.getMidpoint().x + 350;
+							case 'eder-jr':
+								camFollow.y = bfChar.getMidpoint().y - 285;
 							default:
 								camFollow.x += boyfriend.cameraPosition[0];
 								camFollow.y += boyfriend.cameraPosition[1];
 						}
 
-						if(boyfriend.flyingOffset > 0 && canPause)
+						if(bfChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
 					}
 			}
 			else
 			{
-				if (camFollow.x != dad.getMidpoint().x + 150 && !PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
+				var dadChar:Character = layerChars.members[dadID];
+				var bfChar:Boyfriend = layerBFs.members[bfID];
+				if (camFollow.x != dadChar.getMidpoint().x + 150 && !PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
 					{
 						var offsetX = 0;
 						var offsetY = 0;
@@ -3530,37 +3559,39 @@ class PlayState extends MusicBeatState
 						}
 						#end
 		
-						camFollow.setPosition(dad.getMidpoint().x + 150 + offsetX, dad.getMidpoint().y - 100 + offsetY);
+						camFollow.setPosition(dadChar.getMidpoint().x + 150 + offsetX, dadChar.getMidpoint().y - 100 + offsetY);
 						// camFollow.setPosition(lucky.getMidpoint().x - 120, lucky.getMidpoint().y + 210);
 		
-						switch (dad.curCharacter)
+						switch (dadChar.curCharacter)
 						{
 							case 'mom':
-								camFollow.y = dad.getMidpoint().y;
+								camFollow.y = dadChar.getMidpoint().y;
 							case 'senpai':
-								camFollow.y = dad.getMidpoint().y - 430;
-								camFollow.x = dad.getMidpoint().x - 100;
+								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.x = dadChar.getMidpoint().x - 100;
 							case 'senpai-angry':
-								camFollow.y = dad.getMidpoint().y - 430;
-								camFollow.x = dad.getMidpoint().x - 100;
+								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.x = dadChar.getMidpoint().x - 100;
 							case 'tankman':
-								camFollow.y = dad.getMidpoint().y + 100;
+								camFollow.y = dadChar.getMidpoint().y + 100;
 							case 'keen-flying':
-								camFollow.y = dad.getMidpoint().y - 100;
-								camFollow.x = dad.getMidpoint().x + 350;
+								camFollow.y = dadChar.getMidpoint().y - 100;
+								camFollow.x = dadChar.getMidpoint().x + 350;
+							case 'eder-jr':
+								camFollow.y = dadChar.getMidpoint().y - 285;
 							default:
-								camFollow.x += dad.cameraPosition[0];
-								camFollow.y += dad.cameraPosition[1];
+								camFollow.x += dadChar.cameraPosition[0];
+								camFollow.y += dadChar.cameraPosition[1];
 						}
 
-						if(dad.flyingOffset > 0 && canPause)
+						if(dadChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
 		
 						if (dad.curCharacter == 'mom')
 							vocals.volume = 1;
 					}
 		
-					if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
+					if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != bfChar.getMidpoint().x - 100)
 					{
 						var offsetX = 0;
 						var offsetY = 0;
@@ -3573,34 +3604,36 @@ class PlayState extends MusicBeatState
 							offsetY = luaModchart.getVar("followYOffset", "float");
 						}
 						#end
-						camFollow.setPosition(boyfriend.getMidpoint().x - 100 + offsetX, boyfriend.getMidpoint().y - 100 + offsetY);
+						camFollow.setPosition(bfChar.getMidpoint().x - 100 + offsetX, bfChar.getMidpoint().y - 100 + offsetY);
 		
 						switch (curStage)
 						{
 							case 'limo':
-								camFollow.x = boyfriend.getMidpoint().x - 300;
+								camFollow.x = bfChar.getMidpoint().x - 300;
 							case 'mall':
-								camFollow.y = boyfriend.getMidpoint().y - 200;
+								camFollow.y = bfChar.getMidpoint().y - 200;
 							case 'school':
-								camFollow.x = boyfriend.getMidpoint().x - 200;
-								camFollow.y = boyfriend.getMidpoint().y - 200;
+								camFollow.x = bfChar.getMidpoint().x - 200;
+								camFollow.y = bfChar.getMidpoint().y - 200;
 							case 'schoolEvil':
-								camFollow.x = boyfriend.getMidpoint().x - 200;
-								camFollow.y = boyfriend.getMidpoint().y - 200;
+								camFollow.x = bfChar.getMidpoint().x - 200;
+								camFollow.y = bfChar.getMidpoint().y - 200;
 						}
 
-						switch(boyfriend.curCharacter){
+						switch(bfChar.curCharacter){
 							case 'tankman':
-								camFollow.y = boyfriend.getMidpoint().y + 100;
-							case 'bf-keen-flying':
-								camFollow.y = boyfriend.getMidpoint().y - 100;
-								camFollow.x = boyfriend.getMidpoint().x - 350;
+								camFollow.y = bfChar.getMidpoint().y + 100;
+							case 'keen-flying':
+								camFollow.y = bfChar.getMidpoint().y - 100;
+								camFollow.x = bfChar.getMidpoint().x - 350;
+							case 'eder-jr':
+								camFollow.y = bfChar.getMidpoint().y - 285;
 							default:
-								camFollow.x -= boyfriend.cameraPosition[0];
-								camFollow.y += boyfriend.cameraPosition[1];
+								camFollow.x -= bfChar.cameraPosition[0];
+								camFollow.y += bfChar.cameraPosition[1];
 						}
 
-						if(boyfriend.flyingOffset > 0 && canPause)
+						if(bfChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
 					}
 			}

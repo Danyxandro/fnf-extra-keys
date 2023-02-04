@@ -417,10 +417,16 @@ class FreeplayState extends MusicBeatState
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.storyWeek = songs[curSelected].week;
-				trace('CUR WEEK' + PlayState.storyWeek);
 				FlxG.mouse.visible = false;
-				FreeplayState.position = songs[curSelected].listPos;
-				LoadingState.loadAndSwitchState(new PlayState());
+				position = songs[curSelected].listPos;
+				if(songs[curSelected].message == "warning" && FlxG.save.data.enableCharchange && !FlxG.save.data.optimize){
+					openSubState(new WarningSubstate());
+				}else{
+					trace('CUR WEEK' + PlayState.storyWeek);
+					PlayStateChangeables.allowChanging = true;
+					//FreeplayState.position = songs[curSelected].listPos;
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
 			}
 			else
 			{

@@ -12,4 +12,5 @@ class PlayStateChangeables
     public static var randomSection:Bool;
     public static var randomMania:Int;
     public static var randomNoteTypes:Int;
+    public static var allowChanging:Bool;
 }

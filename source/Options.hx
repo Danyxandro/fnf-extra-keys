@@ -1135,3 +1135,23 @@ class GTHModeOption extends Option
 		return "Use Guitar Hero Input: " + (!FlxG.save.data.gthm ? "off" : "on");
 	}
 }
+
+class ChangingOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	public override function press():Bool
+	{
+		FlxG.save.data.enableCharchange = !FlxG.save.data.enableCharchange;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Changing chars: " + (!FlxG.save.data.enableCharchange ? "off" : "on");
+	}
+}

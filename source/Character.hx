@@ -34,7 +34,7 @@ class Character extends FlxSprite
 	public var colorCode:Array<Int> = [];
 	public var isDancingIdle:Bool = false;
 
-	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?synch:Bool = false)
 	{
 		super(x, y);
 
@@ -46,6 +46,7 @@ class Character extends FlxSprite
 
 		var tex:FlxAtlasFrames;
 		antialiasing = FlxG.save.data.antialiasing;
+		this.sync = synch;
 
 		switch (curCharacter)
 		{
@@ -165,11 +166,13 @@ class Character extends FlxSprite
 				animation.addByPrefix('singDOWN', 'spooky DOWN note', 24, false);
 				animation.addByPrefix('singLEFT', 'note sing left', 24, false);
 				animation.addByPrefix('singRIGHT', 'spooky sing right', 24, false);
+				animation.addByPrefix('idle', 'spooky dance idle', 24, false);
 				animation.addByIndices('danceLeft', 'spooky dance idle', [0, 2, 6], "", 12, false);
 				animation.addByIndices('danceRight', 'spooky dance idle', [8, 10, 12, 14], "", 12, false);
 
 				addOffset('danceLeft');
 				addOffset('danceRight');
+				addOffset('idle');
 
 				addOffset("singUP", -20, 26);
 				addOffset("singRIGHT", -130, -14);
@@ -766,9 +769,6 @@ class Character extends FlxSprite
 				if(isPlayer){
 					addOffset('idle',0,0);
 				}else{
-					/*for (ar in offsetsJson){
-						addOffset(ar[0],ar[1],ar[2]);
-					}*/
 					addOffset('idle',0,0);
 				}
 				this.sync = false;
@@ -997,6 +997,47 @@ class Character extends FlxSprite
 			}
 		}
 
+		if(sync){
+			if((isPlayer && isPlayingAsBF) || (!isPlayer && !isPlayingAsBF)){
+				if(this.animation.curAnim.name != "idle" && PlayState.boyfriend.animation.curAnim.name == "idle"){
+					playAnim("idle");
+				}else{
+					if(this.animation.curAnim.name != PlayState.boyfriend.animation.curAnim.name && animation.getByName(PlayState.boyfriend.animation.curAnim.name) != null){
+						playAnim(PlayState.boyfriend.animation.curAnim.name);
+					}
+				}
+				/*if(PlayState.boyfriend.animation.curAnim.name.startsWith('sing') && this.animation.curAnim.finished)
+					playAnim(PlayState.boyfriend.animation.curAnim.name);*/
+				if(PlayState.boyfriend.animation.curAnim.name.startsWith('sing') && PlayState.boyfriend.holdTimer < this.holdTimer){
+					playAnim(PlayState.boyfriend.animation.curAnim.name,true);
+					holdTimer = PlayState.boyfriend.holdTimer;
+				}
+				if(this.animation.curAnim.name == "idle" && this.animation.curAnim.finished)
+					playAnim("idle");
+			}else{
+				if(this.animation.curAnim.name != "idle" && PlayState.dad.animation.curAnim.name == "idle"){
+					playAnim("idle");
+				}else{
+					if(this.animation.curAnim.name != PlayState.dad.animation.curAnim.name && animation.getByName(PlayState.dad.animation.curAnim.name) != null){
+						playAnim(PlayState.dad.animation.curAnim.name);
+					}
+				}
+				/*if(PlayState.dad.animation.curAnim.name.startsWith('sing') && this.animation.curAnim.finished)
+					playAnim(PlayState.dad.animation.curAnim.name);*/
+				if(PlayState.dad.animation.curAnim.name.startsWith('sing') && PlayState.dad.holdTimer < this.holdTimer){
+					playAnim(PlayState.dad.animation.curAnim.name,true);
+					holdTimer = PlayState.dad.holdTimer;
+				}
+				if(this.animation.curAnim.name == "idle" && this.animation.curAnim.finished)
+					dance();
+			}
+		}else{
+			if(!hasFocus && !curCharacter.startsWith('gf')){
+				if(this.animation.curAnim.name == "idle" && this.animation.curAnim.finished)
+					playAnim("idle");
+			}//fin del has focus
+		}
+
 		super.update(elapsed);
 	}//Fin del update
 
@@ -1107,5 +1148,13 @@ class Character extends FlxSprite
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{
 		animOffsets[name] = [x, y];
+	}
+
+	public function setSynchronous(synchronize:Bool){
+		this.sync = synchronize;
+	}
+
+	public function isSynchronous():Bool{
+		return this.sync;
 	}
 }

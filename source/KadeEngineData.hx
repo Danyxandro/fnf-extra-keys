@@ -151,6 +151,9 @@ class KadeEngineData
 		if(FlxG.save.data.saveReplays == null){
 			FlxG.save.data.saveReplays = false;
 		}
+
+		if(FlxG.save.data.enableCharchange == null)
+			FlxG.save.data.enableCharchange == true;
 		
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 		

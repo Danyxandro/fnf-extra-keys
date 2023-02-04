@@ -27,7 +27,8 @@ class OptionsMenu extends MusicBeatState
 	var options:Array<OptionCategory> = [
 		new OptionCategory("Mod Specfic", [
 			new OldTimingsOption("Change between KE 1.5.4 and KE 1.4.2 Hit timings."),
-			new NoteSplashOption("Toggle if a Splash will appear when hitting sicks.")
+			new NoteSplashOption("Toggle if a Splash will appear when hitting sicks."),
+			new ChangingOption("Disables character changing (mainly BETADCIUs) for better performance")
 		]),
 		new OptionCategory("Gameplay", [
 			new GhostTapOption("Ghost Tapping is when you tap a direction and it doesn't give you a miss."),
