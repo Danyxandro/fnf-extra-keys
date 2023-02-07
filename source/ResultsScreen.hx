@@ -193,6 +193,7 @@ class ResultsScreen extends FlxSubState
             if (PlayState.isStoryMode)
             {
                 FlxG.sound.playMusic(Paths.music('freakyMenu'));
+                PlayStateChangeables.weekBotplay = false;
                 FlxG.switchState(new MainMenuState());
             }
             else

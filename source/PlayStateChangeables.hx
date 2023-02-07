@@ -13,4 +13,7 @@ class PlayStateChangeables
     public static var randomMania:Int;
     public static var randomNoteTypes:Int;
     public static var allowChanging:Bool;
+    public static var ghost:Bool;
+    public static var usedBotplay:Bool = false;
+    public static var weekBotplay:Bool = false;
 }

@@ -528,6 +528,10 @@ class ModchartState
 
 				setVar("strumLineY", PlayState.instance.strumLine.y);
 
+				setVar("playingAsRivel", PlayStateChangeables.flip);
+				setVar("playingAsBoth", PlayStateChangeables.bothSide);
+				setVar("keyAmount", PlayState.keyAmmo[PlayState.mania]);
+
 				setVar("dadFadeAlpha", 0.001);
 				setVar("bfFadeAlpha", 0.001);
 				setVar("gfFadeAlpha", 0.001);
@@ -967,12 +971,36 @@ class ModchartState
 					}//fin del data.flip
 				});
 
+				Lua_helper.add_callback(lua, "syncChar", function(id:String,synchronous:Bool,isPlayer:Bool){
+					if(FlxG.save.data.flip){
+						if(isPlayer){
+							if(ids[id] != null)
+								PlayState.instance.layerFakeBFs.members[ids[id]].setSynchronous(synchronous);
+						}else{
+							if(idsBF[id] != null)
+								PlayState.instance.layerPlayChars.members[idsBF[id]].setSynchronous(synchronous);
+						}
+					}else{
+						if(isPlayer){
+							if(idsBF[id] != null)
+								PlayState.instance.layerBFs.members[idsBF[id]].setSynchronous(synchronous);
+						}else{
+							if(ids[id] != null)
+								PlayState.instance.layerChars.members[ids[id]].setSynchronous(synchronous);
+						}
+					}
+				});
+
 				Lua_helper.add_callback(lua, "allowCharacterChanging", function():Bool{
 					return allowChanging;
 				});
 
 				Lua_helper.add_callback(lua, "setCharacterChanging", function(setting:Bool){
 					allowChanging = setting;
+				});
+
+				Lua_helper.add_callback(lua, "getDifficulty", function(){
+					return PlayState.storyDifficulty;
 				});
 
 				Lua_helper.add_callback(lua, "changeNoteStyle", function(style:String,?mode:Int=0)
@@ -1044,6 +1072,57 @@ class ModchartState
 					//FlxG.camera.zoom = zoomAmount;
 					@:privateAccess
 						PlayState.instance.botPlayState.visible = visible;
+				});
+
+				Lua_helper.add_callback(lua,"setGhostTapping", function(mode:Int) {
+					switch(mode){
+						case 0:
+							PlayStateChangeables.ghost = false;
+						case 1:
+							PlayStateChangeables.ghost = true;
+						case 2:
+							PlayStateChangeables.ghost = FlxG.save.data.ghost;
+					}
+				});
+
+				Lua_helper.add_callback(lua,"changeSpeed", function(speed:Float) {
+					if(speed > 0){
+						if(speed == PlayState.SONG.speed){
+							PlayStateChangeables.scrollSpeed = 1;
+						}else{
+							PlayStateChangeables.scrollSpeed = speed;
+						}
+					}
+				});
+
+				Lua_helper.add_callback(lua,"characterFocusFactor", function(distance:Float) {
+					if(!PlayStateChangeables.Optimize){
+						var d:Float = distance;
+						if(distance < 0)
+							d = distance * -1;
+						PlayState.instance.camFactor = d;
+					}
+				});
+
+				Lua_helper.add_callback(lua,"tweenStrumAngle", function(id:Int, toAngle:Int, time:Float, ?finalAngle:Int) {
+					var a:Int = toAngle;
+					var f:Int = 0;
+					if(finalAngle == null)
+						f = toAngle;
+					if(a < 720 && a >= 360){
+						a -= 360;
+					}
+					if(a > -720 && a <= -360){
+						a += 360;
+					}
+					if(id >= 0 && id <= PlayState.keyAmmo[PlayState.mania]-1){
+						trace("twist cpu " + id);
+						FlxTween.tween(PlayState.cpuStrums.members[id], {angle: toAngle}, time, {ease: FlxEase.linear, onComplete: function(flxTween:FlxTween) {PlayState.cpuStrums.members[id].angle = f; }});
+					}
+					if(id >= PlayState.keyAmmo[PlayState.mania] && id <= (PlayState.keyAmmo[PlayState.mania]*2)-1){
+						trace("twist player " + id);
+						FlxTween.tween(PlayState.playerStrums.members[id - PlayState.keyAmmo[PlayState.mania]], {angle: toAngle}, time, {ease: FlxEase.linear, onComplete: function(flxTween:FlxTween) {PlayState.playerStrums.members[id - PlayState.keyAmmo[PlayState.mania]].angle = f; }});
+					}
 				});
 
 				// actors

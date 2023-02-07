@@ -55,11 +55,11 @@ class KeyBinds
     public static function keyCheck():Void
     {
         if(FlxG.save.data.upBind == null){
-            FlxG.save.data.upBind = "W";
+            FlxG.save.data.upBind = "K";
             trace("No UP");
         }
         if (StringTools.contains(FlxG.save.data.upBind,"NUMPAD"))
-            FlxG.save.data.upBind = "W";
+            FlxG.save.data.upBind = "K";
         if(FlxG.save.data.downBind == null){
             FlxG.save.data.downBind = "S";
             trace("No DOWN");
@@ -73,11 +73,11 @@ class KeyBinds
         if (StringTools.contains(FlxG.save.data.leftBind,"NUMPAD"))
             FlxG.save.data.leftBind = "A";
         if(FlxG.save.data.rightBind == null){
-            FlxG.save.data.rightBind = "D";
+            FlxG.save.data.rightBind = "L";
             trace("No RIGHT");
         }
         if (StringTools.contains(FlxG.save.data.rightBind,"NUMPAD"))
-            FlxG.save.data.rightBind = "D";
+            FlxG.save.data.rightBind = "L";
 
         
         if(FlxG.save.data.gpupBind == null){
@@ -166,15 +166,15 @@ class KeyBinds
             trace("No F1");
         }
         if(FlxG.save.data.F2Bind == null){
-            FlxG.save.data.F2Bind = "W";
+            FlxG.save.data.F2Bind = "D";
             trace("No F2");
         }
         if(FlxG.save.data.F3Bind == null){
-            FlxG.save.data.F3Bind = "F";
+            FlxG.save.data.F3Bind = "K";
             trace("No F3");
         }
         if(FlxG.save.data.F4Bind == null){
-            FlxG.save.data.F4Bind = "D";
+            FlxG.save.data.F4Bind = "L";
             trace("No F4");
         }
     }

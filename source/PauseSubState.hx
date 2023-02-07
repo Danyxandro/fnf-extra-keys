@@ -22,13 +22,15 @@ class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Exit to menu'];
+	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Botplay', 'Exit to menu'];
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
 	var perSongOffset:FlxText;
 	
 	var offsetChanged:Bool = false;
+
+	private var botFlag:Bool;
 
 	public function new(x:Float, y:Float)
 	{
@@ -40,6 +42,8 @@ class PauseSubState extends MusicBeatSubstate
 			if (GlobalVideo.get().playing)
 				GlobalVideo.get().pause();
 		}
+
+		if(PlayState.loadRep) menuItems.remove('Botplay');
 
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -88,7 +92,19 @@ class PauseSubState extends MusicBeatSubstate
 
 		for (i in 0...menuItems.length)
 		{
-			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
+			var songText:Alphabet;
+			if(menuItems[i] == 'Botplay'){
+				var texto:String;
+				if(PlayStateChangeables.botPlay == true){
+					texto = "Disable botplay";
+					botFlag = true;
+				}else{
+					texto = "Botplay";
+					botFlag = false;
+				}
+				songText = new Alphabet(0, (70 * i) + 30, texto, true, false);
+			}else
+				songText = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
 			songText.isMenuItem = true;
 			songText.targetY = i;
 			grpMenuShit.add(songText);
@@ -191,6 +207,11 @@ class PauseSubState extends MusicBeatSubstate
 			}
 		#end
 
+		if (controls.BACK)
+		{
+			close();
+		}
+
 		if (accepted)
 		{
 			var daSelected:String = menuItems[curSelected];
@@ -231,11 +252,36 @@ class PauseSubState extends MusicBeatSubstate
 					if (FlxG.save.data.fpsCap > 290)
 						(cast (Lib.current.getChildAt(0), Main)).setFPSCap(290);
 					
-					if(PlayState.isStoryMode)
+					if(PlayState.isStoryMode){
 						FlxG.switchState(new MainMenuState());
-					else{
+						PlayStateChangeables.weekBotplay = false;
+					}else{
 						FlxG.switchState(new FreeplayState());
 					}
+				case "Botplay":
+					var texto:String;
+					if(PlayStateChangeables.botPlay){
+						PlayStateChangeables.botPlay = false;
+						texto = "Botplay";
+						PlayState.instance.botPlayState.alpha = 0;
+						//PlayState.instance.setHealthValues(-2);
+					}else{
+						PlayStateChangeables.botPlay = true;
+						PlayStateChangeables.usedBotplay = true;
+						if(PlayState.isStoryMode)
+							PlayStateChangeables.weekBotplay = true;
+						texto = "Disable botplay";
+						PlayState.instance.botPlayState.alpha = 1;
+						/*if(botFlag)
+							PlayState.instance.setHealthValues(PlayState.storyDifficulty);
+						else
+							PlayState.instance.setHealthValues(-1);*/
+					}
+					var songText:Alphabet = new Alphabet(0, 30, texto, true, false);
+					songText.isMenuItem = true;
+					songText.targetY = 2;
+					grpMenuShit.members[2] = songText;
+					changeSelection(0);
 			}
 		}
 

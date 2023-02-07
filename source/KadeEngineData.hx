@@ -153,7 +153,14 @@ class KadeEngineData
 		}
 
 		if(FlxG.save.data.enableCharchange == null)
-			FlxG.save.data.enableCharchange == true;
+			FlxG.save.data.enableCharchange = true;
+
+		if(FlxG.save.data.singCam == null){
+			FlxG.save.data.singCam = true;
+		}
+		if(FlxG.save.data.camFactor == null){
+			FlxG.save.data.camFactor = 35;
+		}
 		
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 		

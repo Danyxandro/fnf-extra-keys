@@ -997,6 +997,8 @@ class ResetSettings extends Option
 		FlxG.save.data.editor = null;
 		FlxG.save.data.oldtimings = null;
 		FlxG.save.data.gracetmr = null;
+		FlxG.save.data.singCam == null;
+		FlxG.save.data.camFactor == null;
 
 		KadeEngineData.initSave();
 		confirm = false;
@@ -1153,5 +1155,61 @@ class ChangingOption extends Option
 	private override function updateDisplay():String
 	{
 		return "Changing chars: " + (!FlxG.save.data.enableCharchange ? "off" : "on");
+	}
+}
+
+class CamMovingOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	public override function press():Bool
+	{
+		FlxG.save.data.singCam = !FlxG.save.data.singCam;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Camera singing: " + (FlxG.save.data.singCam ? "on" : "off");
+	}
+}
+
+class CamFactorOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+		acceptValues = true;
+	}
+
+	public override function press():Bool
+	{
+		return false;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Camera moving factor";
+	}
+	
+	override function right():Bool {
+		FlxG.save.data.camFactor += 1;
+
+		return true;
+	}
+
+	override function left():Bool {
+		FlxG.save.data.camFactor -= 1;
+		return true;
+	}
+
+	override function getValue():String
+	{
+		return "Camera moving factor: " + FlxG.save.data.camFactor;
 	}
 }

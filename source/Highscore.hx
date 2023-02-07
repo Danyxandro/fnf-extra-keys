@@ -23,7 +23,7 @@ class Highscore
 		NGio.postScore(score, song);
 		#end
 
-		if(!FlxG.save.data.botplay)
+		if(!PlayStateChangeables.usedBotplay)
 		{
 			if (songScores.exists(daSong))
 			{
@@ -40,7 +40,7 @@ class Highscore
 		var daSong:String = formatSong(song, diff);
 		var finalCombo:String = combo.split(')')[0].replace('(', '');
 
-		if(!FlxG.save.data.botplay)
+		if(!PlayStateChangeables.usedBotplay)
 		{
 			if (songCombos.exists(daSong))
 			{
@@ -59,7 +59,7 @@ class Highscore
 		NGio.postScore(score, "Week " + week);
 		#end
 
-		if(!FlxG.save.data.botplay)
+		if(!PlayStateChangeables.weekBotplay)
 		{
 			var daWeek:String = formatSong('week' + week, diff);
 
