@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="crowd.png">
+	<!-- Created with Adobe Animate version 19.2.1.408 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="crowd bump0000" x="0" y="0" width="2080" height="1060" frameX="0" frameY="-78" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0001" x="0" y="0" width="2080" height="1060" frameX="0" frameY="-78" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0002" x="2080" y="0" width="2080" height="1092" frameX="0" frameY="-47" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0003" x="2080" y="0" width="2080" height="1092" frameX="0" frameY="-47" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0004" x="0" y="1092" width="2080" height="1119" frameX="0" frameY="-20" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0005" x="0" y="1092" width="2080" height="1119" frameX="0" frameY="-20" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0006" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0007" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0008" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0009" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0010" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0011" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0012" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+	<SubTexture name="crowd bump0013" x="2080" y="1092" width="2080" height="1138" frameX="0" frameY="0" frameWidth="2080" frameHeight="1139"/>
+</TextureAtlas>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="YunSallyKinu.png">
+	<!-- Created with Adobe Animate version 21.0.7.42652 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="YunSallyKinu0000" x="0" y="0" width="965" height="962" pivotX="403" pivotY="741" frameX="0" frameY="0" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0001" x="965" y="0" width="965" height="961" frameX="0" frameY="-2" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0002" x="1930" y="0" width="965" height="950" frameX="0" frameY="-8" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0003" x="2895" y="0" width="965" height="949" frameX="0" frameY="-10" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0004" x="0" y="962" width="965" height="938" frameX="0" frameY="-17" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0005" x="965" y="962" width="965" height="937" frameX="0" frameY="-19" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0006" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0007" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0008" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0009" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0010" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0011" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0012" x="1930" y="962" width="965" height="928" frameX="0" frameY="-25" frameWidth="965" frameHeight="963"/>
+	<SubTexture name="YunSallyKinu0013" x="0" y="0" width="965" height="962" frameX="0" frameY="0" frameWidth="965" frameHeight="963"/>
+</TextureAtlas>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="floorGlitch.png">
+	<!-- Created with Adobe Animate version 21.0.7.42652 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="floorGlitch0000" x="0" y="0" width="1146" height="513" pivotX="579.95" pivotY="158.3"/>
+	<SubTexture name="floorGlitch0001" x="0" y="0" width="1146" height="513"/>
+	<SubTexture name="floorGlitch0002" x="1146" y="0" width="1146" height="511" frameX="0" frameY="-2" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0003" x="1146" y="0" width="1146" height="511" frameX="0" frameY="-2" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0004" x="2292" y="0" width="1146" height="509" frameX="0" frameY="-4" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0005" x="2292" y="0" width="1146" height="509" frameX="0" frameY="-4" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0006" x="0" y="514" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0007" x="0" y="514" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0008" x="1146" y="514" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0009" x="2292" y="514" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0010" x="0" y="1021" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0011" x="0" y="1021" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0012" x="2292" y="514" width="1146" height="507" frameX="0" frameY="-7" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0013" x="2292" y="514" width="1146" height="507" frameX="0" frameY="-6" frameWidth="1146" frameHeight="513"/>
+	<SubTexture name="floorGlitch0014" x="1146" y="1021" width="1146" height="513"/>
+</TextureAtlas>

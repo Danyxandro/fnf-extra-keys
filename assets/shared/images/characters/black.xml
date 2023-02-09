@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="black.png"><SubTexture name="BLACK DEATH0000" x="2688" y="688" width="849" height="686" frameX="-280" frameY="-246" frameWidth="1969" frameHeight="1084" />
+<SubTexture name="BLACK DEATH0001" x="880" y="2191" width="866" height="686" frameX="-261" frameY="-246" frameWidth="1969" frameHeight="1084" />
+<SubTexture name="BLACK DEATH0002" x="1746" y="2191" width="871" height="685" frameX="-254" frameY="-247" frameWidth="1969" frameHeight="1084" />
+<SubTexture name="BLACK DEATH0003" x="2617" y="2191" width="874" height="685" frameX="-251" frameY="-247" frameWidth="1969" frameHeight="1084" />
+<SubTexture name="BLACK DEATH0004" x="3549" y="0" width="874" height="685" frameX="-251" frameY="-247" frameWidth="1969" frameHeight="1084" />
+<SubTexture name="BLACK DOWN0000" x="2868" y="2879" width="894" height="673" frameX="0" frameY="0" frameWidth="894" frameHeight="673" />
+<SubTexture name="BLACK DOWN0001" x="0" y="4228" width="868" height="648" frameX="-21" frameY="-24" frameWidth="894" frameHeight="673" />
+<SubTexture name="BLACK DOWN0002" x="4423" y="1958" width="851" height="632" frameX="-32" frameY="-40" frameWidth="894" frameHeight="673" />
+<SubTexture name="BLACK DOWN0003" x="4423" y="2590" width="825" height="615" frameX="-60" frameY="-57" frameWidth="894" frameHeight="673" />
+<SubTexture name="BLACK DOWN0004" x="4423" y="661" width="833" height="654" frameX="-37" frameY="-19" frameWidth="894" frameHeight="673" />
+<SubTexture name="BLACK IDLE0000" x="3549" y="1369" width="837" height="682" frameX="-54" frameY="-12" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0001" x="2688" y="0" width="861" height="688" frameX="-32" frameY="-6" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0002" x="1796" y="694" width="889" height="692" frameX="-5" frameY="-2" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0003" x="876" y="799" width="892" height="694" frameX="0" frameY="0" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0004" x="1796" y="0" width="892" height="694" frameX="0" frameY="0" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0005" x="0" y="2191" width="880" height="688" frameX="-9" frameY="-6" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0006" x="2688" y="1374" width="848" height="686" frameX="-35" frameY="-8" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0007" x="3549" y="2051" width="803" height="678" frameX="-69" frameY="-16" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0008" x="894" y="2879" width="764" height="675" frameX="-102" frameY="-18" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0009" x="2256" y="3557" width="727" height="667" frameX="-127" frameY="-26" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0010" x="2983" y="3557" width="704" height="662" frameX="-148" frameY="-31" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0011" x="3687" y="3557" width="699" height="662" frameX="-152" frameY="-31" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0012" x="1547" y="3557" width="709" height="668" frameX="-149" frameY="-27" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0013" x="0" y="3557" width="749" height="671" frameX="-129" frameY="-26" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK IDLE0014" x="749" y="3557" width="798" height="670" frameX="-88" frameY="-25" frameWidth="895" frameHeight="697" />
+<SubTexture name="BLACK LEFT0000" x="0" y="799" width="876" height="698" frameX="-65" frameY="-8" frameWidth="942" frameHeight="706" />
+<SubTexture name="BLACK LEFT0001" x="915" y="0" width="881" height="706" frameX="-38" frameY="0" frameWidth="942" frameHeight="706" />
+<SubTexture name="BLACK LEFT0002" x="0" y="1497" width="894" height="694" frameX="-5" frameY="-12" frameWidth="942" frameHeight="706" />
+<SubTexture name="BLACK LEFT0003" x="0" y="2879" width="894" height="678" frameX="0" frameY="-28" frameWidth="942" frameHeight="706" />
+<SubTexture name="BLACK LEFT0004" x="4423" y="0" width="851" height="661" frameX="-80" frameY="-45" frameWidth="942" frameHeight="706" />
+<SubTexture name="BLACK RIGHT0000" x="4423" y="1315" width="654" height="643" frameX="-55" frameY="-42" frameWidth="718" frameHeight="685" />
+<SubTexture name="BLACK RIGHT0001" x="1971" y="1497" width="611" height="675" frameX="-102" frameY="-10" frameWidth="718" frameHeight="685" />
+<SubTexture name="BLACK RIGHT0002" x="1658" y="2879" width="595" height="675" frameX="-123" frameY="-10" frameWidth="718" frameHeight="685" />
+<SubTexture name="BLACK RIGHT0003" x="2253" y="2879" width="615" height="674" frameX="-86" frameY="-10" frameWidth="718" frameHeight="685" />
+<SubTexture name="BLACK RIGHT0004" x="3549" y="685" width="638" height="684" frameX="0" frameY="0" frameWidth="718" frameHeight="685" />
+<SubTexture name="BLACK UP0000" x="0" y="0" width="915" height="799" frameX="-58" frameY="0" frameWidth="1140" frameHeight="799" />
+<SubTexture name="BLACK UP0001" x="894" y="1497" width="1077" height="692" frameX="-50" frameY="-107" frameWidth="1140" frameHeight="799" />
+<SubTexture name="BLACK UP0002" x="868" y="4228" width="1100" height="633" frameX="-39" frameY="-163" frameWidth="1140" frameHeight="799" />
+<SubTexture name="BLACK UP0003" x="1968" y="4228" width="941" height="619" frameX="0" frameY="-177" frameWidth="1140" frameHeight="799" />
+<SubTexture name="BLACK UP0004" x="2909" y="4228" width="920" height="573" frameX="-11" frameY="-223" frameWidth="1140" frameHeight="799" />
+</TextureAtlas>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="OJ_Week.png"><SubTexture name="OJ Idle instancia 0000" x="0" y="0" width="560" height="764" frameX="-115" frameY="-56" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0001" x="1121" y="0" width="565" height="761" frameX="-115" frameY="-59" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0002" x="565" y="764" width="569" height="758" frameX="-115" frameY="-62" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0003" x="2256" y="0" width="574" height="755" frameX="-115" frameY="-65" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0004" x="0" y="1525" width="581" height="752" frameX="-112" frameY="-68" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0005" x="1162" y="1525" width="592" height="750" frameX="-105" frameY="-70" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0006" x="2830" y="0" width="603" height="747" frameX="-99" frameY="-73" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0007" x="2830" y="747" width="603" height="746" frameX="-98" frameY="-74" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0008" x="1754" y="1525" width="592" height="749" frameX="-105" frameY="-71" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0009" x="581" y="1525" width="581" height="752" frameX="-111" frameY="-68" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0010" x="2256" y="755" width="574" height="755" frameX="-114" frameY="-65" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0011" x="1686" y="0" width="570" height="758" frameX="-114" frameY="-62" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0012" x="0" y="764" width="565" height="761" frameX="-114" frameY="-59" frameWidth="799" frameHeight="880" />
+<SubTexture name="OJ Idle instancia 0013" x="560" y="0" width="561" height="764" frameX="-114" frameY="-56" frameWidth="799" frameHeight="880" />
+</TextureAtlas>

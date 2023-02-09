@@ -2,3 +2,7 @@ gf
 gf-car
 gf-christmas
 gf-pixel
+gf-neon
+gf-alt
+gf-guns
+speakers

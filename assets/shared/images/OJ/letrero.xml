@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="letrero.png">
+	<!-- Created with Adobe Animate version 21.0.1.37179 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Letrero instancia 10000" x="0" y="0" width="488" height="456" pivotX="280.5" pivotY="186.85" frameX="0" frameY="0" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10001" x="488" y="0" width="488" height="457" frameX="0" frameY="0" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10002" x="976" y="0" width="488" height="453" frameX="0" frameY="-3" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10003" x="1464" y="0" width="488" height="454" frameX="0" frameY="-4" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10004" x="0" y="457" width="488" height="447" frameX="0" frameY="-9" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10005" x="488" y="457" width="488" height="448" frameX="0" frameY="-7" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10006" x="976" y="0" width="488" height="453" frameX="0" frameY="-3" frameWidth="488" frameHeight="458"/>
+	<SubTexture name="Letrero instancia 10007" x="976" y="0" width="488" height="453" frameX="0" frameY="-3" frameWidth="488" frameHeight="458"/>
+</TextureAtlas>

@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="OJportrait.png"><SubTexture name="Senpai Portrait Enter0000" x="0" y="0" width="326" height="395" frameWidth="356" frameHeight="395" />
+<SubTexture name="Anger0000" x="327" y="0" width="326" height="395" frameWidth="356" frameHeight="395" />
+</TextureAtlas>

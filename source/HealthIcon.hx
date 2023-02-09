@@ -11,12 +11,13 @@ class HealthIcon extends FlxSprite
 
 	public var char:String;
 	public var isCustom:Bool = false;
+	public var changeSize:Bool = true;
 
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		super();
 		this.char = char;
-		loadGraphic(Paths.image('iconGrid'), true, 150, 150);
+		//loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 
 		antialiasing = true;
 		/*animation.add('bf', [0, 1], 0, false, isPlayer);
@@ -51,7 +52,21 @@ class HealthIcon extends FlxSprite
 				antialiasing = false;
 		}*/
 
-		changeIcon(char,isPlayer);
+		switch(char){
+			case 'daidem':
+				var tex = Paths.getSparrowAtlas('daidem/IconAssets', 'shared');
+				frames = tex;
+				antialiasing = true;
+				animation.addByPrefix('daidem', 'DaidemNormal0', 24, true, isPlayer);
+				animation.addByPrefix('daidem-lose', 'DaidemLoosing0', 24, true, isPlayer);
+				animation.addByPrefix('daidem-win', 'DaidemWinning0', 24, true, isPlayer);
+				changeSize = false;
+				offset.y += 35;
+				this.isCustom = true;
+				animation.play("daidem");
+			default:
+				changeIcon(char, isPlayer);
+		}
 
 		scrollFactor.set();
 	}
@@ -155,6 +170,64 @@ class HealthIcon extends FlxSprite
 			animation.add('keen-flying', [26], 0, false, isPlayer);
 			animation.add('keen-flying-win', [101], 0, false, isPlayer);
 			animation.add('keen-flying-lose', [27], 0, false, isPlayer);
+			var mapping:Map<String,Array<Int>> = new Map<String,Array<Int>>();
+			mapping.set('beat', [24, 25]);
+			mapping.set('beat-neon', [24, 25]);
+			mapping.set('bf-neon', [0, 1]);
+			mapping.set('bf-cat', [0, 1]);
+			mapping.set('bf-holding-gf', [0, 1]);
+			mapping.set("crazy-GF", [0]);
+			mapping.set('OJ', [28, 29]);
+			mapping.set('whitty', [30, 31]);
+			mapping.set('hex', [32, 33]);
+			mapping.set('sarv', [34, 35]);
+			mapping.set('ruv', [36, 37]);
+			mapping.set('impostor', [38, 39]);
+			mapping.set('agoti', [40, 41]);
+			mapping.set('kapi', [42, 43]);
+			mapping.set('sky', [44, 45]);
+			mapping.set('sky-annoyed', [44, 45]);
+			mapping.set('annie', [46, 47]);
+			mapping.set('monika', [48, 49]);
+			mapping.set('bob', [50, 51]);
+			mapping.set('tabi', [52, 53]);
+			mapping.set('garcello', [54, 55]);
+			mapping.set('bluskys', [56, 57]);
+			mapping.set('tricky', [58, 59]);
+			mapping.set('impostor-black', [60, 61]);
+			mapping.set('majin-sonic', [62, 63]);
+			mapping.set('henry', [64, 65]);
+			mapping.set('sarvente-lucifer', [66, 67]);
+			mapping.set('selever', [68, 69]);
+			mapping.set('ron', [70, 71]);
+			mapping.set('eder-jr', [10, 11]);
+			mapping.set('daidem', [72, 73]);
+			mapping.set('retrospecter', [74, 75]);
+			mapping.set('sans', [76, 77]);
+			mapping.set('speakers', [88, 89]);
+			mapping.set('myra', [78, 79]);
+			mapping.set('salad-fingers', [80, 81]);
+			mapping.set('void', [82, 83]);
+			mapping.set('cassette-girl', [84, 85]);
+			mapping.set('sunday', [10, 11]);
+			mapping.set('hank', [86, 87]);
+			mapping.set('ex-tricky', [88, 89]);
+			mapping.set('cassandra', [90, 91]);
+			mapping.set('sky-mad', [92, 92]);
+			mapping.set('mami', [93, 94]);
+			mapping.set('tord', [95, 96]);
+			mapping.set('nene', [97, 98]);
+			mapping.set('kopek', [100, 99]);
+			mapping.set('pico-minus', [4]);
+			for(key in mapping.keys()){
+				animation.add(key, [mapping.get(key)[0]], 0, false, isPlayer);
+				animation.add(key + '-win', [mapping.get(key)[0]], 0, false, isPlayer);
+				animation.add(key + '-lose', [mapping.get(key)[0]], 0, false, isPlayer);
+				if(mapping.get(key).length > 1)
+					animation.add(key + '-lose', [mapping.get(key)[1]], 0, false, isPlayer);
+				if(mapping.get(key).length > 2)
+					animation.add(key + '-win', [mapping.get(key)[2]], 0, false, isPlayer);
+			}
 			animation.play(char);
 
 			switch(char)

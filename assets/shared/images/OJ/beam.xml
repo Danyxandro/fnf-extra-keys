@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="beam.png"><SubTexture name="beam instancia 0000" x="0" y="0" width="441" height="1284" frameX="-60" frameY="0" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0001" x="2294" y="0" width="441" height="1241" frameX="-60" frameY="-43" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0002" x="1853" y="0" width="441" height="1257" frameX="-60" frameY="-27" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0003" x="971" y="0" width="441" height="1273" frameX="-60" frameY="-11" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0004" x="1390" y="1284" width="441" height="1155" frameX="-60" frameY="-129" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0005" x="2272" y="1284" width="441" height="1069" frameX="-60" frameY="-215" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0006" x="1412" y="0" width="441" height="1271" frameX="-60" frameY="-13" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0007" x="1831" y="1284" width="441" height="1152" frameX="-60" frameY="-132" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0008" x="480" y="1284" width="469" height="1213" frameX="-60" frameY="-71" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0009" x="441" y="0" width="530" height="1274" frameX="-60" frameY="-10" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0010" x="0" y="1284" width="480" height="1224" frameX="-60" frameY="-60" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0011" x="949" y="1284" width="441" height="1174" frameX="-60" frameY="-110" frameWidth="725" frameHeight="1289" />
+<SubTexture name="beam instancia 0012" x="0" y="0" width="441" height="1284" frameX="-60" frameY="0" frameWidth="725" frameHeight="1289" />
+</TextureAtlas>

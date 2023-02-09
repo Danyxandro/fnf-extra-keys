@@ -24,11 +24,13 @@ class AnimationDebug extends FlxState
 	var isDad:Bool = true;
 	var daAnim:String = 'spooky';
 	var camFollow:FlxObject;
+	var isPlayer:Bool;
 
-	public function new(daAnim:String = 'spooky')
+	public function new(daAnim:String = 'spooky',?isPlayer:Bool = false)
 	{
 		super();
 		this.daAnim = daAnim;
+		this.isPlayer = isPlayer;
 	}
 
 	override function create()
@@ -39,7 +41,7 @@ class AnimationDebug extends FlxState
 		gridBG.scrollFactor.set(0.5, 0.5);
 		add(gridBG);
 
-		if (daAnim == 'bf')
+		if (isPlayer)
 			isDad = false;
 
 		if (isDad)
@@ -50,17 +52,17 @@ class AnimationDebug extends FlxState
 			add(dad);
 
 			char = dad;
-			dad.flipX = false;
+			//dad.flipX = false;
 		}
 		else
 		{
-			bf = new Boyfriend(0, 0);
+			bf = new Boyfriend(0, 0, daAnim, true);
 			bf.screenCenter();
 			bf.debugMode = true;
 			add(bf);
 
 			char = bf;
-			bf.flipX = false;
+			//bf.flipX = false;
 		}
 
 		dumbTexts = new FlxTypedGroup<FlxText>();
@@ -161,6 +163,11 @@ class AnimationDebug extends FlxState
 
 			updateTexts();
 			genBoyOffsets(false);
+		}
+
+		if (FlxG.keys.justPressed.ENTER)
+		{
+			FlxG.switchState(new MainMenuState());
 		}
 
 		var upP = FlxG.keys.anyJustPressed([UP]);

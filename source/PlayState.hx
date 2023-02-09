@@ -285,7 +285,7 @@ class PlayState extends MusicBeatState
 	public var dadID:Int = 0;
 	public var bfID:Int = 0;
 	//cam moving stuff
-	private var mustHitSection = true;
+	public var mustHitSection = true;
 	private var moveCam:Bool = false;
 	private var charCam:Array<Int> = [0,0,0,0];
 	public var camFactor:Float = 35;
@@ -1549,6 +1549,7 @@ class PlayState extends MusicBeatState
 			estilo = SONG.noteStyle;
 		} else {estilo = SONG.noteStyle2;}
 		changeStyle(estilo,2);
+		preloadNotes();
 
 		switch(mania) //moved it here because i can lol
 		{
@@ -3247,11 +3248,14 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
-
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+		if(iconP1.changeSize){
+			iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
+			iconP1.updateHitbox();
+		}
+		if(iconP2.changeSize){
+			iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
+			iconP2.updateHitbox();
+		}
 
 		var iconOffset:Int = 26;
 
@@ -3337,7 +3341,7 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.ZERO)
 		{
-			FlxG.switchState(new AnimationDebug(SONG.player1));
+			FlxG.switchState(new AnimationDebug(SONG.player1,true));
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
 			#if windows
@@ -3557,6 +3561,45 @@ class PlayState extends MusicBeatState
 								camFollow.x = dadChar.getMidpoint().x - 350;
 							case 'eder-jr':
 								camFollow.y = dadChar.getMidpoint().y - 285;
+							case 'bf-OJ':
+								camFollow.x = dadChar.getMidpoint().x -100;
+								camFollow.y = dadChar.getMidpoint().y -160;
+							case 'bf-pixel'|'bf-tankman-pixel':
+								if(!curStage.startsWith("school")){
+									camFollow.x = dadChar.getMidpoint().x - 200;
+									camFollow.y = dadChar.getMidpoint().y - 200;
+								}
+							case 'monika':
+								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.x = dadChar.getMidpoint().x - 370;
+							case 'senpai':
+								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.x = dadChar.getMidpoint().x - 370;
+							case 'henry':
+								camFollow.y = dadChar.getMidpoint().y + 50;
+								camFollow.x = dadChar.getMidpoint().x - 175;
+							case 'annie':
+								camFollow.y = dadChar.getMidpoint().y - 200;
+								camFollow.x = dadChar.getMidpoint().x - 200;
+							case 'void':
+								camFollow.y = dadChar.getMidpoint().y + 20;
+								camFollow.x = dadChar.getMidpoint().x - 400;
+							case 'pico':
+								camFollow.x = dadChar.getMidpoint().x - 200;
+							case 'pico-minus':
+								camFollow.x = dadChar.getMidpoint().x - 300;
+							case 'mami':
+								camFollow.x = dadChar.getMidpoint().x - 320;
+							case 'tord':
+								camFollow.x = dadChar.getMidpoint().x - 220;
+							case 'beat' | 'bf-beat-neon':
+								camFollow.y = dadChar.getMidpoint().y - 140;
+								camFollow.x = dadChar.getMidpoint().x - 300;
+							case 'impostor-black':
+								camFollow.y = dadChar.getMidpoint().y - 170;
+								camFollow.x = dadChar.getMidpoint().x - 750;
+							case 'kopek':
+								camFollow.x = dadChar.getMidpoint().x - 450;
 							default:
 								camFollow.x -= dad.cameraPosition[0];
 								camFollow.y += dad.cameraPosition[1];
@@ -3621,9 +3664,42 @@ class PlayState extends MusicBeatState
 								camFollow.x = bfChar.getMidpoint().x + 350;
 							case 'eder-jr':
 								camFollow.y = bfChar.getMidpoint().y - 285;
+							case 'OJ':
+								camFollow.x = bfChar.getMidpoint().x + 200;
+								camFollow.y = bfChar.getMidpoint().y -160;
+							case 'monika':
+								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.x = bfChar.getMidpoint().x - 100;
+							case 'henry':
+								camFollow.y = bfChar.getMidpoint().y + 50;
+								camFollow.x = bfChar.getMidpoint().x + 300;
+							case 'eder-jr':
+								camFollow.y = bfChar.getMidpoint().y - 285;
+							case 'annie':
+								camFollow.y = bfChar.getMidpoint().y - 200;
+								camFollow.x = bfChar.getMidpoint().x + 250;
+							case 'void':
+								camFollow.y = bfChar.getMidpoint().y - 40;
+								camFollow.x = bfChar.getMidpoint().x + 300;
+							case 'tord':
+								camFollow.x = bfChar.getMidpoint().x - 20;
+							case 'beat' | 'beat-neon':
+								camFollow.y = bfChar.getMidpoint().y - 180;
+								camFollow.x = bfChar.getMidpoint().x + 300;
+							case 'impostor-black':
+								camFollow.y = bfChar.getMidpoint().y - 170;
+								camFollow.x = bfChar.getMidpoint().x - 150;
+							case 'keen-flying':
+								camFollow.y = bfChar.getMidpoint().y - 100;
+								camFollow.x = bfChar.getMidpoint().x + 350;
+							case 'kopek':
+								camFollow.x = bfChar.getMidpoint().x - 50;
+							case 'bf-pixel'|'bf-tankman-pixel':
+								camFollow.y -= 120;
+								camFollow.x -= 100;
 							default:
-								camFollow.x += boyfriend.cameraPosition[0];
-								camFollow.y += boyfriend.cameraPosition[1];
+								camFollow.x += bfChar.cameraPosition[0];
+								camFollow.y += bfChar.cameraPosition[1];
 						}
 
 						if(bfChar.flyingOffset > 0 && canPause)
@@ -3687,6 +3763,39 @@ class PlayState extends MusicBeatState
 								camFollow.x = dadChar.getMidpoint().x + 350;
 							case 'eder-jr':
 								camFollow.y = dadChar.getMidpoint().y - 285;
+							case 'OJ':
+								camFollow.x = dadChar.getMidpoint().x + 200;
+								camFollow.y = dadChar.getMidpoint().y -160;
+							case 'monika':
+								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.x = dadChar.getMidpoint().x - 100;
+							case 'henry':
+								camFollow.y = dadChar.getMidpoint().y + 50;
+								camFollow.x = dadChar.getMidpoint().x + 300;
+							case 'eder-jr':
+								camFollow.y = dadChar.getMidpoint().y - 285;
+							case 'annie':
+								camFollow.y = dadChar.getMidpoint().y - 200;
+								camFollow.x = dadChar.getMidpoint().x + 250;
+							case 'void':
+								camFollow.y = dadChar.getMidpoint().y - 40;
+								camFollow.x = dadChar.getMidpoint().x + 300;
+							case 'tord':
+								camFollow.x = dadChar.getMidpoint().x - 20;
+							case 'beat' | 'beat-neon':
+								camFollow.y = dadChar.getMidpoint().y - 180;
+								camFollow.x = dadChar.getMidpoint().x + 300;
+							case 'impostor-black':
+								camFollow.y = dadChar.getMidpoint().y - 170;
+								camFollow.x = dadChar.getMidpoint().x - 150;
+							case 'keen-flying':
+								camFollow.y = dadChar.getMidpoint().y - 100;
+								camFollow.x = dadChar.getMidpoint().x + 350;
+							case 'kopek':
+								camFollow.x = dadChar.getMidpoint().x - 50;
+							case 'bf-pixel'|'bf-tankman-pixel':
+								camFollow.y -= 120;
+								camFollow.x -= 100;
 							default:
 								camFollow.x += dadChar.cameraPosition[0];
 								camFollow.y += dadChar.cameraPosition[1];
@@ -3757,6 +3866,45 @@ class PlayState extends MusicBeatState
 								camFollow.x = bfChar.getMidpoint().x - 350;
 							case 'eder-jr':
 								camFollow.y = bfChar.getMidpoint().y - 285;
+							case 'bf-OJ':
+								camFollow.x = bfChar.getMidpoint().x -100;
+								camFollow.y = bfChar.getMidpoint().y -160;
+							case 'bf-pixel'|'bf-tankman-pixel':
+								if(!curStage.startsWith("school")){
+									camFollow.x = bfChar.getMidpoint().x - 200;
+									camFollow.y = bfChar.getMidpoint().y - 200;
+								}
+							case 'monika':
+								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.x = bfChar.getMidpoint().x - 370;
+							case 'senpai':
+								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.x = bfChar.getMidpoint().x - 370;
+							case 'henry':
+								camFollow.y = bfChar.getMidpoint().y + 50;
+								camFollow.x = bfChar.getMidpoint().x - 175;
+							case 'annie':
+								camFollow.y = bfChar.getMidpoint().y - 200;
+								camFollow.x = bfChar.getMidpoint().x - 200;
+							case 'void':
+								camFollow.y = bfChar.getMidpoint().y + 20;
+								camFollow.x = bfChar.getMidpoint().x - 400;
+							case 'pico':
+								camFollow.x = bfChar.getMidpoint().x - 200;
+							case 'pico-minus':
+								camFollow.x = bfChar.getMidpoint().x - 300;
+							case 'mami':
+								camFollow.x = bfChar.getMidpoint().x - 320;
+							case 'tord':
+								camFollow.x = bfChar.getMidpoint().x - 220;
+							case 'beat' | 'bf-beat-neon':
+								camFollow.y = bfChar.getMidpoint().y - 140;
+								camFollow.x = bfChar.getMidpoint().x - 300;
+							case 'impostor-black':
+								camFollow.y = bfChar.getMidpoint().y - 170;
+								camFollow.x = bfChar.getMidpoint().x - 750;
+							case 'kopek':
+								camFollow.x = bfChar.getMidpoint().x - 450;
 							default:
 								camFollow.x -= bfChar.cameraPosition[0];
 								camFollow.y += bfChar.cameraPosition[1];
@@ -5953,6 +6101,7 @@ class PlayState extends MusicBeatState
 
 			songScore -= 10;
 
+			if((!PlayStateChangeables.botPlay) || (PlayStateChangeables.botPlay && !loadRep))
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 			// FlxG.sound.play(Paths.sound('missnote1'), 1, false);
 			// FlxG.log.add('played imss note');
@@ -6877,12 +7026,14 @@ class PlayState extends MusicBeatState
 			}
 	
 		}
-
-		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-			
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+		if(iconP1.changeSize){
+			iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+			iconP1.updateHitbox();
+		}
+		if(iconP2.changeSize){
+			iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+			iconP2.updateHitbox();
+		}
 
 		if (curBeat % gfSpeed == 0)
 		{
@@ -7183,5 +7334,24 @@ class PlayState extends MusicBeatState
 		}
 		healthBar.createFilledBar(barColors[0],barColors[1]);
 		healthBar.updateBar();
+	}
+
+	public function preloadNotes(?loadAll:Bool = false){
+		var nota:FlxSprite = new FlxSprite();
+		nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrows-pixels'), true, 17, 17);
+		nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrowEnds'), true, 7, 6);
+		nota.loadGraphic(Paths.image('noteassets/pixel/halo/arrows-pixels'), true, 17, 17);
+		nota.loadGraphic(Paths.image('noteassets/pixel/halo/arrowEnds'), true, 7, 6);
+		nota.loadGraphic(Paths.image('noteassets/pixel/warning/arrows-pixels'), true, 17, 17);
+		nota.loadGraphic(Paths.image('noteassets/pixel/warning/arrowEnds'), true, 7, 6);
+		nota.loadGraphic(Paths.image('noteassets/pixel/angel/arrows-pixels'), true, 17, 17);
+		nota.loadGraphic(Paths.image('noteassets/pixel/angel/arrowEnds'), true, 7, 6);
+		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrows-pixels'), true, 17, 17);
+		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrowEnds'), true, 7, 6);
+		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types');
+		if(loadAll){
+			nota.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
+			nota.loadGraphic(Paths.image('noteassets/pixel/arrows-pixels'), true, 17, 17);
+		}
 	}
 }//Fin de la clase

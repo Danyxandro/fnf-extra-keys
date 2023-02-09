@@ -365,7 +365,7 @@ class ModchartState
 		PlayState.instance.switchMania(newMania);
 	}
 
-	function makeAnimatedLuaSprite(spritePath:String,names:Array<String>,prefixes:Array<String>,startAnim:String, id:String)
+	/*function makeAnimatedLuaSprite(spritePath:String,names:Array<String>,prefixes:Array<String>,startAnim:String, id:String)
 	{
 		#if sys
 		// pre lowercasing the song name (makeAnimatedLuaSprite)
@@ -397,6 +397,49 @@ class ModchartState
 		sprite.animation.play(startAnim);
 		return id;
 		#end
+	}*/
+
+	function makeAnimatedSprite(name:String,fileName:String,initialAnimation:String,prefix:String,?drawBehind:Bool=false){
+		var sprite:FlxSprite = new FlxSprite();
+
+		var songLowercase:String = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
+		switch (songLowercase) {
+			case 'dad-battle': songLowercase = 'dadbattle';
+			case 'philly-nice': songLowercase = 'philly';
+		}
+
+		if(sys.FileSystem.exists("assets/data/" + songLowercase + '/' + fileName + ".png") && sys.FileSystem.exists("assets/data/" + songLowercase + '/' + fileName + ".xml")){
+			sprite.frames = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile("assets/data/" + songLowercase + '/' + fileName + ".png"),sys.io.File.getContent("assets/data/" + songLowercase + '/' + fileName + ".xml"));
+			
+			sprite.animation.addByPrefix(initialAnimation,prefix,24,true);
+
+			/*var chars = PlayState.instance.layerChars;
+			var bfs = PlayState.instance.layerBFs;
+			var gfs = PlayState.instance.layerGF;*/
+
+			@:privateAccess
+			{
+				if (drawBehind)
+				{
+					/*PlayState.instance.removeObject(gfs);
+					PlayState.instance.removeObject(chars);
+					PlayState.instance.removeObject(bfs);*/
+					PlayState.instance.layerBG.add(sprite);
+				}else
+				PlayState.instance.addObject(sprite);
+				/*if (drawBehind)
+				{
+					PlayState.instance.addObject(gfs);
+					PlayState.instance.addObject(chars);
+					PlayState.instance.addObject(bfs);
+				}*/
+			}
+			sprites[name] = sprite;
+			luaSprites.set(name,sprite);
+			sprite.animation.play(initialAnimation);
+		}
+
+		return name;
 	}
 
 	function makeLuaSprite(spritePath:String,toBeCalled:String, drawBehind:Bool)
@@ -437,16 +480,7 @@ class ModchartState
         {
             if (drawBehind)
             {
-                PlayState.instance.removeObject(PlayState.gf);
-                PlayState.instance.removeObject(PlayState.boyfriend);
-                PlayState.instance.removeObject(PlayState.dad);
-            }
-            PlayState.instance.addObject(sprite);
-            if (drawBehind)
-            {
-                PlayState.instance.addObject(PlayState.gf);
-                PlayState.instance.addObject(PlayState.boyfriend);
-                PlayState.instance.addObject(PlayState.dad);
+                PlayState.instance.layerBG.add(sprite);
             }
         }
 		#end
@@ -625,7 +659,7 @@ class ModchartState
 				});
 
 				
-				// Lua_helper.add_callback(lua,"makeAnimatedSprite", makeAnimatedLuaSprite);
+				Lua_helper.add_callback(lua,"makeAnimatedSprite", makeAnimatedSprite);
 				// this one is still in development
 
 				Lua_helper.add_callback(lua,"destroySprite", function(id:String) {
@@ -1123,6 +1157,50 @@ class ModchartState
 						trace("twist player " + id);
 						FlxTween.tween(PlayState.playerStrums.members[id - PlayState.keyAmmo[PlayState.mania]], {angle: toAngle}, time, {ease: FlxEase.linear, onComplete: function(flxTween:FlxTween) {PlayState.playerStrums.members[id - PlayState.keyAmmo[PlayState.mania]].angle = f; }});
 					}
+				});
+
+				Lua_helper.add_callback(lua,"spritePlayAnim", function(id:String, anim:String, ?force:Bool = false, ?reverse:Bool=false){
+					if(sprites[id] != null)
+					sprites[id].animation.play(anim, force, reverse);
+				});
+
+				Lua_helper.add_callback(lua,"addAnim", function(id:String, name:String, prefix:String, ?fps:Int = 24, ?looped:Bool = false){
+					if(sprites[id] != null)
+						sprites[id].animation.addByPrefix(name, prefix, fps, looped);
+					else{
+						var r = new EReg("^[0-7]", "i");
+						if(!r.match(id) && getActorByName(id) != null){
+							getActorByName(id).animation.addByPrefix(name, prefix, fps, looped);
+						}
+					}
+				});
+
+				Lua_helper.add_callback(lua,"addOffset", function(char:String,anim:String,x:Float,y:Float, type:Int){
+					switch(type){
+						case 0:
+							if(idsBF[char] != null)
+							PlayState.instance.layerBFs.members[idsBF[char]].addOffset(anim,x,y);
+						case 1:
+							if(ids[char] != null)
+							PlayState.instance.layerChars.members[ids[char]].addOffset(anim,x,y);
+						case 2:
+							if(gfs[char] != null)
+							PlayState.instance.layerGF.members[gfs[char]].addOffset(anim,x,y);
+					}
+				});
+
+				Lua_helper.add_callback(lua,"setAntialiasing", function(anti:Bool,id:String){
+					if(FlxG.save.data.antialiasing)
+						getActorByName(id).antialiasing = anti;
+				});
+
+				Lua_helper.add_callback(lua,"mustHit", function():Bool {
+					return PlayState.instance.mustHitSection;
+				});
+
+				Lua_helper.add_callback(lua,"preloadNotes", function():Int {
+					PlayState.instance.preloadNotes(true);
+					return 0;
 				});
 
 				// actors

@@ -154,7 +154,9 @@ class ChartingState extends MusicBeatState
 		}
 
 		leftIcon = new HealthIcon(_song.player1);
+		leftIcon.centerOffsets();
 		rightIcon = new HealthIcon(_song.player2);
+		rightIcon.centerOffsets();
 		leftIcon.scrollFactor.set(1, 1);
 		rightIcon.scrollFactor.set(1, 1);
 
@@ -1507,6 +1509,7 @@ class ChartingState extends MusicBeatState
 				iconLayer.remove(leftIcon);
 				iconLayer.remove(rightIcon);
 				leftIcon = new HealthIcon(_song.player1);
+				leftIcon.centerOffsets();
 				leftIcon.scrollFactor.set(1, 1);
 				leftIcon.setGraphicSize(0, 45);
 				leftIcon.setPosition(0, -100);
@@ -1516,6 +1519,7 @@ class ChartingState extends MusicBeatState
 				iconLayer.remove(leftIcon);
 				iconLayer.remove(rightIcon);
 				rightIcon = new HealthIcon(_song.player2);
+				rightIcon.centerOffsets();
 				rightIcon.scrollFactor.set(1, 1);
 				rightIcon.setGraphicSize(0, 45);
 				rightIcon.setPosition(gridBG.width / 2, -100);
