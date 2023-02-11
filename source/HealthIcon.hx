@@ -59,10 +59,10 @@ class HealthIcon extends FlxSprite
 				antialiasing = true;
 				animation.addByPrefix('daidem', 'DaidemNormal0', 24, true, isPlayer);
 				animation.addByPrefix('daidem-lose', 'DaidemLoosing0', 24, true, isPlayer);
-				animation.addByPrefix('daidem-win', 'DaidemWinning0', 24, true, isPlayer);
+				animation.addByPrefix('daidem-win', 'Daidem Winning', 24, true, isPlayer);
 				changeSize = false;
 				offset.y += 35;
-				this.isCustom = true;
+				isCustom = true;
 				animation.play("daidem");
 			default:
 				changeIcon(char, isPlayer);
@@ -201,7 +201,7 @@ class HealthIcon extends FlxSprite
 			mapping.set('selever', [68, 69]);
 			mapping.set('ron', [70, 71]);
 			mapping.set('eder-jr', [10, 11]);
-			mapping.set('daidem', [72, 73]);
+			//mapping.set('daidem', [72, 73]);
 			mapping.set('retrospecter', [74, 75]);
 			mapping.set('sans', [76, 77]);
 			mapping.set('speakers', [88, 89]);

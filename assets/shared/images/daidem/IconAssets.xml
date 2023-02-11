@@ -76,18 +76,18 @@
 	<SubTexture name="DaidemNormal0011" x="696" y="460" width="106" height="124" frameX="-3" frameY="-12" frameWidth="109" frameHeight="137"/>
 	<SubTexture name="DaidemNormal0012" x="802" y="460" width="106" height="131" frameX="-1" frameY="-5" frameWidth="109" frameHeight="137"/>
 	<SubTexture name="DaidemNormal0013" x="908" y="460" width="107" height="130" frameX="-1" frameY="-6" frameWidth="109" frameHeight="137"/>
-	<SubTexture name="DaidemWinning0000" x="1015" y="460" width="107" height="132" frameX="-2" frameY="-3" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0001" x="1122" y="460" width="107" height="132" frameX="-2" frameY="-1" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0002" x="1229" y="460" width="104" height="134" frameX="0" frameY="-1" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0003" x="1333" y="460" width="105" height="135" frameX="-1" frameY="0" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0004" x="1438" y="460" width="101" height="133" frameX="-5" frameY="-2" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0005" x="1539" y="460" width="102" height="133" frameX="-6" frameY="-1" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0006" x="1641" y="460" width="104" height="112" frameX="-5" frameY="-23" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0007" x="1745" y="460" width="103" height="112" frameX="-4" frameY="-23" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0008" x="1848" y="460" width="99" height="109" frameX="-6" frameY="-25" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0009" x="1947" y="460" width="99" height="109" frameX="-5" frameY="-25" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0010" x="0" y="596" width="108" height="122" frameX="-4" frameY="-12" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0011" x="108" y="596" width="107" height="122" frameX="-4" frameY="-12" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0012" x="215" y="596" width="107" height="130" frameX="-2" frameY="-3" frameWidth="112" frameHeight="135"/>
-	<SubTexture name="DaidemWinning0013" x="322" y="596" width="107" height="130" frameX="-2" frameY="-5" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0000" x="1015" y="460" width="107" height="132" frameX="-2" frameY="-3" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0001" x="1122" y="460" width="107" height="132" frameX="-2" frameY="-1" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0002" x="1229" y="460" width="104" height="134" frameX="0" frameY="-1" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0003" x="1333" y="460" width="105" height="135" frameX="-1" frameY="0" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0004" x="1438" y="460" width="101" height="133" frameX="-5" frameY="-2" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0005" x="1539" y="460" width="102" height="133" frameX="-6" frameY="-1" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0006" x="1641" y="460" width="104" height="112" frameX="-5" frameY="-23" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0007" x="1745" y="460" width="103" height="112" frameX="-4" frameY="-23" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0008" x="1848" y="460" width="99" height="109" frameX="-6" frameY="-25" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0009" x="1947" y="460" width="99" height="109" frameX="-5" frameY="-25" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0010" x="0" y="596" width="108" height="122" frameX="-4" frameY="-12" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0011" x="108" y="596" width="107" height="122" frameX="-4" frameY="-12" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0012" x="215" y="596" width="107" height="130" frameX="-2" frameY="-3" frameWidth="112" frameHeight="135"/>
+	<SubTexture name="Daidem Winning0013" x="322" y="596" width="107" height="130" frameX="-2" frameY="-5" frameWidth="112" frameHeight="135"/>
 </TextureAtlas>

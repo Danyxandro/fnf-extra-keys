@@ -11,6 +11,7 @@ import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUICheckBox;
 import flixel.addons.ui.FlxUIDropDownMenu;
+import ui.FlxUIDropDownMenuCustom;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
@@ -111,6 +112,8 @@ class ChartingState extends MusicBeatState
 	private var m_check7 = new FlxUICheckBox(10, 85, null, null, "2", 100);
 	private var m_check8 = new FlxUICheckBox(10, 105, null, null, "3", 100);
 	private var m_check0 = new FlxUICheckBox(10, 125, null, null, "4", 100);
+
+	private var lockMouseWheel:Bool = false;
 
 	override function create()
 	{
@@ -332,20 +335,22 @@ class ChartingState extends MusicBeatState
 		var stages:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteStyles:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteStyleList'));
 
-		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		var player1DropDown = new FlxUIDropDownMenuCustom(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 			{
 				_song.player1 = characters[Std.parseInt(character)];
 				updateHeads(1);
-			});
+				unlockWheel();
+			},function(isShown:Bool){unlockWheel(!isShown);});
 			player1DropDown.selectedLabel = _song.player1;
 	
 			var player1Label = new FlxText(10,80,64,'Player 1');
 	
-			var player2DropDown = new FlxUIDropDownMenu(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+			var player2DropDown = new FlxUIDropDownMenuCustom(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 			{
 				_song.player2 = characters[Std.parseInt(character)];
 				updateHeads(2);
-			});
+				unlockWheel();
+			},function(isShown:Bool){unlockWheel(!isShown);});
 			player2DropDown.selectedLabel = _song.player2;
 	
 			var player2Label = new FlxText(140,80,64,'Player 2');
@@ -359,10 +364,11 @@ class ChartingState extends MusicBeatState
 		//	});
 
 		player2DropDown.selectedLabel = _song.player2;
-		var gfVersionDropDown = new FlxUIDropDownMenu(10, 200, FlxUIDropDownMenu.makeStrIdLabelArray(gfVersions, true), function(gfVersion:String)
+		var gfVersionDropDown = new FlxUIDropDownMenuCustom(10, 200, FlxUIDropDownMenu.makeStrIdLabelArray(gfVersions, true), function(gfVersion:String)
 			{
 				_song.gfVersion = gfVersions[Std.parseInt(gfVersion)];
-			});
+				unlockWheel();
+			},function(isShown:Bool){unlockWheel(!isShown);});
 		gfVersionDropDown.selectedLabel = _song.gfVersion;
 
 		var gfVersionLabel = new FlxText(10,180,64,'Girlfriend');
@@ -1299,7 +1305,7 @@ class ChartingState extends MusicBeatState
 					resetSection();
 			}
 
-			if (FlxG.mouse.wheel != 0)
+			if (FlxG.mouse.wheel != 0 && !lockMouseWheel)
 			{
 				FlxG.sound.music.pause();
 				vocals.pause();
@@ -2104,5 +2110,9 @@ class ChartingState extends MusicBeatState
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 		_file = null;
 		FlxG.log.error("Problem saving Level data");
+	}
+
+	private function unlockWheel(?unlock:Bool = true){
+		this.lockMouseWheel = !unlock;
 	}
 }

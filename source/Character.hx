@@ -1898,6 +1898,7 @@ class Character extends FlxSprite
 			case 'daidem':
 				tex = Paths.getSparrowAtlas('characters/DaidemAssetsREwork', 'shared');
 				frames = tex;
+				this.isCustom = true;
 				animation.addByPrefix('idle', 'Idke0', 24,true);
 				animation.addByPrefix('singUP', 'Up0', 24, false);
 				animation.addByPrefix('singDOWN', 'Down0', 24, false);

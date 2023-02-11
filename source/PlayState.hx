@@ -2816,9 +2816,55 @@ class PlayState extends MusicBeatState
 					babyArrow.animation.add('pressed', [startpress[i], endpress[i]], 12, false);
 					babyArrow.animation.add('confirm', [startconf[i], endconf[i]], 24, false);
 
-					
-				
-					//case 'normal':
+					case 'dance':
+						{
+							babyArrow.frames = Paths.getSparrowAtlas('keen/Dance_assets');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['purple', 'blue', 'green', 'red'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'E', 'left', 'down', 'up', 'right'];
+										babyArrow.x -= Note.tooMuch;
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'E', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'E', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['SPACE'];
+										pPre = ['E'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
+										pPre = ['left', 'E', 'right'];
+	
+								}
+						
+						babyArrow.x += Note.swagWidth * i;
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}						
 					default:
 						{
 							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
@@ -3273,7 +3319,32 @@ class PlayState extends MusicBeatState
 			health = 4;
 		if (!PlayStateChangeables.flip)
 			{
-				if (healthBar.percent < 20){
+				if (healthBar.percent > 80)
+				{
+					iconP1.animation.play(iconP1.char + "-win");
+				}
+				else if (healthBar.percent < 20)
+				{
+					iconP1.animation.play(iconP1.char + "-lose");
+				}
+				else
+				{
+					iconP1.animation.play(iconP1.char);
+				}
+
+				if (healthBar.percent > 80)
+				{
+					iconP2.animation.play(iconP2.char + "-lose");
+				}
+				else if (healthBar.percent < 20)
+				{
+					iconP2.animation.play(iconP2.char + "-win");
+				}
+				else
+				{
+					iconP2.animation.play(iconP2.char);
+				}
+				/*if (healthBar.percent < 20){
 					//iconP1.animation.curAnim.curFrame = 1;
 					iconP1.animation.play(iconP1.char + "-lose");
 					iconP2.animation.play(iconP2.char + "-win");
@@ -3289,11 +3360,36 @@ class PlayState extends MusicBeatState
 				}else{
 					//iconP2.animation.curAnim.curFrame = 0;
 					iconP2.animation.play(iconP2.char);
-				}
+				}*/
 			}
 		else
 		{
-			if (healthBar.percent < 20){
+			if (healthBar.percent > 80)
+			{
+				iconP2.animation.play(iconP2.char + "-win");
+			}
+			else if (healthBar.percent < 20)
+			{
+				iconP2.animation.play(iconP2.char + "-lose");
+			}
+			else
+			{
+				iconP2.animation.play(iconP2.char);
+			}
+
+			if (healthBar.percent > 80)
+			{
+				iconP1.animation.play(iconP1.char + "-lose");
+			}
+			else if (healthBar.percent < 20)
+			{
+				iconP1.animation.play(iconP1.char + "-win");
+			}
+			else
+			{
+				iconP1.animation.play(iconP1.char);
+			}
+			/*if (healthBar.percent < 20){
 				//iconP2.animation.curAnim.curFrame = 1;
 				iconP2.animation.play(iconP2.char + "-lose");
 				iconP1.animation.play(iconP1.char + "-win");
@@ -3309,7 +3405,7 @@ class PlayState extends MusicBeatState
 			}else{
 				//iconP1.animation.curAnim.curFrame = 0;
 				iconP1.animation.play(iconP1.char);
-			}
+			}*/
 		}
 
 		/* if (FlxG.keys.justPressed.NINE)
@@ -4403,7 +4499,8 @@ class PlayState extends MusicBeatState
 								{
 									spr.animation.play('confirm', true);
 								}
-								if (spr.animation.curAnim.name == 'confirm' && ((!FlxG.save.data.flip && !style[1].startsWith('pixel')) || (FlxG.save.data.flip && !style[0].startsWith('pixel'))))
+								//if (spr.animation.curAnim.name == 'confirm' && ((!FlxG.save.data.flip && !style[1].startsWith('pixel')) || (FlxG.save.data.flip && !style[0].startsWith('pixel'))))
+								if (spr.animation.curAnim.name == 'confirm' && !style[1].startsWith('pixel'))
 								{
 									spr.centerOffsets();
 									switch(maniaToChange)
@@ -4748,7 +4845,7 @@ class PlayState extends MusicBeatState
 														{
 															spr.animation.play('confirm', true);
 														}
-														if (spr.animation.curAnim.name == 'confirm' && SONG.noteStyle != 'pixel')
+														if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel')/*SONG.noteStyle != 'pixel'*/)
 														{
 															spr.centerOffsets();
 															switch(maniaToChange)
@@ -5870,7 +5967,8 @@ class PlayState extends MusicBeatState
 						if (!keys[spr.ID])
 							spr.animation.play('static', false);
 			
-						if (spr.animation.curAnim.name == 'confirm' && ((!FlxG.save.data.flip && !style[0].startsWith('pixel')) || (FlxG.save.data.flip && !style[1].startsWith('pixel'))))
+						//if (spr.animation.curAnim.name == 'confirm' && ((!FlxG.save.data.flip && !style[0].startsWith('pixel')) || (FlxG.save.data.flip && !style[1].startsWith('pixel'))))
+						if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel'))
 						{
 							spr.centerOffsets();
 							switch(maniaToChange)
@@ -7196,9 +7294,6 @@ class PlayState extends MusicBeatState
 								endpress = [18, 20, 21, 23, 19, 26];
 								startconf = [27, 29, 30, 32, 28, 35];
 								endconf = [36, 38, 39, 41, 37, 44];
-
-							case 2: 
-								babyArrow.x -= Note.tooMuch;
 							case 3: 
 								numstatic = [0, 1, 4, 2, 3];
 								startpress = [9, 10, 13, 11, 12];
@@ -7242,9 +7337,54 @@ class PlayState extends MusicBeatState
 					babyArrow.animation.add('pressed', [startpress[i], endpress[i]], 12, false);
 					babyArrow.animation.add('confirm', [startconf[i], endconf[i]], 24, false);
 
-					
-				
-					case 'normal':
+					case 'dance':
+						{
+							babyArrow.frames = Paths.getSparrowAtlas('keen/Dance_assets');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['purple', 'blue', 'green', 'red'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'E', 'left', 'down', 'up', 'right'];
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'E', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'E', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['SPACE'];
+										pPre = ['E'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
+										pPre = ['left', 'E', 'right'];
+	
+								}
+						
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}			
+					default:
 						{
 							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 							babyArrow.animation.addByPrefix('green', 'arrowUP');
@@ -7266,7 +7406,6 @@ class PlayState extends MusicBeatState
 									case 2:
 										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 										pPre = ['purple', 'blue', 'green', 'red', 'white', 'yellow', 'violet', 'darkred', 'dark'];
-										babyArrow.x -= Note.tooMuch;
 									case 3: 
 										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
 										pPre = ['purple', 'blue', 'white', 'green', 'red'];

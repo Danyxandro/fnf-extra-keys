@@ -636,6 +636,72 @@ class Note extends FlxSprite
 				setGraphicSize(Std.int(width * PlayState.daPixelZoom * pixelnoteScale));
 				//setGraphicSize(Std.int(width * PlayState.daPixelZoom * noteScale));
 				updateHitbox();
+			case 'dance':
+				frames = Paths.getSparrowAtlas('keen/Dance_assets');
+				var colores = ['purple', 'blue', 'green', 'red', 'E', 'purple', 'blue', 'green', 'red'];
+				for (i in 0...9)
+					{
+						animation.addByPrefix(noteColors[i] + 'Scroll', colores[i] + '0'); // Normal notes
+						if(i == 4){
+						animation.addByPrefix(noteColors[i] + 'hold', 'green hold piece'); // Hold
+						animation.addByPrefix(noteColors[i] + 'holdend', 'green hold end'); // Tails
+						}else{
+						animation.addByPrefix(noteColors[i] + 'hold', colores[i] + ' hold piece'); // Hold
+						animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
+						}
+					}	
+				if (burning || death || warning || angel || bob || glitch)
+					{
+						frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types');
+						switch(noteType)
+						{
+							case 1: 
+								for (i in 0...9)
+									{
+										animation.addByPrefix(noteColors[i] + 'Scroll', 'fire ' + noteColors[i] + '0'); // Normal notes
+										animation.addByPrefix(noteColors[i] + 'hold', 'fire hold piece'); // Hold
+										animation.addByPrefix(noteColors[i] + 'holdend', 'fire hold end'); // Tails
+									}
+							case 2: 
+								for (i in 0...9)
+									{
+										animation.addByPrefix(noteColors[i] + 'Scroll', 'halo ' + noteColors[i] + '0'); // Normal notes
+										animation.addByPrefix(noteColors[i] + 'hold', 'halo hold piece'); // Hold
+										animation.addByPrefix(noteColors[i] + 'holdend', 'halo hold end'); // Tails
+									}
+							case 3: 
+								for (i in 0...9)
+									{
+										animation.addByPrefix(noteColors[i] + 'Scroll', 'warning ' + noteColors[i] + '0'); // Normal notes
+										animation.addByPrefix(noteColors[i] + 'hold', 'warning hold piece'); // Hold
+										animation.addByPrefix(noteColors[i] + 'holdend', 'warning hold end'); // Tails
+									}
+							case 4: 
+								for (i in 0...9)
+									{
+										animation.addByPrefix(noteColors[i] + 'Scroll', 'angel ' + noteColors[i] + '0'); // Normal notes
+										animation.addByPrefix(noteColors[i] + 'hold', 'angel hold piece'); // Hold
+										animation.addByPrefix(noteColors[i] + 'holdend', 'angel hold end'); // Tails
+									}
+							case 6: 
+								for (i in 0...9)
+									{
+										animation.addByPrefix(noteColors[i] + 'Scroll', 'bob ' + noteColors[i] + '0'); // Normal notes
+										animation.addByPrefix(noteColors[i] + 'hold', 'bob hold piece'); // Hold
+										animation.addByPrefix(noteColors[i] + 'holdend', 'bob hold end'); // Tails
+									}
+							case 7:
+								for (i in 0...9)
+									{
+										animation.addByPrefix(noteColors[i] + 'Scroll', 'glitch ' + noteColors[i] + '0'); // Normal notes
+										animation.addByPrefix(noteColors[i] + 'hold', 'glitch hold piece'); // Hold
+										animation.addByPrefix(noteColors[i] + 'holdend', 'glitch hold end'); // Tails
+									}
+						}
+					}
+				setGraphicSize(Std.int(width * noteScale));
+				updateHitbox();
+				antialiasing = true;
 			default:
 				frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 				for (i in 0...9)
