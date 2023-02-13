@@ -41,7 +41,7 @@
 <SubTexture name="left press0017" x="688" y="422" width="165" height="165" frameX="0" frameY="0" frameWidth="165" frameHeight="165" />
 <SubTexture name="left press0018" x="688" y="422" width="165" height="165" frameX="0" frameY="0" frameWidth="165" frameHeight="165" />
 <SubTexture name="left press0019" x="688" y="422" width="165" height="165" frameX="0" frameY="0" frameWidth="165" frameHeight="165" />
-<SubTexture name="purple end hold0000" x="688" y="587" width="53" height="66" frameX="0" frameY="0" frameWidth="53" frameHeight="66" />
+<SubTexture name="purple hold end0000" x="688" y="587" width="53" height="66" frameX="0" frameY="0" frameWidth="53" frameHeight="66" />
 <SubTexture name="purple0000" x="902" y="0" width="156" height="157" frameX="0" frameY="0" frameWidth="165" frameHeight="165" />
 <SubTexture name="purple hold piece0000" x="741" y="587" width="52" height="46" frameX="0" frameY="0" frameWidth="53" frameHeight="46" />
 <SubTexture name="red0000" x="0" y="898" width="157" height="157" frameX="0" frameY="0" frameWidth="157" frameHeight="157" />
@@ -86,7 +86,7 @@
 <SubTexture name="up press0001" x="157" y="898" width="157" height="157" frameX="-3" frameY="-4" frameWidth="164" frameHeight="165" />
 <SubTexture name="up press0002" x="220" y="686" width="163" height="165" frameX="0" frameY="0" frameWidth="164" frameHeight="165" />
 <SubTexture name="up press0003" x="220" y="686" width="163" height="165" frameX="0" frameY="0" frameWidth="164" frameHeight="165" />
-<SubTexture name="E0000" x="902" y="313" width="147" height="147" frameX="0" frameY="0" frameWidth="149" frameHeight="149" />
+<SubTexture name="E0000" x="902" y="313" width="147" height="147" frameX="-13" frameY="0" frameWidth="149" frameHeight="149" />
 <SubTexture name="E confirm0000" x="314" y="898" width="173" height="145" frameX="-9" frameY="-41" frameWidth="226" frameHeight="230" />
 <SubTexture name="E confirm0001" x="314" y="898" width="173" height="145" frameX="-9" frameY="-41" frameWidth="226" frameHeight="230" />
 <SubTexture name="E confirm0002" x="487" y="898" width="182" height="145" frameX="-36" frameY="-41" frameWidth="226" frameHeight="230" />

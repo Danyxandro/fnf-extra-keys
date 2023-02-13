@@ -539,7 +539,7 @@ class ChartingState extends MusicBeatState
 	var stepperWarningNote:FlxUINumericStepper;
 	var stepperGlitchNote:FlxUINumericStepper;
 
-	var noteTypes:Array<String> = ['Normal', 'Fire', 'Death', 'Warning', 'Angel', 'Alt Anim', 'Bob', 'Glitch'];
+	var noteTypes:Array<String> = ['Normal', 'Death','Damage', 'Fire', "Gold", 'Warning', 'Angel', 'Alt Anim', 'Glitch'];
 	var typeChangeLabel:FlxText;
 
 	function addNoteUI():Void
@@ -1652,7 +1652,7 @@ class ChartingState extends MusicBeatState
 							var thetext:String = Std.string(daType);
 							var typeText:FlxText = new FlxText(note.x, note.y, 0, thetext, 25, true);
 							typeText.color = FlxColor.fromRGB(255,0,0);
-							if (daType == 5)
+							if (daType == 7)
 								{
 									typeText.text = "Alt";
 								}
@@ -1698,7 +1698,7 @@ class ChartingState extends MusicBeatState
 						var thetext:String = Std.string(daType);
 						var typeText:FlxText = new FlxText(note.x, note.y, 0, thetext, 25, true);
 						typeText.color = FlxColor.fromRGB(255,0,0);
-						if (daType == 5)
+						if (daType == 7)
 							{
 								typeText.text = "Alt";
 							}
@@ -1746,7 +1746,7 @@ class ChartingState extends MusicBeatState
 							var thetext:String = Std.string(daType);
 							var typeText:FlxText = new FlxText(note.x, note.y, 0, thetext, 25, true);
 							typeText.color = FlxColor.fromRGB(255,0,0);
-							if (daType == 5)
+							if (daType == 7)
 								{
 									typeText.text = "Alt";
 								}
@@ -1793,7 +1793,7 @@ class ChartingState extends MusicBeatState
 						var thetext:String = Std.string(daType);
 						var typeText:FlxText = new FlxText(note.x, note.y, 0, thetext, 25, true);
 						typeText.color = FlxColor.fromRGB(255,0,0);
-						if (daType == 5)
+						if (daType == 7)
 							{
 								typeText.text = "Alt";
 							}

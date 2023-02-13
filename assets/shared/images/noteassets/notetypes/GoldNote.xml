@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="GoldNote.png"><SubTexture name="white0000" x="0" y="0" width="159" height="160" frameX="-2" frameY="-2" frameWidth="164" frameHeight="164" />
+<SubTexture name="purple end hold0000" x="308" y="160" width="50" height="64" frameX="-1" frameY="0" frameWidth="51" frameHeight="64" />
+<SubTexture name="purple hold piece0000" x="358" y="160" width="50" height="44" frameX="-1" frameY="0" frameWidth="51" frameHeight="44" />
+<SubTexture name="purple0000" x="159" y="0" width="154" height="157" frameX="0" frameY="0" frameWidth="154" frameHeight="157" />
+<SubTexture name="green0000" x="154" y="160" width="154" height="155" frameX="0" frameY="-1" frameWidth="154" frameHeight="157" />
+<SubTexture name="red0000" x="313" y="0" width="154" height="157" frameX="0" frameY="0" frameWidth="154" frameHeight="157" />
+<SubTexture name="blue0000" x="0" y="160" width="154" height="156" frameX="0" frameY="-1" frameWidth="154" frameHeight="157" />
+</TextureAtlas>

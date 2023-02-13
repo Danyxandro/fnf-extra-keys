@@ -7477,7 +7477,7 @@ class PlayState extends MusicBeatState
 
 	public function preloadNotes(?loadAll:Bool = false){
 		var nota:FlxSprite = new FlxSprite();
-		nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrows-pixels'), true, 17, 17);
+		/*nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrows-pixels'), true, 17, 17);
 		nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrowEnds'), true, 7, 6);
 		nota.loadGraphic(Paths.image('noteassets/pixel/halo/arrows-pixels'), true, 17, 17);
 		nota.loadGraphic(Paths.image('noteassets/pixel/halo/arrowEnds'), true, 7, 6);
@@ -7486,8 +7486,11 @@ class PlayState extends MusicBeatState
 		nota.loadGraphic(Paths.image('noteassets/pixel/angel/arrows-pixels'), true, 17, 17);
 		nota.loadGraphic(Paths.image('noteassets/pixel/angel/arrowEnds'), true, 7, 6);
 		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrows-pixels'), true, 17, 17);
-		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrowEnds'), true, 7, 6);
+		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrowEnds'), true, 7, 6);*/
 		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types');
+		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_fire');
+		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/HURTNote');
+		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/GoldNote');
 		if(loadAll){
 			nota.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 			nota.loadGraphic(Paths.image('noteassets/pixel/arrows-pixels'), true, 17, 17);

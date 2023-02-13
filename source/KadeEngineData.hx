@@ -161,6 +161,9 @@ class KadeEngineData
 		if(FlxG.save.data.camFactor == null){
 			FlxG.save.data.camFactor = 35;
 		}
+		if(FlxG.save.data.healthValues == null){
+			setHealthValues();
+		}
 		
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 		
@@ -173,5 +176,62 @@ class KadeEngineData
 		Main.watermarks = FlxG.save.data.watermark;
 
 		(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+	}
+
+	public static function setHealthValues():Void{
+		var map:Map<String,Dynamic> = [
+			"0" => new Map<String,Dynamic>(),
+			"1" => new Map<String,Dynamic>(),
+			"2" => new Map<String,Dynamic>(),
+			"3" => new Map<String,Dynamic>(),
+			"4" => new Map<String,Dynamic>(),
+			"5" => new Map<String,Dynamic>(),
+			"6" => new Map<String,Dynamic>(),
+			"missPressed" => ["Hard" => -0.075, "Easy" => -0.025, "Normal" => -0.05]
+		];
+
+		map["0"].set("Hard",["shit"=>-0.1,"bad"=>-0.06,"good"=>0,"sick"=>0.04,"miss"=>-0.15,"missLN"=>-0.05]);
+		map["0"].set("Normal",["shit"=>-0.1,"bad"=>-0.06,"good"=>0.03,"sick"=>0.07,"miss"=>-0.15,"missLN"=>-0.05]);
+		map["0"].set("Easy",["shit"=>-0.07,"bad"=>-0.03,"good"=>0.03,"sick"=>0.07,"miss"=>-0.1,"missLN"=>-0.03]);
+		map["0"].set("score",["shitScore"=>-100,"badScore"=>0,"goodScore"=>200,"sickScore"=>350,"missScore"=>-150,"missLNScore"=>-50]);
+		map["0"].set("damage",false);
+
+		map["1"].set("Hard",["shit"=>0,"bad"=>0,"good"=>-2,"sick"=>-2,"miss"=>0,"missLN"=>0]);
+		map["1"].set("Normal",["shit"=>0,"bad"=>0,"good"=>-1,"sick"=>-1,"miss"=>0,"missLN"=>0]);
+		map["1"].set("Easy",["shit"=>0,"bad"=>0,"good"=>-0.75,"sick"=>-0.75,"miss"=>0,"missLN"=>0]);
+		map["1"].set("score",["shitScore"=>0,"badScore"=>0,"goodScore"=>-1000,"sickScore"=>-1000,"missScore"=>0,"missLNScore"=>0]);
+		map["1"].set("damage",true);
+
+		map["2"].set("Hard",["shit"=>0,"bad"=>0,"good"=>-0.1,"sick"=>-0.1,"miss"=>0,"missLN"=>0]);
+		map["2"].set("Normal",["shit"=>0,"bad"=>0,"good"=>-0.075,"sick"=>-0.075,"miss"=>0,"missLN"=>0]);
+		map["2"].set("Easy",["shit"=>0,"bad"=>0,"good"=>-0.05,"sick"=>-0.05,"miss"=>0,"missLN"=>0]);
+		map["2"].set("score",["shitScore"=>0,"badScore"=>0,"goodScore"=>-300,"sickScore"=>-300,"missScore"=>0,"missLNScore"=>0]);
+		map["2"].set("damage",true);
+
+		map["3"].set("Hard",["shit"=>0,"bad"=>0,"good"=>-0.2,"sick"=>-0.2,"miss"=>0,"missLN"=>0]);
+		map["3"].set("Normal",["shit"=>0,"bad"=>0,"good"=>-0.15,"sick"=>-0.15,"miss"=>0,"missLN"=>0]);
+		map["3"].set("Easy",["shit"=>0,"bad"=>0,"good"=>-0.1,"sick"=>-0.1,"miss"=>0,"missLN"=>0]);
+		map["3"].set("score",["shitScore"=>0,"badScore"=>0,"goodScore"=>-500,"sickScore"=>-500,"missScore"=>0,"missLNScore"=>0]);
+		map["3"].set("damage",true);
+
+		map["4"].set("Hard",["shit"=>0.14,"bad"=>0.14,"good"=>0.14,"sick"=>0.14,"miss"=>-0.3,"missLN"=>-0.1]);
+		map["4"].set("Normal",["shit"=>0.1,"bad"=>0.1,"good"=>0.1,"sick"=>0.1,"miss"=>-0.2,"missLN"=>-0.075]);
+		map["4"].set("Easy",["shit"=>0.1,"bad"=>0.1,"good"=>0.1,"sick"=>0.1,"miss"=>-0.1,"missLN"=>-0.05]);
+		map["4"].set("score",["shitScore"=>420,"badScore"=>420,"goodScore"=>420,"sickScore"=>420,"missScore"=>-600,"missLNScore"=>-100]);
+		map["4"].set("damage",false);
+
+		map["5"].set("Hard",["shit"=>-0.1,"bad"=>-0.06,"good"=>0,"sick"=>0.04,"miss"=>-1,"missLN"=>-0.15]);
+		map["5"].set("Normal",["shit"=>-0.1,"bad"=>-0.06,"good"=>0.03,"sick"=>0.07,"miss"=>-0.75,"missLN"=>-0.15]);
+		map["5"].set("Easy",["shit"=>-0.07,"bad"=>-0.03,"good"=>0.03,"sick"=>0.07,"miss"=>-0.5,"missLN"=>-0.1]);
+		map["5"].set("score",["shitScore"=>-100,"badScore"=>0,"goodScore"=>200,"sickScore"=>350,"missScore"=>-1000,"missLNScore"=>-150]);
+		map["5"].set("damage",false);
+
+		map["6"].set("Hard",["shit"=>-0.05,"bad"=>-0.03,"good"=>0.03,"sick"=>0.07,"miss"=>-0.3,"missLN"=>-0.1]);
+		map["6"].set("Normal",["shit"=>-0.05,"bad"=>-0.03,"good"=>0.07,"sick"=>0.15,"miss"=>-0.3,"missLN"=>-0.07]);
+		map["6"].set("Easy",["shit"=>-0.03,"bad"=>0,"good"=>0.07,"sick"=>0.15,"miss"=>-0.2,"missLN"=>-0.05]);
+		map["6"].set("score",["shitScore"=>-50,"badScore"=>100,"goodScore"=>300,"sickScore"=>500,"missScore"=>-300,"missLNScore"=>-75]);
+		map["6"].set("damage",false);
+
+		FlxG.save.data.healthValues = map;
 	}
 }
