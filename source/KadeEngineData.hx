@@ -187,6 +187,8 @@ class KadeEngineData
 			"4" => new Map<String,Dynamic>(),
 			"5" => new Map<String,Dynamic>(),
 			"6" => new Map<String,Dynamic>(),
+			"7" => new Map<String,Dynamic>(),
+			"8" => new Map<String,Dynamic>(),
 			"missPressed" => ["Hard" => -0.075, "Easy" => -0.025, "Normal" => -0.05]
 		];
 
@@ -231,6 +233,18 @@ class KadeEngineData
 		map["6"].set("Easy",["shit"=>-0.03,"bad"=>0,"good"=>0.07,"sick"=>0.15,"miss"=>-0.2,"missLN"=>-0.05]);
 		map["6"].set("score",["shitScore"=>-50,"badScore"=>100,"goodScore"=>300,"sickScore"=>500,"missScore"=>-300,"missLNScore"=>-75]);
 		map["6"].set("damage",false);
+
+		map["7"].set("Hard",["shit"=>-0.1,"bad"=>-0.06,"good"=>0,"sick"=>0.04,"miss"=>-0.15,"missLN"=>-0.05]);
+		map["7"].set("Normal",["shit"=>-0.1,"bad"=>-0.06,"good"=>0.03,"sick"=>0.07,"miss"=>-0.15,"missLN"=>-0.05]);
+		map["7"].set("Easy",["shit"=>-0.07,"bad"=>-0.03,"good"=>0.03,"sick"=>0.07,"miss"=>-0.1,"missLN"=>-0.03]);
+		map["7"].set("score",["shitScore"=>-100,"badScore"=>0,"goodScore"=>200,"sickScore"=>350,"missScore"=>-150,"missLNScore"=>-50]);
+		map["7"].set("damage",false);
+
+		map["8"].set("Hard",["shit"=>0,"bad"=>0,"good"=>-0.003,"sick"=>-0.003,"miss"=>0,"missLN"=>0]);
+		map["8"].set("Normal",["shit"=>0,"bad"=>0,"good"=>-0.002,"sick"=>-0.002,"miss"=>0,"missLN"=>0]);
+		map["8"].set("Easy",["shit"=>0,"bad"=>0,"good"=>-0.001,"sick"=>-0.001,"miss"=>0,"missLN"=>0]);
+		map["8"].set("score",["shitScore"=>0,"badScore"=>0,"goodScore"=>-300,"sickScore"=>-300,"missScore"=>0,"missLNScore"=>0]);
+		map["8"].set("damage",true);
 
 		FlxG.save.data.healthValues = map;
 	}

@@ -290,6 +290,9 @@ class PlayState extends MusicBeatState
 	private var charCam:Array<Int> = [0,0,0,0];
 	public var camFactor:Float = 35;
 	private var posiciones:Array<Float> = [0,0];
+	public var healthValues:Map<String,Dynamic> = new Map<String,Dynamic>(); 
+	public var goldAnim:Array<String> = ['singHey','singHey'];
+	private var health2:Map<String,Dynamic> = new Map<String,Dynamic>();
 
 	override public function create()
 	{
@@ -371,6 +374,31 @@ class PlayState extends MusicBeatState
 		daSplash.alpha = 0;
 		noteSplashes.add(daSplash);
 
+		var map:Map<String,Dynamic> = FlxG.save.data.healthValues;
+		var map2:Map<String,Dynamic>;
+		var map3:Map<String,Dynamic>;
+		for (key in map.keys()){
+			if(key != "missPressed"){
+				healthValues.set(key,new Map<String,Dynamic>());
+				map2 = map.get(key);
+				for(key2 in map2.keys()){
+					map3 = map2.get(key2);
+					if(key2 != "damage"){
+						var aux:Map<String,Dynamic> = [
+							for(key3 in map3.keys())
+								key3 => map3[key3]
+						];
+						healthValues[key].set(key2,aux);
+					}else{
+						healthValues[key].set(key2,map[key].get("damage"));
+					}
+				}
+			}else{
+				healthValues.set(key,map.get("missPressed"));
+			}
+			//healthValues.set(key,map.get(key).copy());
+		}
+		setHealthValues(storyDifficulty);
 
 		#if windows
 		// Making difficulty text for Discord Rich Presence.
@@ -1331,6 +1359,7 @@ class PlayState extends MusicBeatState
 		botPlayState.alpha = 0;
 		if(PlayStateChangeables.botPlay && !loadRep){
 			botPlayState.alpha = 1;
+			setHealthValues(-1);
 		}
 		add(botPlayState);
 
@@ -2259,6 +2288,7 @@ class PlayState extends MusicBeatState
 							ana.hit = false;
 							ana.hitJudge = "shit";
 							ana.nearestNote = [];
+							health += healthValues["missPressed"].get(storyDifficultyText);
 							//health -= 0.20;
 						}
 				}
@@ -2828,7 +2858,7 @@ class PlayState extends MusicBeatState
 							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
 	
 							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
-							var pPre:Array<String> = ['purple', 'blue', 'green', 'red'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
 								switch (mania)
 								{
 									case 1:
@@ -4383,6 +4413,7 @@ class PlayState extends MusicBeatState
 									}
 									else
 									{
+										if(!daNote.mustPress){
 										var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
 										swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
 											+ Note.swagWidth / 2
@@ -4390,6 +4421,16 @@ class PlayState extends MusicBeatState
 										swagRect.y = daNote.frameHeight - swagRect.height;
 		
 										daNote.clipRect = swagRect;
+
+										}else{
+											if(!healthValues.get(""+daNote.noteType).get("damage")){
+											var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
+											swagRect.height = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
+											swagRect.y = daNote.frameHeight - swagRect.height;
+	
+											daNote.clipRect = swagRect;
+											}
+										}
 									}
 								}
 							}
@@ -4424,6 +4465,7 @@ class PlayState extends MusicBeatState
 									}
 									else
 									{
+										if(!daNote.mustPress){
 										var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
 										swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
 											+ Note.swagWidth / 2
@@ -4431,6 +4473,15 @@ class PlayState extends MusicBeatState
 										swagRect.height -= swagRect.y;
 		
 										daNote.clipRect = swagRect;
+										}else{
+											if(!healthValues.get(""+daNote.noteType).get("damage")){
+											var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
+											swagRect.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
+											swagRect.height -= swagRect.y;
+	
+											daNote.clipRect = swagRect;
+											}
+										}
 									}
 								}
 							}
@@ -4452,8 +4503,14 @@ class PlayState extends MusicBeatState
 						if (daNote.alt)
 							altAnim = '-alt';
 
-						dad.playAnim('sing' + sDir[daNote.noteData] + altAnim, true);
-
+						switch(daNote.noteType){
+							case 4:
+								dad.playAnim(goldAnim[1], true);
+							default:
+							if(!healthValues[""+daNote.noteType].get("damage"))
+								dad.playAnim('sing' + sDir[daNote.noteData] + altAnim, true);
+						}
+					if(!healthValues[""+daNote.noteType].get("damage")){
 						if(FlxG.save.data.singCam){
 							switch(sDir[daNote.noteData].toUpperCase()){
 								case "UP":
@@ -4491,7 +4548,7 @@ class PlayState extends MusicBeatState
 							health -= SONG.noteValues[0];
 						*/
 						
-						if (FlxG.save.data.cpuStrums)
+						if (FlxG.save.data.cpuStrums && !healthValues.get(""+daNote.noteType).get("damage"))
 						{
 							cpuStrums.forEach(function(spr:FlxSprite)
 							{
@@ -4596,7 +4653,7 @@ class PlayState extends MusicBeatState
 	
 						if (SONG.needsVoices)
 							vocals.volume = 1;
-	
+					}//fein del if note.damage
 						daNote.active = false;
 
 
@@ -4654,12 +4711,10 @@ class PlayState extends MusicBeatState
 						&& PlayStateChangeables.useDownscroll)
 						&& daNote.mustPress)
 					{
-
-							switch (daNote.noteType)
-							{
+						if(!healthValues.get(""+daNote.noteType).get("damage")){
 						
-								case 0: //normal
-								{
+								/*case 0: //normal
+								{*/
 									if (daNote.isSustainNote && daNote.wasGoodHit)
 										{
 											daNote.kill();
@@ -4681,8 +4736,11 @@ class PlayState extends MusicBeatState
 													}
 													if (daNote.isParent)
 													{
-														health -= 0.15; // give a health punishment for failing a LN
-														trace("hold fell over at the start");
+														//health -= 0.15;  give a health punishment for failing a LN
+														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
+														trace("hold fell over at the start\nType: " + daNote.noteType + " value: "
+															+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
 														for (i in daNote.children)
 														{
 															i.alpha = 0.3;
@@ -4696,8 +4754,9 @@ class PlayState extends MusicBeatState
 															&& daNote.sustainActive
 															&& daNote.spotInLine != daNote.parent.children.length)
 														{
-															health -= 0.2; // give a health punishment for failing a LN
-															trace("hold fell over at " + daNote.spotInLine);
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+															trace("hold fell over at " + daNote.spotInLine + "\nNote type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
 															for (i in daNote.parent.children)
 															{
 																i.alpha = 0.3;
@@ -4710,7 +4769,9 @@ class PlayState extends MusicBeatState
 														else if (!daNote.wasGoodHit
 															&& !daNote.isSustainNote)
 														{
-															health -= 0.15;
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
+															trace("Note type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss"));
 														}
 													}
 												}
@@ -4731,13 +4792,16 @@ class PlayState extends MusicBeatState
 				
 												if (daNote.isParent)
 												{
-													health -= 0.15; // give a health punishment for failing a LN
-													trace("hold fell over at the start");
+													//health -= 0.15;  give a health punishment for failing a LN
+													health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+													songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
+													trace("hold fell over at the start\nType: " + daNote.noteType + " value: "
+														+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
 													for (i in daNote.children)
 													{
 														i.alpha = 0.3;
 														i.sustainActive = false;
-														trace(i.alpha);
+														//trace(i.alpha);
 													}
 												}
 												else
@@ -4747,13 +4811,14 @@ class PlayState extends MusicBeatState
 														&& daNote.sustainActive
 														&& daNote.spotInLine != daNote.parent.children.length)
 													{
-														health -= 0.25; // give a health punishment for failing a LN
-														trace("hold fell over at " + daNote.spotInLine);
+														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+														trace("hold fell over at " + daNote.spotInLine + "\nNote type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
 														for (i in daNote.parent.children)
 														{
 															i.alpha = 0.3;
 															i.sustainActive = false;
-															trace(i.alpha);
+															//trace(i.alpha);
 														}
 														if (daNote.parent.wasGoodHit)
 															misses++;
@@ -4762,7 +4827,9 @@ class PlayState extends MusicBeatState
 													else if (!daNote.wasGoodHit
 														&& !daNote.isSustainNote)
 													{
-														health -= 0.15;
+														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
+														trace("Note type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss"));
 													}
 												}
 											}
@@ -4771,51 +4838,8 @@ class PlayState extends MusicBeatState
 										daNote.visible = false;
 										daNote.kill();
 										notes.remove(daNote, true);
-								}
-								case 1: //fire notes - makes missing them not count as one
-								{
-									daNote.kill();
-									notes.remove(daNote, true);
-									daNote.destroy();
-								}
-								case 2: //halo notes, same as fire
-								{
-									daNote.kill();
-									notes.remove(daNote, true);
-									daNote.destroy();
-								}
-								case 3:  //warning notes, removes half health and then removed so it doesn't repeatedly deal damage
-								{
-									health -= 1;
-									vocals.volume = 0;
-									badNoteHit();
-									daNote.kill();
-									notes.remove(daNote, true);
-									daNote.destroy();
-								}
-								case 4: //angel notes
-								{
-									daNote.kill();
-									notes.remove(daNote, true);
-									daNote.destroy();
-								}
-								case 6:  //bob notes
-								{
-									daNote.kill();
-									notes.remove(daNote, true);
-									daNote.destroy();
-								}
-								case 7: //gltich notes
-								{
-									HealthDrain();
-									daNote.kill();
-									notes.remove(daNote, true);
-									daNote.destroy();
-								}
-
-
-
-							}
+								//}fin del default
+							}//fin del if note.damage
 						}
 						if(PlayStateChangeables.useDownscroll && daNote.y > strumLine.y ||
 							!PlayStateChangeables.useDownscroll && daNote.y < strumLine.y)
@@ -4831,12 +4855,13 @@ class PlayState extends MusicBeatState
 											trace(n);
 											if(n != null)
 											{
+												if(!healthValues.get(""+daNote.noteType).get("damage")){
 												goodNoteHit(daNote);
 												boyfriend.holdTimer = daNote.sustainLength;
+												}
 											}
 										}else {
-											if (!daNote.burning && !daNote.death && !daNote.bob)
-												{
+											if(!healthValues.get(""+daNote.noteType).get("damage")){
 													goodNoteHit(daNote);
 													boyfriend.holdTimer = daNote.sustainLength;
 													playerStrums.forEach(function(spr:FlxSprite)
@@ -5173,39 +5198,78 @@ class PlayState extends MusicBeatState
 			switch(daRating)
 			{
 				case 'shit':
-					score = -300;
+					score = healthValues.get(""+daNote.noteType).get("score").get("shitScore");
 					combo = 0;
 					misses++;
 					if (!FlxG.save.data.gthm)
-						health -= 0.2;
+						health += healthValues.get(""+daNote.noteType).get(storyDifficultyText).get("shit");
 					ss = false;
 					shits++;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit -= 1;
+					/*if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit -= 1;*/
+					if(healthValues.get(""+daNote.noteType).get("damage")){
+						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('shit') < 0)
+							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+						daRating = "sick";
+					}else{
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.25;
+					}
 				case 'bad':
 					daRating = 'bad';
-					score = 0;
+					score = healthValues.get(""+daNote.noteType).get("score").get("badScore");
 					if (!FlxG.save.data.gthm)
-						health -= 0.06;
+						health += healthValues.get(""+daNote.noteType).get(storyDifficultyText).get("bad");
 					ss = false;
 					bads++;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.50;
+					/*if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 0.50;*/
+					if(healthValues.get(""+daNote.noteType).get("damage")){
+						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('bad') < 0)
+							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+						daRating = "good";
+					}else{
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.50;
+					}
 				case 'good':
 					daRating = 'good';
-					score = 200;
+					score = healthValues.get(""+daNote.noteType).get("score").get("goodScore");
 					ss = false;
 					goods++;
 					if (health < 2)
-						health += 0.04;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 0.75;
+						health += healthValues.get(""+daNote.noteType).get(storyDifficultyText).get("good");
+					/*if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 0.75;*/
+					if(healthValues.get(""+daNote.noteType).get("damage")){
+						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('good') < 0)
+							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+						daRating = "shit";
+					}else{
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 0.75;
+					}
 				case 'sick':
+					score = healthValues.get(""+daNote.noteType).get("score").get("sickScore");
 					if (health < 2)
-						health += 0.1;
-					if (FlxG.save.data.accuracyMod == 0)
-						totalNotesHit += 1;
+						health += healthValues.get(""+daNote.noteType).get(storyDifficultyText).get("sick");
+					/*if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 1;*/
 					sicks++;
+					if(healthValues.get(""+daNote.noteType).get("damage")){
+						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('sick') < 0)
+							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+						daRating = "shit";
+					}else{
+						if (FlxG.save.data.accuracyMod == 0)
+							totalNotesHit += 1;
+					}
+			}
+
+			if(healthValues.get(""+daNote.noteType).get("damage")){
+				combo = 0;
+				misses++;
+				totalNotesHit -= 1;
 			}
 
 			// trace('Wife accuracy loss: ' + wife + ' | Rating: ' + daRating + ' | Score: ' + score + ' | Weight: ' + (1 - wife));
@@ -5769,8 +5833,10 @@ class PlayState extends MusicBeatState
 													if (holdArray[ignoreList[shit]] || pressArray[ignoreList[shit]])
 														inIgnoreList = true;
 												}
-												if (!inIgnoreList && !PlayStateChangeables.ghost /*!FlxG.save.data.ghost*/)
+												if (!inIgnoreList && !PlayStateChangeables.ghost /*!FlxG.save.data.ghost*/){
+													health += healthValues["missPressed"].get(storyDifficultyText);
 													noteMiss(1, null);
+												}
 											}
 										}
 									}
@@ -5904,8 +5970,10 @@ class PlayState extends MusicBeatState
 								{
 									for (i in 0...pressArray.length)
 										{ // if a direction is hit that shouldn't be
-											if (pressArray[i] && !directionList.contains(i))
+											if (pressArray[i] && !directionList.contains(i)){
+												health += healthValues["missPressed"].get(storyDifficultyText);
 												noteMiss(i, null);
+											}
 										}
 								}
 							if (FlxG.save.data.gthm)
@@ -5940,8 +6008,10 @@ class PlayState extends MusicBeatState
 						else if (!PlayStateChangeables.ghost/*!FlxG.save.data.ghost*/)
 							{
 								for (shit in 0...keyAmmo[mania])
-									if (pressArray[shit])
+									if (pressArray[shit]){
+										health += healthValues["missPressed"].get(storyDifficultyText);
 										noteMiss(shit, null);
+									}
 							}
 					}
 
@@ -6168,7 +6238,7 @@ class PlayState extends MusicBeatState
 	{
 		if (!boyfriend.stunned)
 		{
-			health -= 0.04;
+			//health -= 0.04;
 			if (combo > 5 && gf.animOffsets.exists('sad'))
 			{
 				gf.playAnim('sad');
@@ -6184,12 +6254,14 @@ class PlayState extends MusicBeatState
 					saveJudge.push("miss");
 				}
 			}
-			else
+			else{
 				if (!loadRep)
 				{
 					saveNotes.push([Conductor.songPosition,0,direction,166 * Math.floor((PlayState.rep.replay.sf / 60) * 1000) / 166]);
 					saveJudge.push("miss");
 				}
+				songScore -= 10;
+			}
 
 			//var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition);
 			//var wife:Float = EtternaFunctions.wife3(noteDiff, FlxG.save.data.etternaMode ? 1 : 1.7);
@@ -6348,7 +6420,8 @@ class PlayState extends MusicBeatState
 					if (!note.isSustainNote)
 					{
 						popUpScore(note);
-						combo += 1;
+						if(!healthValues.get(""+note.noteType).get("damage"))
+							combo += 1;
 					}
 					else
 						totalNotesHit += 1;
@@ -6365,8 +6438,13 @@ class PlayState extends MusicBeatState
 
 					if (!PlayStateChangeables.bothSide)
 					{
-						//if (boyfriend.curCharacter == 'bf')
-							boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+						switch(note.noteType){
+							case 4:
+								boyfriend.playAnim(goldAnim[0], true);
+							default:
+							if(!healthValues.get(""+note.noteType).get("damage"))
+								boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+						}
 						/*else
 							boyfriend.playAnim('sing' + sDir[note.noteData] + altAnim, true);*/
 						boyfriend.holdTimer = 0;
@@ -6400,9 +6478,15 @@ class PlayState extends MusicBeatState
 							}
 						}
 					}
-					else if (note.noteData <= 3)
+					else if (note.noteData /*<=*/ > 3)
 					{
-						boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+						switch(note.noteType){
+							case 4:
+								boyfriend.playAnim(goldAnim[0], true);
+							default:
+							if(!healthValues.get(""+note.noteType).get("damage"))
+								boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+						}
 						boyfriend.holdTimer = 0;
 						if(FlxG.save.data.singCam){
 							switch(bfsDir[note.noteData].toUpperCase()){
@@ -6435,7 +6519,14 @@ class PlayState extends MusicBeatState
 					}
 					else
 					{
-						dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
+						switch(note.noteType){
+							case 4:
+								dad.playAnim(goldAnim[0], true);
+							default:
+							if(!healthValues.get(""+note.noteType).get("damage"))
+								dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
+						}
+						//dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
 						dad.holdTimer = 0;
 						if(FlxG.save.data.singCam){
 							switch(sDir[note.noteData].toUpperCase()){
@@ -6473,7 +6564,7 @@ class PlayState extends MusicBeatState
 						luaModchart.executeState('playerOneSing', [note.noteData, Conductor.songPosition]);
 					#end
 
-					if (note.burning) //fire note
+					/*if (note.burning) //fire note
 						{
 							badNoteHit();
 							health -= 0.45;
@@ -6504,7 +6595,7 @@ class PlayState extends MusicBeatState
 					else if (note.bob) //bob note
 						{
 							HealthDrain();
-						}
+						}*/
 
 
 					if(!loadRep && note.mustPress)
@@ -6516,6 +6607,7 @@ class PlayState extends MusicBeatState
 						saveJudge.push(note.rating);
 					}
 					
+					if(!healthValues[""+note.noteType].get("damage"))
 					playerStrums.forEach(function(spr:FlxSprite)
 					{
 						if (Math.abs(note.noteData) == spr.ID)
@@ -6594,8 +6686,8 @@ class PlayState extends MusicBeatState
 			badNoteHit();
 			new FlxTimer().start(0.01, function(tmr:FlxTimer)
 			{
-				health -= 0.005;
-			}, 300);
+				health += healthValues.get("8").get(storyDifficultyText).get("sick");
+			}, 150);//300);
 		}
 
 	function badNoteHit():Void
@@ -7349,7 +7441,7 @@ class PlayState extends MusicBeatState
 							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
 	
 							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
-							var pPre:Array<String> = ['purple', 'blue', 'green', 'red'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
 								switch (mania)
 								{
 									case 1:
@@ -7495,5 +7587,59 @@ class PlayState extends MusicBeatState
 			nota.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 			nota.loadGraphic(Paths.image('noteassets/pixel/arrows-pixels'), true, 17, 17);
 		}
+	}
+
+	public function setHealthValues(difficulty:Int){
+		switch (difficulty)
+		{
+			case 0:
+				storyDifficultyText = "Easy";
+			case 1:
+				storyDifficultyText = "Normal";
+			case 2:
+				storyDifficultyText = "Hard";
+			case -1:
+				var map:Map<String,Dynamic> = healthValues;
+				var map2:Map<String,Dynamic>;
+				var map3:Map<String,Dynamic>;
+				for (key in map.keys()){
+					if(key != "missPressed"){
+						health2.set(key,new Map<String,Dynamic>());
+						map2 = map.get(key);
+						for(key2 in map2.keys()){
+							map3 = map2.get(key2);
+							if(key2 != "damage"){
+								var aux:Map<String,Dynamic> = [
+									for(key3 in map3.keys())
+										key3 => map3[key3]
+								];
+								health2[key].set(key2,aux);
+							}else{
+								health2[key].set(key2,map[key].get("damage"));
+							}
+						}
+					}else{
+						health2.set(key,map.get("missPressed"));
+					}
+					//healthValues.set(key,map.get(key).copy());
+				}
+				for (key2 in healthValues.keys()){
+					if(key2 != "missPressed"){
+					trace("Key: " + key2 + " map:\n"+healthValues[key2].get(storyDifficultyText));
+					var map:Map<String,Dynamic> = healthValues[key2].get(storyDifficultyText);
+					for(key3 in map.keys()){
+						var valor:Float = healthValues[key2].get(storyDifficultyText).get(key3);
+						if(valor < 0){
+							healthValues[key2].get(storyDifficultyText).set(key3, 0);
+						}
+					}//Fin del for
+					}//Fin del if
+				}
+				SONG.validScore = false;
+			case -2:
+				for (key in health2.keys())
+					healthValues.set(key,health2.get(key));
+		}
+		//trace(storyDifficultyText + " values:\n" + healthValues.toString());
 	}
 }//Fin de la clase

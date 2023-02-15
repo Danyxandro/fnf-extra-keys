@@ -736,12 +736,20 @@ class Note extends FlxSprite
 				setGraphicSize(Std.int(width * PlayState.daPixelZoom * pixelnoteScale));
 				//setGraphicSize(Std.int(width * PlayState.daPixelZoom * noteScale));
 				updateHitbox();
-				if(noteType == 1){
-					if(FlxG.save.data.downscroll)
-						offset.y += 66;
-					else
-						offset.y += 26;
-					offset.x += 24;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += 66;
+						else
+							offset.y += 26;
+						offset.x += 19;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += 66;
+						else
+							offset.y += 26;
+						offset.x += 26;
+					}
 				}
 			case 'dance':
 				frames = Paths.getSparrowAtlas('keen/Dance_assets');
@@ -761,12 +769,20 @@ class Note extends FlxSprite
 				setGraphicSize(Std.int(width * noteScale));
 				updateHitbox();
 				antialiasing = true;
-				if(noteType == 1){
-					if(FlxG.save.data.downscroll)
-						offset.y += 161;
-					else
-						offset.y += 41;
-					offset.x += 28;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += 161;
+						else
+							offset.y += 41;
+						offset.x += 34;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += 161;
+						else
+							offset.y += 41;
+						offset.x += 28;
+					}
 				}
 			default:
 				frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
@@ -829,12 +845,20 @@ class Note extends FlxSprite
 				setGraphicSize(Std.int(width * noteScale));
 				updateHitbox();
 				antialiasing = true;
-				if(noteType == 1){
-					if(FlxG.save.data.downscroll)
-						offset.y += 161;
-					else
-						offset.y += 41;
-					offset.x += 28;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += 161;
+						else
+							offset.y += 41;
+						offset.x += 34;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += 161;
+						else
+							offset.y += 41;
+						offset.x += 28;
+					}
 				}					
 		}
 
@@ -950,7 +974,7 @@ class Note extends FlxSprite
 				}
 			}
 		}
-		if(!ignoreTypes.contains(2) && noteType == 2){
+		if(!ignoreTypes.contains(3) && noteType == 3){
 			frames = Paths.getSparrowAtlas('noteassets/notetypes/HURTNote');
 			var colores = ['purple', 'blue', 'green', 'red', 'white', 'purple', 'blue', 'green', 'red'];
 			for (i in 0...9)
@@ -960,7 +984,7 @@ class Note extends FlxSprite
 				animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
 			}
 		}
-		if(!ignoreTypes.contains(3) && noteType == 3){
+		if(!ignoreTypes.contains(2) && noteType == 2){
 			frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types');
 			for (i in 0...9)
 			{

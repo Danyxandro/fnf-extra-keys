@@ -999,6 +999,8 @@ class ResetSettings extends Option
 		FlxG.save.data.gracetmr = null;
 		FlxG.save.data.singCam == null;
 		FlxG.save.data.camFactor == null;
+		FlxG.save.data.enableCharchange = true;
+		KadeEngineData.setHealthValues();
 
 		KadeEngineData.initSave();
 		confirm = false;

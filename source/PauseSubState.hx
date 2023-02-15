@@ -264,7 +264,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayStateChangeables.botPlay = false;
 						texto = "Botplay";
 						PlayState.instance.botPlayState.alpha = 0;
-						//PlayState.instance.setHealthValues(-2);
+						PlayState.instance.setHealthValues(-2);
 					}else{
 						PlayStateChangeables.botPlay = true;
 						PlayStateChangeables.usedBotplay = true;
@@ -272,10 +272,10 @@ class PauseSubState extends MusicBeatSubstate
 							PlayStateChangeables.weekBotplay = true;
 						texto = "Disable botplay";
 						PlayState.instance.botPlayState.alpha = 1;
-						/*if(botFlag)
+						if(botFlag)
 							PlayState.instance.setHealthValues(PlayState.storyDifficulty);
 						else
-							PlayState.instance.setHealthValues(-1);*/
+							PlayState.instance.setHealthValues(-1);
 					}
 					var songText:Alphabet = new Alphabet(0, 30, texto, true, false);
 					songText.isMenuItem = true;
