@@ -40,7 +40,7 @@ class FreeplayState extends MusicBeatState
 	var randomManiaText:FlxText;
 	var noteTypesText:FlxText;
 
-	var keyAmmo:Array<Int> = [4, 6, 9, 5, 7, 8, 1, 2, 3];
+	var keyAmmo:Array<Int> = [0, 4, 6, 9, 5, 7, 8, 1, 2, 3];
 	var randMania:Array<String> = ["Off", "Low Chance", "Medium Chance", "High Chance"];
 	var randNoteTypes:Array<String> = ["Off", "Low Chance", "Medium Chance", "High Chance", 'Unfair'];
 
@@ -164,7 +164,7 @@ class FreeplayState extends MusicBeatState
 		randomManiaText = new FlxText(randomText.x, randomText.y + 64, "Randomly change Amount of keys: " + randMania[FlxG.save.data.randomMania] + " (Y)", 16);
 		randomManiaText.setFormat(Paths.font("vcr.ttf"), 14, FlxColor.WHITE, RIGHT);
 
-		maniaText = new FlxText(randomText.x, randomText.y + 96, "Set ammount of keys: " + keyAmmo[FlxG.save.data.mania] + " (4 = default) (U)", 24);
+		maniaText = new FlxText(randomText.x, randomText.y + 96, "Set ammount of keys: " + keyAmmo[FlxG.save.data.mania+1] + " (0 = default) (U)", 24);
 		maniaText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT);
 
 		noteTypesText = new FlxText(randomText.x, randomText.y + 128, "Randomly Place Note Types: " + randNoteTypes[FlxG.save.data.randomNoteTypes] + "(I)", 24);
@@ -365,8 +365,8 @@ class FreeplayState extends MusicBeatState
 		{
 			FlxG.save.data.mania += 1;
 			if (FlxG.save.data.mania > 8)
-				FlxG.save.data.mania = 0;
-			maniaText.text = "Set ammount of keys: " + keyAmmo[FlxG.save.data.mania] + " (4 = default) (U)";
+				FlxG.save.data.mania = -1;
+			maniaText.text = "Set ammount of keys: " + keyAmmo[FlxG.save.data.mania+1] + " (0 = default) (U)";
 		}
 		if (FlxG.keys.justPressed.I && !searchExtended)
 			{

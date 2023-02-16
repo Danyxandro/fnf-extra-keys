@@ -108,10 +108,10 @@ class PlayState extends MusicBeatState
 
 	var songLength:Float = 0;
 	var kadeEngineWatermark:FlxText;
-	
+	public var storyDifficultyText:String = "";
+
 	#if windows
 	// Discord RPC variables
-	var storyDifficultyText:String = "";
 	var iconRPC:String = "";
 	var detailsText:String = "";
 	var detailsPausedText:String = "";
@@ -293,6 +293,23 @@ class PlayState extends MusicBeatState
 	public var healthValues:Map<String,Dynamic> = new Map<String,Dynamic>(); 
 	public var goldAnim:Array<String> = ['singHey','singHey'];
 	private var health2:Map<String,Dynamic> = new Map<String,Dynamic>();
+	/*public var noteOffsets = {
+		downscroll:{
+		trickyYNormal:161,
+		trickyYSmall:161,
+		pixelYNormal:66,
+		pixelYSmall:66
+	},
+	trickyXNormal:30,
+	trickyXSmall:18,
+	pixelXNormal:35,
+	pixelXSmall:46,
+	upscroll:{
+		trickyYNormal:51,
+		trickyYSmall:31,
+		pixelYNormal:26,
+		pixelYSmall:26
+	}};*/
 
 	override public function create()
 	{
@@ -400,6 +417,8 @@ class PlayState extends MusicBeatState
 		}
 		setHealthValues(storyDifficulty);
 
+		//noteOffsets = cast Json.parse( Assets.getText( Paths.json('offsets') ).trim());
+
 		#if windows
 		// Making difficulty text for Discord Rich Presence.
 		storyDifficultyText = CoolUtil.difficultyFromInt(storyDifficulty);
@@ -464,7 +483,7 @@ class PlayState extends MusicBeatState
 
 		if (PlayStateChangeables.bothSide)
 			mania = 5;
-		else if (FlxG.save.data.mania != 0 && PlayStateChangeables.randomNotes)
+		else if (FlxG.save.data.mania != -1 && PlayStateChangeables.randomNotes)
 			mania = FlxG.save.data.mania;
 
 		maniaToChange = mania;
@@ -4646,7 +4665,7 @@ class PlayState extends MusicBeatState
 	
 						#if windows
 						if (luaModchart != null)
-							luaModchart.executeState('playerTwoSing', [Math.abs(daNote.noteData), Conductor.songPosition]);
+							luaModchart.executeState('playerTwoSing', [Math.abs(daNote.noteData), Conductor.songPosition, daNote.noteType, daNote.isSustainNote]);
 						#end
 
 						dad.holdTimer = 0;
@@ -5185,7 +5204,7 @@ class PlayState extends MusicBeatState
 			coolText.x = FlxG.width * 0.55;
 			coolText.y -= 350;
 			coolText.cameras = [camHUD];
-			//
+			var wrongNote:Bool = false;
 	
 			var rating:FlxSprite = new FlxSprite();
 			var score:Float = 350;
@@ -5208,9 +5227,11 @@ class PlayState extends MusicBeatState
 					/*if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit -= 1;*/
 					if(healthValues.get(""+daNote.noteType).get("damage")){
-						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('shit') < 0)
+						if((!PlayStateChangeables.botPlay || (PlayStateChangeables.botPlay && !loadRep)) && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('shit') < 0){
 							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
-						daRating = "sick";
+							wrongNote = true;
+						}
+						daRating = "bad";
 					}else{
 						if (FlxG.save.data.accuracyMod == 0)
 							totalNotesHit += 0.25;
@@ -5225,9 +5246,11 @@ class PlayState extends MusicBeatState
 					/*if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 0.50;*/
 					if(healthValues.get(""+daNote.noteType).get("damage")){
-						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('bad') < 0)
+						if((!PlayStateChangeables.botPlay || (PlayStateChangeables.botPlay && !loadRep)) && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('bad') < 0){
 							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
-						daRating = "good";
+							wrongNote = true;
+						}
+						daRating = "shit";
 					}else{
 						if (FlxG.save.data.accuracyMod == 0)
 							totalNotesHit += 0.50;
@@ -5242,8 +5265,10 @@ class PlayState extends MusicBeatState
 					/*if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 0.75;*/
 					if(healthValues.get(""+daNote.noteType).get("damage")){
-						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('good') < 0)
+						if((!PlayStateChangeables.botPlay || (PlayStateChangeables.botPlay && !loadRep)) && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('good') < 0){
 							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+							wrongNote = true;
+						}
 						daRating = "shit";
 					}else{
 						if (FlxG.save.data.accuracyMod == 0)
@@ -5257,19 +5282,23 @@ class PlayState extends MusicBeatState
 						totalNotesHit += 1;*/
 					sicks++;
 					if(healthValues.get(""+daNote.noteType).get("damage")){
-						if(PlayStateChangeables.botPlay && !loadRep && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('sick') < 0)
+						if((!PlayStateChangeables.botPlay || (PlayStateChangeables.botPlay && !loadRep)) && healthValues.get(""+daNote.noteType).get(storyDifficultyText).get('sick') < 0){
 							FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+							wrongNote = true;
+						}
 						daRating = "shit";
 					}else{
 						if (FlxG.save.data.accuracyMod == 0)
 							totalNotesHit += 1;
 					}
 			}
-
-			if(healthValues.get(""+daNote.noteType).get("damage")){
+			if(wrongNote){
+				daNote.wrongHit = true;
 				combo = 0;
 				misses++;
 				totalNotesHit -= 1;
+				if(daNote.noteType == 8)
+					HealthDrain();
 			}
 
 			// trace('Wife accuracy loss: ' + wife + ' | Rating: ' + daRating + ' | Score: ' + score + ' | Weight: ' + (1 - wife));
@@ -6269,7 +6298,7 @@ class PlayState extends MusicBeatState
 			if (FlxG.save.data.accuracyMod == 1)
 				totalNotesHit -= 1;
 
-			songScore -= 10;
+			//songScore -= 10;
 
 			if((!PlayStateChangeables.botPlay) || (PlayStateChangeables.botPlay && !loadRep))
 			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
@@ -6278,8 +6307,12 @@ class PlayState extends MusicBeatState
 			boyfriend.playAnim('sing' + sDir[direction] + 'miss', true);
 
 			#if windows
-			if (luaModchart != null)
-				luaModchart.executeState('playerOneMiss', [direction, Conductor.songPosition]);
+			if (luaModchart != null){
+				if(daNote != null)
+					luaModchart.executeState('playerOneMiss', [direction, Conductor.songPosition, daNote.noteType, daNote.isSustainNote]);
+				else
+					luaModchart.executeState('playerOneMiss', [direction, Conductor.songPosition, -1, false]);
+			}
 			#end
 
 
@@ -6444,6 +6477,9 @@ class PlayState extends MusicBeatState
 							default:
 							if(!healthValues.get(""+note.noteType).get("damage"))
 								boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+							else
+								if(note.wrongHit && note.noteType != 8)
+									noteMiss(note.noteData,note);
 						}
 						/*else
 							boyfriend.playAnim('sing' + sDir[note.noteData] + altAnim, true);*/
@@ -6486,6 +6522,9 @@ class PlayState extends MusicBeatState
 							default:
 							if(!healthValues.get(""+note.noteType).get("damage"))
 								boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+							else
+								if(note.wrongHit && note.noteType != 8)
+									noteMiss(note.noteData,note);
 						}
 						boyfriend.holdTimer = 0;
 						if(FlxG.save.data.singCam){
@@ -6525,6 +6564,9 @@ class PlayState extends MusicBeatState
 							default:
 							if(!healthValues.get(""+note.noteType).get("damage"))
 								dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
+							else
+								if(note.wrongHit && note.noteType != 8)
+									dad.playAnim('sing' + sDir[note.noteData] + "-miss", true);
 						}
 						//dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
 						dad.holdTimer = 0;
@@ -6561,7 +6603,7 @@ class PlayState extends MusicBeatState
 		
 					#if windows
 					if (luaModchart != null)
-						luaModchart.executeState('playerOneSing', [note.noteData, Conductor.songPosition]);
+						luaModchart.executeState('playerOneSing', [note.noteData, Conductor.songPosition, note.noteType, note.isSustainNote]);
 					#end
 
 					/*if (note.burning) //fire note
@@ -6692,7 +6734,7 @@ class PlayState extends MusicBeatState
 
 	function badNoteHit():Void
 		{
-			boyfriend.playAnim('hit', true);
+			boyfriend.playAnim('singHit', true);
 			FlxG.sound.play(Paths.soundRandom('badnoise', 1, 3), FlxG.random.float(0.7, 1));
 		}
 

@@ -80,6 +80,7 @@ class Note extends FlxSprite
 	private var estilo:String;
 	private var useStyle1:Bool;
 	private var isTrailNote:Bool = false;
+	public var wrongHit:Bool = false;
 
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?noteType:Int = 0, ?_mustPress:Bool = false, ?inCharter:Bool = false, ?useStyle1:Bool=true)
 	{
@@ -742,13 +743,13 @@ class Note extends FlxSprite
 							offset.y += 66;
 						else
 							offset.y += 26;
-						offset.x += 19;
+						offset.x += 10;
 					}else{
 						if(FlxG.save.data.downscroll)
-							offset.y += 66;
+							offset.y += 52;
 						else
-							offset.y += 26;
-						offset.x += 26;
+							offset.y += 20;
+						offset.x += 10;
 					}
 				}
 			case 'dance':
@@ -772,16 +773,16 @@ class Note extends FlxSprite
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
 						if(FlxG.save.data.downscroll)
-							offset.y += 161;
+							offset.y += 201;
 						else
-							offset.y += 41;
-						offset.x += 34;
+							offset.y += 51;
+						offset.x += 40;
 					}else{
 						if(FlxG.save.data.downscroll)
-							offset.y += 161;
+							offset.y += 291 * noteScale;
 						else
-							offset.y += 41;
-						offset.x += 28;
+							offset.y += 71 * noteScale;
+						offset.x += 58 * noteScale;
 					}
 				}
 			default:
@@ -848,18 +849,33 @@ class Note extends FlxSprite
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
 						if(FlxG.save.data.downscroll)
-							offset.y += 161;
+							offset.y += 201;
 						else
-							offset.y += 41;
-						offset.x += 34;
+							offset.y += 51;
+						offset.x += 40;
 					}else{
 						if(FlxG.save.data.downscroll)
-							offset.y += 161;
+							offset.y += 291 * noteScale;
 						else
-							offset.y += 41;
-						offset.x += 28;
+							offset.y += 71 * noteScale;
+						offset.x += 58 * noteScale;
 					}
-				}					
+				}
+				/*if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += PlayState.instance.noteOffsets.downscroll.trickyYNormal;
+						else
+							offset.y += PlayState.instance.noteOffsets.upscroll.trickyYNormal;
+						offset.x += PlayState.instance.noteOffsets.trickyXNormal;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += PlayState.instance.noteOffsets.downscroll.trickyYSmall * noteScale;
+						else
+							offset.y += PlayState.instance.noteOffsets.upscroll.trickyYSmall  * noteScale;
+						offset.x += PlayState.instance.noteOffsets.trickyXSmall * noteScale;
+					}
+				}*/
 		}
 
 		switch (mania)

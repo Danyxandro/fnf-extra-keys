@@ -337,7 +337,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
 				animation.addByPrefix('hey', 'BF HEY', 24, false);
 				animation.addByPrefix('singHey', 'BF HEY', 24, false);
-				animation.addByPrefix('hit', 'BF hit', 24, false);
+				animation.addByPrefix('singHit', 'BF hit', 24, false);
 
 				animation.addByPrefix('firstDeath', "BF dies", 24, false);
 				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
@@ -2581,26 +2581,6 @@ class Character extends FlxSprite
 				}
 		}//Fin del switch
 
-		if(curCharacter.toLowerCase().startsWith('gf') || curCharacter == "speakers"){
-			if(animation.getByName('hey') == null && animation.getByName('cheer') != null){
-				animation.add("hey",animation.getByName('cheer').frames,24,false);
-				if(animOffsets['hey'] != null){
-					addOffset('hey', animOffsets['cheer'][0], animOffsets['cheer'][1]);
-				}
-			}
-		}else{
-			if(animation.getByName('hey') == null && animation.getByName('singUP') != null){
-				animation.add("hey",animation.getByName('singUP').frames,24,false);
-				if(animOffsets['singUP'] != null){
-					addOffset('hey', animOffsets['singUP'][0], animOffsets['singUP'][1]);
-				}
-			}
-			if(animation.getByName('hey') != null){
-				animation.add("singHey",animation.getByName('hey').frames,24,false);
-				addOffset('singHey', animOffsets['hey'][0], animOffsets['hey'][1]);
-			}
-		}
-
 		dance();
 
 		if (isPlayer)
@@ -2629,6 +2609,74 @@ class Character extends FlxSprite
 					var offsetL = animOffsets.get('singLEFTmiss');
 					addOffset("singRIGHTmiss", offsetL[0], offsetL[1]);
 					addOffset("singLEFTmiss", offsetR[0], offsetR[1]);
+				}
+			}
+		}
+		
+		if(curCharacter.toLowerCase().startsWith('gf') || curCharacter == "speakers"){
+			if(animation.getByName('hey') == null && animation.getByName('cheer') != null){
+				animation.add("hey",animation.getByName('cheer').frames,24,false);
+				if(animOffsets['hey'] != null){
+					addOffset('hey', animOffsets['cheer'][0], animOffsets['cheer'][1]);
+				}
+			}
+		}else{
+			if(animation.getByName('hey') == null && animation.getByName('singUP') != null){
+				animation.add("hey",animation.getByName('singUP').frames,24,false);
+				if(animOffsets['singUP'] != null){
+					addOffset('hey', animOffsets['singUP'][0], animOffsets['singUP'][1]);
+				}
+			}
+			if(animation.getByName('hey') != null && animation.getByName('singHey') == null){
+				animation.add("singHey",animation.getByName('hey').frames,24,false);
+				addOffset('singHey', animOffsets['hey'][0], animOffsets['hey'][1]);
+			}
+			if(animation.getByName('singUPmiss') == null && animation.getByName('idle') != null){
+				animation.add("singUPmiss",animation.getByName('idle').frames,24,false);
+				if(animOffsets['idle'] != null){
+					addOffset('singUPmiss', animOffsets['idle'][0], animOffsets['idle'][1]);
+				}
+			}
+			if(animation.getByName('singDOWNmiss') == null && animation.getByName('idle') != null){
+				animation.add("singDOWNmiss",animation.getByName('idle').frames,24,false);
+				if(animOffsets['idle'] != null){
+					addOffset('singDOWNmiss', animOffsets['idle'][0], animOffsets['idle'][1]);
+				}
+			}
+			if(animation.getByName('singLEFTmiss') == null && animation.getByName('idle') != null){
+				animation.add("singLEFTmiss",animation.getByName('idle').frames,24,false);
+				if(animOffsets['idle'] != null){
+					addOffset('singLEFTmiss', animOffsets['idle'][0], animOffsets['idle'][1]);
+				}
+			}
+			if(animation.getByName('singRIGHTmiss') == null && animation.getByName('idle') != null){
+				animation.add("singRIGHTmiss",animation.getByName('idle').frames,24,false);
+				if(animOffsets['idle'] != null){
+					addOffset('singRIGHTmiss', animOffsets['idle'][0], animOffsets['idle'][1]);
+				}
+			}
+			if(animation.getByName('singUP-alt') == null && animation.getByName('singUP') != null){
+				animation.add("singUP-alt",animation.getByName('singUP').frames,24,false);
+				if(animOffsets['singUP'] != null){
+					addOffset('singUP-alt', animOffsets['singUP'][0], animOffsets['singUP'][1]);
+				}
+			}
+			if(animation.getByName('singDOWN-alt') == null && animation.getByName('singDOWN') != null){
+				animation.add("singDOWN-alt",animation.getByName('singDOWN').frames,24,false);
+				if(animOffsets['singDOWN'] != null){
+					addOffset('singDOWN-alt', animOffsets['singDOWN'][0], animOffsets['singDOWN'][1]);
+				}
+			}
+			if(animation.getByName('singLEFT-alt') == null && animation.getByName('singLEFT') != null){
+				animation.add("singLEFT-alt",animation.getByName('singLEFT').frames,24,false);
+				if(animOffsets['singLEFT'] != null){
+					addOffset('singLEFT-alt', animOffsets['singLEFT'][0], animOffsets['singLEFT'][1]);
+				}
+			}
+			if(animation.getByName('singRIGHT-alt') == null && animation.getByName('singRIGHT') != null){
+				animation.add("singRIGHT-alt",animation.getByName('singRIGHT').frames,24,false);
+				if(animOffsets['singRIGHT'] != null){
+					addOffset('singRIGHT-alt', animOffsets['singRIGHT'][0], animOffsets['singRIGHT'][1]);
 				}
 			}
 		}

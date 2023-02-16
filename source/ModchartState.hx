@@ -481,7 +481,8 @@ class ModchartState
             if (drawBehind)
             {
                 PlayState.instance.layerBG.add(sprite);
-            }
+            }else
+				PlayState.instance.addObject(sprite);
         }
 		#end
 		return toBeCalled;
@@ -1201,6 +1202,132 @@ class ModchartState
 				Lua_helper.add_callback(lua,"preloadNotes", function():Int {
 					PlayState.instance.preloadNotes(true);
 					return 0;
+				});
+
+				Lua_helper.add_callback(lua, "playAnim", function(character:String, animation:String, ?force:Bool = false){
+					switch(character){
+						case 'dad' | 'boyfriend' | 'girlfriend':
+							getActorByName(character).playAnim(animation, force);
+						default:
+							if(FlxG.save.data.flip){
+								if(!sprites.exists(character) && idsBF.exists(character)){
+									trace("Entro jugador en lado rival " + character);
+									PlayState.instance.layerPlayChars.members[idsBF[character]].playAnim(animation,force);
+								}else{
+									if(character.length > 3)
+										if(!sprites.exists(character) && ids.exists(character.substr(3))){
+											trace("Entro rial en lado del jugador " + character.substr(3));
+											PlayState.instance.layerFakeBFs.members[ids[character]].playAnim(animation,force);
+										}
+								}
+							}else{
+								if(!sprites.exists(character) && ids.exists(character)){
+									trace("Entro rival " + character);
+									PlayState.instance.layerChars.members[ids[character]].playAnim(animation,force);
+								}else{
+									if(character.length > 3)
+										if(!sprites.exists(character) && idsBF.exists(character.substr(3))){
+											trace("Entro jugador " + character.substr(3));
+											PlayState.instance.layerBFs.members[idsBF[character]].playAnim(animation,force);
+										}
+								}
+							}
+					}
+				});
+
+				Lua_helper.add_callback(lua, "setHealthValue", function (property:String,value:Float,?noteType:Int=0,?setDamage) {
+					if(PlayStateChangeables.botPlay && value < 0){
+						value = value * -1;
+					}
+					if(PlayState.instance.healthValues.exists(""+noteType)){
+						switch(property){
+							case "shit":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("shit",value);
+							case "bad":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("bad",value);
+							case "good":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("good",value);
+							case "sick":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("sick",value);
+							case "miss":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("miss",value);
+							case "missLN":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("missLN",value);
+						}
+						if(setDamage != null && noteType != 4){
+							PlayState.instance.healthValues[""+noteType].set("damage",setDamage);
+						}
+						if(property == "missPressed"){
+							PlayState.instance.healthValues["missPressed"].set(PlayState.instance.storyDifficultyText,value);
+							trace(property + " is: " + PlayState.instance.healthValues["missPressed"].get(PlayState.instance.storyDifficultyText));
+						}else
+						trace(property + " is: " + PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get(property) + " damage note set to:"
+							+ PlayState.instance.healthValues[""+noteType].get("damage"));
+					}
+				});
+
+				Lua_helper.add_callback(lua, "setScoreValue", function (property:String,value:Float,?noteType:Int=0) {
+					if(PlayState.instance.healthValues.exists(""+noteType)){
+						switch(property){
+							case "shit":
+							PlayState.instance.healthValues[""+noteType].get("score").set("shitScore",value);
+							case "bad":
+							PlayState.instance.healthValues[""+noteType].get("score").set("badScore",value);
+							case "good":
+							PlayState.instance.healthValues[""+noteType].get("score").set("goodScore",value);
+							case "sick":
+							PlayState.instance.healthValues[""+noteType].get("score").set("sickScore",value);
+							case "miss":
+							PlayState.instance.healthValues[""+noteType].get("score").set("missScore",value);
+							case "missLN":
+							PlayState.instance.healthValues[""+noteType].get("score").set("missLNScore",value);
+						}
+						trace(property + " is: " + PlayState.instance.healthValues[""+noteType].get("score").get(property+"Score"));
+					}
+				});
+
+				Lua_helper.add_callback(lua, "getScoreValue", function (property:String,?noteType:Int=0):Float {
+					var value:Float = -31.4;
+					if(PlayState.instance.healthValues.exists(""+noteType)){
+						switch(property){
+							case "shit":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("shitScore");
+							case "bad":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("badScore");
+							case "good":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("goodScore");
+							case "sick":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("sickScore");
+							case "miss":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("missScore");
+							case "missLN":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("missLNScore");
+						}
+					}
+					return value;
+				});
+
+				Lua_helper.add_callback(lua, "getHealthValue", function(property:String,?noteType:Int=0):Float{
+					var value:Float = -31.4;
+					if(PlayState.instance.healthValues.exists(""+noteType))
+					switch(property){
+						case "shit":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("shit");
+						case "bad":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("bad");
+						case "good":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("good");
+						case "sick":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("sick");
+						case "miss":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("miss");
+						case "missLN":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("missLN");
+					}
+					if(property == "missPressed")
+						value = PlayState.instance.healthValues["missPressed"].get(PlayState.instance.storyDifficultyText);
+					
+					return value;
 				});
 
 				// actors

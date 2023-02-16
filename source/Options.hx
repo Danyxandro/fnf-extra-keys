@@ -1215,3 +1215,23 @@ class CamFactorOption extends Option
 		return "Camera moving factor: " + FlxG.save.data.camFactor;
 	}
 }
+
+class HealthValOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	public override function press():Bool
+	{
+		OptionsMenu.instance.openSubState(new HealthValueMenu());
+		//display = updateDisplay();
+		return false;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Change Health Values";
+	}
+}

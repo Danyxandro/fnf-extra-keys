@@ -97,6 +97,9 @@ class HealthIcon extends FlxSprite
 			loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 
 			antialiasing = true;
+			animation.add(char, [10], 0, false, isPlayer);
+			animation.add(char+'-win', [10], 0, false, isPlayer);
+			animation.add(char+'-lose', [11], 0, false, isPlayer);
 			//This is too tedious too
 			animation.add('bf', [0], 0, false, isPlayer);
 			animation.add('bf-win', [0], 0, false, isPlayer);

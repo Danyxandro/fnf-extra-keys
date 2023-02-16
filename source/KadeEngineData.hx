@@ -134,7 +134,7 @@ class KadeEngineData
 			FlxG.save.data.randomSection = true;
 
 		if (FlxG.save.data.mania == null)
-			FlxG.save.data.mania = 0;
+			FlxG.save.data.mania = -1;
 
 		if (FlxG.save.data.randomMania == null)
 			FlxG.save.data.randomMania = 0;

@@ -1,0 +1,18 @@
+{
+"downscroll":{
+	"trickyYNormal":201,
+	"trickyYSmall":291,
+	"pixelYNormal":66,
+	"pixelYSmall":52
+},
+"trickyXNormal":40,
+"trickyXSmall":58,
+"pixelXNormal":10,
+"pixelXSmall":10,
+"upscroll":{
+	"trickyYNormal":51,
+	"trickyYSmall":71,
+	"pixelYNormal":26,
+	"pixelYSmall":20
+}
+}
