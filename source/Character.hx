@@ -42,7 +42,7 @@ class Character extends FlxSprite
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 
-		isPlayingAsBF = !FlxG.save.data.flip;
+		isPlayingAsBF = !PlayStateChangeables.flip;
 
 		var tex:FlxAtlasFrames;
 		antialiasing = FlxG.save.data.antialiasing;
@@ -922,6 +922,8 @@ class Character extends FlxSprite
 				addOffset('scared', -2, -17);
 
 				playAnim('danceRight');
+
+				isDancingIdle = true;
 			case 'gf-alt':
 				tex = Paths.getSparrowAtlas('keen/gf_whitty',"shared");
 				frames = tex;
@@ -953,7 +955,7 @@ class Character extends FlxSprite
 				addOffset('scared', -2, -17);
 
 				playAnim('danceRight');
-
+				isDancingIdle = true;
 			case 'bf-cat':
 				var tex = Paths.getSparrowAtlas('keen/BOYFRIEND',"shared");
 				frames = tex;
@@ -1024,6 +1026,7 @@ class Character extends FlxSprite
 				addOffset('scared', -2, -17);
 
 				playAnim('danceRight');
+				isDancingIdle = true;
 			case 'pico-speaker':
 				// GIRLFRIEND CODE
 				tex = Paths.getSparrowAtlas('tankman/picoSpeaker','shared');
@@ -1052,6 +1055,7 @@ class Character extends FlxSprite
 				playAnim('danceRight');
 
 				this.y -= 200;
+				isDancingIdle = true;
 			case 'bf-holding-gf':
 				var tex = Paths.getSparrowAtlas('tankman/bfAndGF','shared');
 				frames = tex;				
@@ -2004,6 +2008,7 @@ class Character extends FlxSprite
 				addOffset('scared', -2, -17);
 
 				playAnim('danceRight');
+				isDancingIdle = true;
 			case 'crazy-GF':
 				tex = Paths.getSparrowAtlas('characters/crazyGF', 'shared');
 				frames = tex;

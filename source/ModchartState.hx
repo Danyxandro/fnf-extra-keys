@@ -219,7 +219,7 @@ class ModchartState
 		{
 			case 'boyfriend':
                 @:privateAccess{
-				if(FlxG.save.data.flip)
+				if(PlayStateChangeables.flip)
 					return PlayState.dad;
 				return PlayState.boyfriend;
 				}
@@ -228,7 +228,7 @@ class ModchartState
 				return PlayState.gf;
 			case 'dad':
                 @:privateAccess{
-				if(FlxG.save.data.flip)
+				if(PlayStateChangeables.flip)
 					return PlayState.boyfriend;
 				return PlayState.dad;
 				}
@@ -252,7 +252,7 @@ class ModchartState
 
 	function changeDadCharacter(id:String,?swap:Bool = true,?noteStyle:String)
 	{
-		if(FlxG.save.data.flip){
+		if(PlayStateChangeables.flip){
 			if(idsBF[id] != null && !PlayState.instance.layerPlayChars.members[idsBF[id]].isSynchronous()){
 				if(idsBF[id] != curBF){
 					PlayState.instance.layerPlayChars.members[idsBF[id]].active = true;
@@ -301,7 +301,7 @@ class ModchartState
 
 	function changeBoyfriendCharacter(id:String,?swap:Bool = true,?noteStyle:String)
 	{
-		if(!FlxG.save.data.flip){
+		if(!PlayStateChangeables.flip){
 			if(idsBF[id] != null && !PlayState.instance.layerBFs.members[idsBF[id]].isSynchronous()){
 				if(idsBF[id] != curBF){
 					PlayState.instance.layerBFs.members[idsBF[id]].active = true;
@@ -762,7 +762,7 @@ class ModchartState
 				Lua_helper.add_callback(lua, "loadCharacter", function(character:String,x:Float,y:Float,?isPlayer:Bool = false,?sync:Bool = false){
 					if(allowChanging){
 						if(isPlayer){
-							if(FlxG.save.data.flip){
+							if(PlayStateChangeables.flip){
 								var bf:Character = new Character(x,y,character,true,sync);
 								trace("loaded rival (bf side): " + character);
 								PlayState.instance.layerFakeBFs.add(bf);
@@ -798,7 +798,7 @@ class ModchartState
 								}
 							}
 						}else{
-							if(FlxG.save.data.flip){
+							if(PlayStateChangeables.flip){
 								var char:Boyfriend = new Boyfriend(x,y,character,false,sync);
 								trace("loaded bf? (rival side): " + character);
 								PlayState.instance.layerPlayChars.add(char);
@@ -875,7 +875,7 @@ class ModchartState
 				});
 
 				Lua_helper.add_callback(lua, "swapBF", function(id:String,?swap:Bool = true,?noteStyle:String){
-					if(FlxG.save.data.flip){
+					if(PlayStateChangeables.flip){
 						if(ids[id] != null){
 						PlayState.instance.layerFakeBFs.members[ids[id]].alpha = 1;
 						if(swap){
@@ -913,7 +913,7 @@ class ModchartState
 				});
 
 				Lua_helper.add_callback(lua, "swapDad", function(id:String,?swap:Bool = true,?noteStyle:String){
-					if(FlxG.save.data.flip){
+					if(PlayStateChangeables.flip){
 						if(idsBF[id] != null){
 							if(swap){
 								PlayState.instance.layerPlayChars.members[curBF].alpha = getVar("bfFadeAlpha","float");
@@ -951,7 +951,7 @@ class ModchartState
 				});
 
 				Lua_helper.add_callback(lua, "visibleChar", function(id:String,visible:Bool,isPlayer:Bool){
-					if(FlxG.save.data.flip){
+					if(PlayStateChangeables.flip){
 						if(isPlayer){
 							if(visible){
 								if(ids[id] != null){
@@ -1007,7 +1007,7 @@ class ModchartState
 				});
 
 				Lua_helper.add_callback(lua, "syncChar", function(id:String,synchronous:Bool,isPlayer:Bool){
-					if(FlxG.save.data.flip){
+					if(PlayStateChangeables.flip){
 						if(isPlayer){
 							if(ids[id] != null)
 								PlayState.instance.layerFakeBFs.members[ids[id]].setSynchronous(synchronous);
@@ -1074,7 +1074,7 @@ class ModchartState
 				});
 
 				Lua_helper.add_callback(lua,"setFlyingOffset", function(id:String, isPlayer:Bool, amount:Float){
-					if(FlxG.save.data.flip){
+					if(PlayStateChangeables.flip){
 						if(isPlayer){
 							if(ids[id] != null)
 								PlayState.instance.layerFakeBFs.members[ids[id]].flyingOffset = amount;
@@ -1209,7 +1209,7 @@ class ModchartState
 						case 'dad' | 'boyfriend' | 'girlfriend':
 							getActorByName(character).playAnim(animation, force);
 						default:
-							if(FlxG.save.data.flip){
+							if(PlayStateChangeables.flip){
 								if(!sprites.exists(character) && idsBF.exists(character)){
 									trace("Entro jugador en lado rival " + character);
 									PlayState.instance.layerPlayChars.members[idsBF[character]].playAnim(animation,force);

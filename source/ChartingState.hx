@@ -103,15 +103,15 @@ class ChartingState extends MusicBeatState
 
 	var selectedType:Int = 0;
 
-	private var m_check = new FlxUICheckBox(10, 165, null, null, "6", 100);
-	private var m_check2 = new FlxUICheckBox(10, 225, null, null, "9", 100);
-	private var m_check3 = new FlxUICheckBox(10, 145, null, null, "5", 100);
-	private var m_check4 = new FlxUICheckBox(10, 185, null, null, "7", 100);
-	private var m_check5 = new FlxUICheckBox(10, 205, null, null, "8", 100);
-	private var m_check6 = new FlxUICheckBox(10, 65, null, null, "1", 100);
-	private var m_check7 = new FlxUICheckBox(10, 85, null, null, "2", 100);
-	private var m_check8 = new FlxUICheckBox(10, 105, null, null, "3", 100);
-	private var m_check0 = new FlxUICheckBox(10, 125, null, null, "4", 100);
+	private var m_check = new FlxUICheckBox(10, 165, null, null, "6", 70);
+	private var m_check2 = new FlxUICheckBox(10, 225, null, null, "9", 70);
+	private var m_check3 = new FlxUICheckBox(10, 145, null, null, "5", 70);
+	private var m_check4 = new FlxUICheckBox(10, 185, null, null, "7", 70);
+	private var m_check5 = new FlxUICheckBox(10, 205, null, null, "8", 70);
+	private var m_check6 = new FlxUICheckBox(10, 65, null, null, "1", 70);
+	private var m_check7 = new FlxUICheckBox(10, 85, null, null, "2", 70);
+	private var m_check8 = new FlxUICheckBox(10, 105, null, null, "3", 70);
+	private var m_check0 = new FlxUICheckBox(10, 125, null, null, "4", 70);
 
 	private var lockMouseWheel:Bool = false;
 
@@ -152,7 +152,9 @@ class ChartingState extends MusicBeatState
 				stage: 'stage',
 				speed: 1,
 				mania: 0,
-				validScore: false
+				validScore: false,
+				bothSide: false,
+				asRival: false
 			};
 		}
 
@@ -334,6 +336,14 @@ class ChartingState extends MusicBeatState
 		var gfVersions:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfVersionList'));
 		var stages:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
 		var noteStyles:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteStyleList'));
+		var rivalPlaying = new FlxUICheckBox(10, 30, null, null, "Play as Rival", 70);
+		var bothSides = new FlxUICheckBox(150, 30, null, null, "Play as both", 70);
+		rivalPlaying.name = 'song_asRival';
+		bothSides.name = 'song_bothSide';
+		bothSides.checked = _song.bothSide;
+		rivalPlaying.checked = _song.asRival;
+		rivalPlaying.callback = function(){_song.asRival = false;if(rivalPlaying.checked)_song.asRival = true;};
+		bothSides.callback = function(){_song.bothSide = false;if(bothSides.checked)_song.bothSide = true;};
 
 		var player1DropDown = new FlxUIDropDownMenuCustom(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 			{
@@ -437,6 +447,8 @@ class ChartingState extends MusicBeatState
 
 		var tab_group_assets = new FlxUI(null, UI_box);
 		tab_group_assets.name = "Assets";
+		tab_group_assets.add(rivalPlaying);
+		tab_group_assets.add(bothSides);
 		tab_group_assets.add(noteStyleDropDown);
 		tab_group_assets.add(noteStyleLabel);
 		tab_group_assets.add(noteStyle2DropDown);
@@ -552,11 +564,11 @@ class ChartingState extends MusicBeatState
 		stepperSusLength.value = 0;
 		stepperSusLength.name = 'note_susLength';
 
-		stepperNoteTypes = new FlxUINumericStepper(100, 55, 1, selectedType, 0, noteTypes.length - 1, 0);
+		stepperNoteTypes = new FlxUINumericStepper(150, 55, 1, selectedType, 0, noteTypes.length - 1, 0);
 		stepperNoteTypes.value = selectedType;
 		stepperNoteTypes.name = 'note_types';
 
-		typeChangeLabel = new FlxText(100, 75, 64, noteTypes[selectedType] + " notes");
+		typeChangeLabel = new FlxText(150, 75, 64, noteTypes[selectedType] + " notes");
 
 		var applyLength:FlxButton = new FlxButton(100, 10, 'Apply');
 
@@ -1130,7 +1142,7 @@ class ChartingState extends MusicBeatState
 		gridBlackLine.x = gridBG.x + gridBG.width / 2;
 		/*leftIcon.setPosition(0, -100);
 		rightIcon.setPosition(gridBG.width / 2, -100);*/
-		UI_box.x = FlxG.width / 2;// + 160 * _song.mania;
+		UI_box.x = FlxG.width / 2 + 40;// + 160 * _song.mania;
 		UI_box.y = 100; //20;
 		if (_song.mania != 0)
 		{

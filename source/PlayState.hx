@@ -135,8 +135,8 @@ class PlayState extends MusicBeatState
 	public var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
-	var replacableTypeList:Array<Int> = [3,4,7]; //note types do wanna hit
-	var nonReplacableTypeList:Array<Int> = [1,2,6]; //note types you dont wanna hit
+	var replacableTypeList:Array<Int> = [4,5,6]; //note types do wanna hit
+	var nonReplacableTypeList:Array<Int> = [1,2,3,8]; //note types you dont wanna hit
 
 	private var camFollow:FlxObject;
 
@@ -346,12 +346,8 @@ class PlayState extends MusicBeatState
 		}
 		PlayStateChangeables.Optimize = FlxG.save.data.optimize;
 		PlayStateChangeables.zoom = FlxG.save.data.zoom;
-		PlayStateChangeables.bothSide = FlxG.save.data.bothSide;
-		PlayStateChangeables.flip = FlxG.save.data.flip;
-		PlayStateChangeables.randomNotes = FlxG.save.data.randomNotes;
-		PlayStateChangeables.randomSection = FlxG.save.data.randomSection;
-		PlayStateChangeables.randomMania = FlxG.save.data.randomMania;
-		PlayStateChangeables.randomNoteTypes = FlxG.save.data.randomNoteTypes;
+		//PlayStateChangeables.bothSide = FlxG.save.data.bothSide;
+		//PlayStateChangeables.flip = FlxG.save.data.flip;
 		PlayStateChangeables.ghost = FlxG.save.data.ghost;
 		if(PlayStateChangeables.allowChanging)
 			PlayStateChangeables.allowChanging = FlxG.save.data.enableCharchange;
@@ -363,7 +359,28 @@ class PlayState extends MusicBeatState
 			PlayStateChangeables.allowChanging = false;
 			SONG.stage = "none";
 			camFactor = 0;
-		} 
+		}
+		if(isStoryMode){
+			PlayStateChangeables.bothSide = SONG.bothSide;
+			PlayStateChangeables.flip = SONG.asRival;
+			PlayStateChangeables.randomNotes = false;
+			PlayStateChangeables.randomSection = false;
+			PlayStateChangeables.randomMania = 0;
+			PlayStateChangeables.randomNoteTypes = 0;
+		}else{
+			if(FlxG.save.data.bothSide)
+				PlayStateChangeables.bothSide = true;
+			else
+				PlayStateChangeables.bothSide = !!SONG.bothSide;
+			if(FlxG.save.data.flip)
+				PlayStateChangeables.flip = !SONG.asRival;
+			else
+				PlayStateChangeables.flip = !!SONG.asRival;
+			PlayStateChangeables.randomNotes = FlxG.save.data.randomNotes;
+			PlayStateChangeables.randomSection = FlxG.save.data.randomSection;
+			PlayStateChangeables.randomMania = FlxG.save.data.randomMania;
+			PlayStateChangeables.randomNoteTypes = FlxG.save.data.randomNoteTypes;
+		}
 
 		// pre lowercasing the song name (create)
 		var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
@@ -956,7 +973,7 @@ class PlayState extends MusicBeatState
 			case 'gf-pixel':
 				curGf = 'gf-pixel';
 			default:
-				curGf = 'gf';
+				curGf = gfCheck;
 		}
 		
 		gf = new Character(400, 130, curGf);
@@ -1104,7 +1121,7 @@ class PlayState extends MusicBeatState
 
 			add(layerChars);
 			add(layerBFs);
-			if(FlxG.save.data.flip && executeModchart){
+			if(PlayStateChangeables.flip && executeModchart){
 				layerFakeBFs = new FlxTypedGroup<Character>();
 				layerPlayChars = new FlxTypedGroup<Boyfriend>();
 				layerChars.remove(dad);
@@ -1115,7 +1132,7 @@ class PlayState extends MusicBeatState
 				add(layerFakeBFs);
 			}
 		}else{
-			if(FlxG.save.data.flip && executeModchart){
+			if(PlayStateChangeables.flip && executeModchart){
 				layerFakeBFs = new FlxTypedGroup<Character>();
 				layerPlayChars = new FlxTypedGroup<Boyfriend>();
 				layerChars.remove(dad);
@@ -1339,7 +1356,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// Add Kade Engine watermark
-		kadeEngineWatermark = new FlxText(4,healthBarBG.y + 50,0,SONG.song + " - " + CoolUtil.difficultyFromInt(storyDifficulty) + (Main.watermarks ? " | KE " + MainMenuState.kadeEngineVer : ""), 16);
+		kadeEngineWatermark = new FlxText(4,healthBarBG.y + 50,0,SONG.song + " - " + CoolUtil.difficultyFromInt(storyDifficulty) + (Main.watermarks ? " | DE " + MainMenuState.kadeEngineVer : ""), 16);
 		kadeEngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
 		kadeEngineWatermark.scrollFactor.set();
 		add(kadeEngineWatermark);
@@ -3818,8 +3835,6 @@ class PlayState extends MusicBeatState
 							case 'henry':
 								camFollow.y = bfChar.getMidpoint().y + 50;
 								camFollow.x = bfChar.getMidpoint().x + 300;
-							case 'eder-jr':
-								camFollow.y = bfChar.getMidpoint().y - 285;
 							case 'annie':
 								camFollow.y = bfChar.getMidpoint().y - 200;
 								camFollow.x = bfChar.getMidpoint().x + 250;
@@ -3834,9 +3849,6 @@ class PlayState extends MusicBeatState
 							case 'impostor-black':
 								camFollow.y = bfChar.getMidpoint().y - 170;
 								camFollow.x = bfChar.getMidpoint().x - 150;
-							case 'keen-flying':
-								camFollow.y = bfChar.getMidpoint().y - 100;
-								camFollow.x = bfChar.getMidpoint().x + 350;
 							case 'kopek':
 								camFollow.x = bfChar.getMidpoint().x - 50;
 							case 'bf-pixel'|'bf-tankman-pixel':
@@ -3917,8 +3929,6 @@ class PlayState extends MusicBeatState
 							case 'henry':
 								camFollow.y = dadChar.getMidpoint().y + 50;
 								camFollow.x = dadChar.getMidpoint().x + 300;
-							case 'eder-jr':
-								camFollow.y = dadChar.getMidpoint().y - 285;
 							case 'annie':
 								camFollow.y = dadChar.getMidpoint().y - 200;
 								camFollow.x = dadChar.getMidpoint().x + 250;
@@ -3933,9 +3943,6 @@ class PlayState extends MusicBeatState
 							case 'impostor-black':
 								camFollow.y = dadChar.getMidpoint().y - 170;
 								camFollow.x = dadChar.getMidpoint().x - 150;
-							case 'keen-flying':
-								camFollow.y = dadChar.getMidpoint().y - 100;
-								camFollow.x = dadChar.getMidpoint().x + 350;
 							case 'kopek':
 								camFollow.x = dadChar.getMidpoint().x - 50;
 							case 'bf-pixel'|'bf-tankman-pixel':
@@ -4575,8 +4582,8 @@ class PlayState extends MusicBeatState
 								{
 									spr.animation.play('confirm', true);
 								}
-								//if (spr.animation.curAnim.name == 'confirm' && ((!FlxG.save.data.flip && !style[1].startsWith('pixel')) || (FlxG.save.data.flip && !style[0].startsWith('pixel'))))
-								if (spr.animation.curAnim.name == 'confirm' && !style[1].startsWith('pixel'))
+								if (spr.animation.curAnim.name == 'confirm' && ((!PlayStateChangeables.flip && !style[1].startsWith('pixel')) || (PlayStateChangeables.flip && !style[0].startsWith('pixel'))))
+								//if (spr.animation.curAnim.name == 'confirm' && !style[1].startsWith('pixel'))
 								{
 									spr.centerOffsets();
 									switch(maniaToChange)
@@ -4889,7 +4896,8 @@ class PlayState extends MusicBeatState
 														{
 															spr.animation.play('confirm', true);
 														}
-														if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel')/*SONG.noteStyle != 'pixel'*/)
+														if (spr.animation.curAnim.name == 'confirm' && ((!PlayStateChangeables.flip && !style[1].startsWith('pixel')) || (PlayStateChangeables.flip && !style[0].startsWith('pixel'))))
+														//if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel')/*SONG.noteStyle != 'pixel'*/)
 														{
 															spr.centerOffsets();
 															switch(maniaToChange)
@@ -6066,8 +6074,8 @@ class PlayState extends MusicBeatState
 						if (!keys[spr.ID])
 							spr.animation.play('static', false);
 			
-						//if (spr.animation.curAnim.name == 'confirm' && ((!FlxG.save.data.flip && !style[0].startsWith('pixel')) || (FlxG.save.data.flip && !style[1].startsWith('pixel'))))
-						if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel'))
+						if (spr.animation.curAnim.name == 'confirm' && ((!PlayStateChangeables.flip && !style[0].startsWith('pixel')) || (PlayStateChangeables.flip && !style[1].startsWith('pixel'))))
+						//if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel'))
 						{
 							spr.centerOffsets();
 							switch(maniaToChange)
@@ -7280,15 +7288,15 @@ class PlayState extends MusicBeatState
 
 		if (curBeat % 8 == 7 && curSong == 'Bopeebo')
 		{
-			if(!FlxG.save.data.flip)
-				boyfriend.playAnim('hey', true);
+			if(!PlayStateChangeables.flip)
+				boyfriend.playAnim('singHey', true);
 			else
 				dad.playAnim("singHey",true);
 		}
 
 		if (curBeat % 16 == 15 && SONG.song == 'Tutorial' && dad.curCharacter == 'gf' && curBeat > 16 && curBeat < 48)
 			{
-				if(!FlxG.save.data.flip){
+				if(!PlayStateChangeables.flip){
 					boyfriend.playAnim('hey', true);
 					dad.playAnim('cheer', true);
 				}else{
@@ -7371,13 +7379,13 @@ class PlayState extends MusicBeatState
 				style[1] = estilo;
 			case 1:
 				style[0] = estilo;
-				if(FlxG.save.data.flip){
+				if(PlayStateChangeables.flip){
 					j = keyAmmo[mania];
 				}else{
 					k = keyAmmo[mania];
 				}
 			case 2:
-				if(FlxG.save.data.flip){
+				if(PlayStateChangeables.flip){
 					k = keyAmmo[mania];
 				}else{
 					j = keyAmmo[mania];

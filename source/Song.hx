@@ -22,6 +22,8 @@ typedef SwagSong =
 	var gfVersion:String;
 	var noteStyle:String;
 	var noteStyle2:String;
+	var asRival:Bool;
+	var bothSide:Bool;
 	var stage:String;
 	var validScore:Bool;
 }
@@ -34,19 +36,14 @@ class Song
 	public var needsVoices:Bool = true;
 	public var speed:Float = 1;
 	public var mania:Int = 0;
-	//public var noteValues:Array<Float> = [0, 0.01, 0.45, 2.2, 1, 0.005]; //this never ended up working :(
-	//0 = global health drain
-	//1 = note specific health drain
-	//2 = fire note values
-	//3 = death note values
-	//4 = warning note values
-	//5 = glitch/bob arrow values
 
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
 	public var gfVersion:String = '';
 	public var noteStyle:String = '';
 	public var noteStyle2:String = '';
+	public var asRival:Bool = false;
+	public var bothSide:Bool = false;
 	public var stage:String = '';
 
 	public function new(song, notes, bpm)
