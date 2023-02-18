@@ -203,7 +203,7 @@ class Note extends FlxSprite
 				pixelnoteScale = 1;
 				mania = 8;
 			}
-		if (FlxG.save.data.bothSide)
+		if (PlayStateChangeables.bothSide)
 			{
 				swagWidth = 100 * 0.7;
 				noteScale = 0.55;

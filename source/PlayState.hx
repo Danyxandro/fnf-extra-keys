@@ -501,6 +501,7 @@ class PlayState extends MusicBeatState
 		if (PlayStateChangeables.bothSide)
 			mania = 5;
 		else if (FlxG.save.data.mania != -1 && PlayStateChangeables.randomNotes)
+			if(!isStoryMode)
 			mania = FlxG.save.data.mania;
 
 		maniaToChange = mania;
@@ -2990,15 +2991,15 @@ class PlayState extends MusicBeatState
 			babyArrow.updateHitbox();
 			babyArrow.scrollFactor.set();
 
-			if (!isStoryMode)
-			{
+			/*if (!isStoryMode)
+			{*/
 				//babyArrow.y -= 10;
 				//babyArrow.alpha = 0;
 				//FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
 				if (PlayStateChangeables.Optimize && !PlayStateChangeables.bothSide && player == 0){
 					babyArrow.alpha = 0.5;
 				}
-			}
+			//}
 
 			babyArrow.ID = i;
 
