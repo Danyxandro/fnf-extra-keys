@@ -399,7 +399,7 @@ class ModchartState
 		#end
 	}*/
 
-	function makeAnimatedSprite(name:String,fileName:String,initialAnimation:String,prefix:String,?drawBehind:Bool=false){
+	function makeAnimatedSprite(name:String,fileName:String,initialAnimation:String,prefix:String,?drawBehind=false){
 		var sprite:FlxSprite = new FlxSprite();
 
 		var songLowercase:String = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
@@ -419,20 +419,32 @@ class ModchartState
 
 			@:privateAccess
 			{
-				if (drawBehind)
+				/*if (drawBehind)
 				{
-					/*PlayState.instance.removeObject(gfs);
+					PlayState.instance.removeObject(gfs);
 					PlayState.instance.removeObject(chars);
-					PlayState.instance.removeObject(bfs);*/
+					PlayState.instance.removeObject(bfs);
 					PlayState.instance.layerBG.add(sprite);
 				}else
 				PlayState.instance.addObject(sprite);
-				/*if (drawBehind)
+				if (drawBehind)
 				{
 					PlayState.instance.addObject(gfs);
 					PlayState.instance.addObject(chars);
 					PlayState.instance.addObject(bfs);
 				}*/
+				switch(""+drawBehind){
+					case "0" | "true":
+						PlayState.instance.layerBGs[0].add(sprite);
+					case "1":
+						PlayState.instance.layerBGs[1].add(sprite);
+					case "3":
+						PlayState.instance.layerBGs[3].add(sprite);
+					case "4":
+						PlayState.instance.layerBGs[4].add(sprite);
+					default:
+						PlayState.instance.layerBGs[2].add(sprite);
+				}
 			}
 			sprites[name] = sprite;
 			luaSprites.set(name,sprite);
@@ -442,7 +454,7 @@ class ModchartState
 		return name;
 	}
 
-	function makeLuaSprite(spritePath:String,toBeCalled:String, drawBehind:Bool)
+	function makeLuaSprite(spritePath:String,toBeCalled:String, ?drawBehind=false)
 	{
 		#if sys
 		// pre lowercasing the song name (makeLuaSprite)
@@ -478,11 +490,23 @@ class ModchartState
 		// shitty layering but it works!
         @:privateAccess
         {
-            if (drawBehind)
+            /*if (drawBehind)
             {
                 PlayState.instance.layerBG.add(sprite);
             }else
-				PlayState.instance.addObject(sprite);
+				PlayState.instance.addObject(sprite);*/
+			switch(""+drawBehind){
+				case "0" | "true":
+					PlayState.instance.layerBGs[0].add(sprite);
+				case "1":
+					PlayState.instance.layerBGs[1].add(sprite);
+				case "3":
+					PlayState.instance.layerBGs[3].add(sprite);
+				case "4":
+					PlayState.instance.layerBGs[4].add(sprite);
+				default:
+					PlayState.instance.layerBGs[2].add(sprite);
+			}
         }
 		#end
 		return toBeCalled;

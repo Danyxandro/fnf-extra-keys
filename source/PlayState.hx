@@ -281,7 +281,7 @@ class PlayState extends MusicBeatState
 	public var layerFakeBFs:FlxTypedGroup<Character>;
 	public var layerPlayChars:FlxTypedGroup<Boyfriend>;
 	public var layerGF:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
-	public var layerBG:FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+	public var layerBGs:Array<FlxTypedGroup<FlxSprite>> = [new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>()];
 	public var dadID:Int = 0;
 	public var bfID:Int = 0;
 	//cam moving stuff
@@ -1054,7 +1054,7 @@ class PlayState extends MusicBeatState
 				camPos.set(gf.getGraphicMidpoint().x, gf.getGraphicMidpoint().y + 100);
 		}
 
-		add(layerBG);
+		add(layerBGs[0]);
 		layerGF.add(gf);
 		layerChars.add(dad);
 		layerBFs.add(boyfriend);
@@ -1115,7 +1115,7 @@ class PlayState extends MusicBeatState
 		if (!PlayStateChangeables.Optimize)
 		{
 			add(layerGF);
-
+			add(layerBGs[1]);
 			// Shitty layering but whatev it works LOL
 			if (curStage == 'limo')
 				add(limo);
@@ -1133,6 +1133,7 @@ class PlayState extends MusicBeatState
 				add(layerFakeBFs);
 			}
 		}else{
+			add(layerBGs[1]);
 			if(PlayStateChangeables.flip && executeModchart){
 				layerFakeBFs = new FlxTypedGroup<Character>();
 				layerPlayChars = new FlxTypedGroup<Boyfriend>();
@@ -1142,7 +1143,11 @@ class PlayState extends MusicBeatState
 				layerPlayChars.add(boyfriend);
 			}
 		}
-
+		add(layerBGs[2]);
+		layerBGs[3].cameras = [camHUD];
+		add(layerBGs[3]);
+		layerBGs[4].cameras = [cam3];
+		add(layerBGs[4]);
 		if (loadRep)
 		{
 			FlxG.watch.addQuick('rep rpesses',repPresses);

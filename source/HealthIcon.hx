@@ -179,7 +179,7 @@ class HealthIcon extends FlxSprite
 			mapping.set('bf-neon', [0, 1]);
 			mapping.set('bf-cat', [0, 1]);
 			mapping.set('bf-holding-gf', [0, 1]);
-			mapping.set("crazy-GF", [0]);
+			mapping.set("crazy-GF", [16]);
 			mapping.set('OJ', [28, 29]);
 			mapping.set('whitty', [30, 31]);
 			mapping.set('hex', [32, 33]);
