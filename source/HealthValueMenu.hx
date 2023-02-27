@@ -77,7 +77,7 @@ class HealthValueMenu extends FlxSubState
             tab_group.name = texto;
 
             var normalNoteLabel:FlxText = new FlxText(210,15,-1,'Normal notes',16);
-            var label0:FlxText = new FlxText(370,40,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label0:FlxText = new FlxText(370,40,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var normalNote:FlxSprite = new FlxSprite();
             normalNote.frames = Paths.getSparrowAtlas('NOTE_assets',"shared");
             normalNote.animation.addByPrefix('greenScroll', 'green0');
@@ -86,7 +86,7 @@ class HealthValueMenu extends FlxSubState
             normalNote.updateHitbox();
             normalNote.x = 240;
             normalNote.y = 45;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -95,6 +95,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,65, 0.01, FlxG.save.data.healthValues.get("0").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "0", stepper);
@@ -102,7 +103,7 @@ class HealthValueMenu extends FlxSubState
             }
             
             var trickyNoteLabel:FlxText = new FlxText(210,110,-1,'Tricky notes',16);
-            var label1:FlxText = new FlxText(370, 140,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label1:FlxText = new FlxText(370, 140,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var trickyNote:FlxSprite = new FlxSprite();
             trickyNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_fire',"shared");
             trickyNote.animation.addByPrefix('greenScroll', 'green fire0');
@@ -111,7 +112,7 @@ class HealthValueMenu extends FlxSubState
             trickyNote.updateHitbox();
             trickyNote.x = 230;
             trickyNote.y = 120;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -120,6 +121,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,165, 0.01, FlxG.save.data.healthValues.get("1").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "1", stepper);
@@ -127,7 +129,7 @@ class HealthValueMenu extends FlxSubState
             }
 
             var blackNoteLabel:FlxText = new FlxText(200, 230,-1,'Damage notes',16);
-            var label2:FlxText = new FlxText(370, 260,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label2:FlxText = new FlxText(370, 260,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var blackNote:FlxSprite = new FlxSprite();
             blackNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types',"shared");
             blackNote.animation.addByPrefix('greenScroll', 'halo green0');
@@ -136,7 +138,7 @@ class HealthValueMenu extends FlxSubState
             blackNote.updateHitbox();
             blackNote.x = 240;
             blackNote.y = 260;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -145,6 +147,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,285, 0.01, FlxG.save.data.healthValues.get("2").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "2", stepper);
@@ -152,7 +155,7 @@ class HealthValueMenu extends FlxSubState
             }
 
             var hurtNoteLabel:FlxText = new FlxText(220, 330,-1,'Hurt notes',16);
-            var label3:FlxText = new FlxText(370, 360,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label3:FlxText = new FlxText(370, 360,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var hurtNote:FlxSprite = new FlxSprite();
             hurtNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/HURTNote',"shared");
             hurtNote.animation.addByPrefix('greenScroll', 'green0');
@@ -161,7 +164,7 @@ class HealthValueMenu extends FlxSubState
             hurtNote.updateHitbox();
             hurtNote.x = 240;
             hurtNote.y = 360;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -170,6 +173,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j *67,385, 0.01, FlxG.save.data.healthValues.get("3").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "3", stepper);
@@ -177,7 +181,7 @@ class HealthValueMenu extends FlxSubState
             }
 
             var goldNoteLabel:FlxText = new FlxText(215, 430,-1,'Gold notes',16);
-            var label4:FlxText = new FlxText(370, 460,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label4:FlxText = new FlxText(370, 460,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var goldNote:FlxSprite = new FlxSprite();
             goldNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/GoldNote',"shared");
             goldNote.animation.addByPrefix('greenScroll', 'green0');
@@ -186,7 +190,7 @@ class HealthValueMenu extends FlxSubState
             goldNote.updateHitbox();
             goldNote.x = 240;
             goldNote.y = 460;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -195,6 +199,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,485, 0.01, FlxG.save.data.healthValues.get("4").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "4", stepper);
@@ -202,7 +207,7 @@ class HealthValueMenu extends FlxSubState
             }
 
             var warningNoteLabel:FlxText = new FlxText(200, 530,-1,'Warning notes',16);
-            var label5:FlxText = new FlxText(370, 560,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label5:FlxText = new FlxText(370, 560,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var warningNote:FlxSprite = new FlxSprite();
             warningNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types',"shared");
             warningNote.animation.addByPrefix('greenScroll', 'warning green0');
@@ -211,7 +216,7 @@ class HealthValueMenu extends FlxSubState
             warningNote.updateHitbox();
             warningNote.x = 242;
             warningNote.y = 560;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -220,6 +225,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,585, 0.01, FlxG.save.data.healthValues.get("5").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "5", stepper);
@@ -227,7 +233,7 @@ class HealthValueMenu extends FlxSubState
             }
 
             var whiteNoteLabel:FlxText = new FlxText(220, 630,-1,'Angel notes',16);
-            var label6:FlxText = new FlxText(370, 660,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label6:FlxText = new FlxText(370, 660,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var whiteNote:FlxSprite = new FlxSprite();
             whiteNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types',"shared");
             whiteNote.animation.addByPrefix('greenScroll', 'angel green0');
@@ -236,7 +242,7 @@ class HealthValueMenu extends FlxSubState
             whiteNote.updateHitbox();
             whiteNote.x = 245;
             whiteNote.y = 660;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -245,6 +251,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,685, 0.01, FlxG.save.data.healthValues.get("6").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "6", stepper);
@@ -252,7 +259,7 @@ class HealthValueMenu extends FlxSubState
             }
 
             var glitchNoteLabel:FlxText = new FlxText(220, 730,-1,'Glitch notes',16);
-            var label7:FlxText = new FlxText(370, 760,-1, "Shit      Bad    Good    Sick    Miss Miss(LN)",16);
+            var label7:FlxText = new FlxText(370, 760,-1, "Shit      Bad    Good    Sick   Miss Miss(LN) Miss(Sus)",16);
             var glitchNote:FlxSprite = new FlxSprite();
             glitchNote.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types',"shared");
             glitchNote.animation.addByPrefix('greenScroll', 'glitch green0');
@@ -261,7 +268,7 @@ class HealthValueMenu extends FlxSubState
             glitchNote.updateHitbox();
             glitchNote.x = 245;
             glitchNote.y = 760;
-            for(j in 0...6){
+            for(j in 0...7){
                 var texto2:String = "sick";
                 switch(j){
                     case 0: texto2 = "shit";
@@ -270,6 +277,7 @@ class HealthValueMenu extends FlxSubState
                     case 3: texto2 = "sick";
                     case 4: texto2 = "miss";
                     case 5: texto2 = "missLN";
+                    case 6: texto2 = "missSus";
                 }
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,785, 0.01, FlxG.save.data.healthValues.get("8").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "8", stepper);
@@ -376,6 +384,7 @@ class HealthValueMenu extends FlxSubState
                 FlxG.save.data.healthValues.get(""+i).get(texto).set("sick", map.get("sick"+j).value);
                 FlxG.save.data.healthValues.get(""+i).get(texto).set("miss", map.get("miss"+j).value);
                 FlxG.save.data.healthValues.get(""+i).get(texto).set("missLN", map.get("missLN"+j).value);
+                FlxG.save.data.healthValues.get(""+i).get(texto).set("missSus", map.get("missSus"+j).value);
             }
             FlxG.save.data.healthValues.get("missPressed").set(texto, map.get("missPress").value);
         }

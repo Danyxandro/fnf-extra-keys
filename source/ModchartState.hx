@@ -260,7 +260,7 @@ class ModchartState
 					PlayState.instance.layerPlayChars.members[idsBF[id]].alpha = 1;
 					PlayState.instance.layerPlayChars.members[curBF].hasFocus = false;
 					if(swap){
-						PlayState.instance.layerPlayChars.members[curBF].alpha = getVar("dadFadeAlpha","float");
+						PlayState.instance.layerPlayChars.members[curBF].alpha = getVar("bfFadeAlpha","float");
 						PlayState.instance.layerPlayChars.members[curBF].active = false;
 					}
 					curBF = idsBF[id];
@@ -326,7 +326,7 @@ class ModchartState
 					PlayState.instance.layerFakeBFs.members[ids[id]].alpha = 1;
 					PlayState.instance.layerFakeBFs.members[curChar].hasFocus = false;
 					if(swap){
-						PlayState.instance.layerFakeBFs.members[curChar].alpha = getVar("bfFadeAlpha","float");
+						PlayState.instance.layerFakeBFs.members[curChar].alpha = getVar("dadFadeAlpha","float");
 						PlayState.instance.layerFakeBFs.members[curChar].active = false;
 					}
 					curChar = ids[id];
@@ -587,7 +587,7 @@ class ModchartState
 
 				setVar("strumLineY", PlayState.instance.strumLine.y);
 
-				setVar("playingAsRivel", PlayStateChangeables.flip);
+				setVar("playingAsRival", PlayStateChangeables.flip);
 				setVar("playingAsBoth", PlayStateChangeables.bothSide);
 				setVar("keyAmount", PlayState.keyAmmo[PlayState.mania]);
 
@@ -613,6 +613,10 @@ class ModchartState
 					PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character+"2"]);
 				}
 				if(PlayStateChangeables.flip){
+					ids.clear();
+					idsBF.clear();
+					ids = [PlayState.SONG.player1 => 0];
+					idsBF = [PlayState.SONG.player2 => 0];
 					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerFakeBFs.members[0]);
 					ids.set("bf-" + PlayState.SONG.player1, 0);
 					if(PlayState.SONG.player2 == "dad"){
@@ -791,10 +795,10 @@ class ModchartState
 								trace("loaded rival (bf side): " + character);
 								PlayState.instance.layerFakeBFs.add(bf);
 								ids[character] = PlayState.instance.layerFakeBFs.members.length-1;
-								luaSprites.set("bf-" + character, PlayState.instance.layerFakeBFs.members[idsBF[character]]);
+								luaSprites.set("bf-" + character, PlayState.instance.layerFakeBFs.members[ids[character]]);
 								bf.active = false;
 								bf.hasFocus = false;
-								bf.alpha = getVar("bfFadeAlpha","float");
+								bf.alpha = getVar("dadFadeAlpha","float");
 								if(bf.isCustom){
 									PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
 									PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
@@ -834,7 +838,7 @@ class ModchartState
 								char.active = false;
 								char.hasFocus = false;
 								//char.alpha = 0.5;
-								char.alpha = getVar("dadFadeAlpha","float");
+								char.alpha = getVar("bfFadeAlpha","float");
 								if(char.isCustom){
 									PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
 									PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
@@ -1354,6 +1358,14 @@ class ModchartState
 					return value;
 				});
 
+				Lua_helper.add_callback(lua,"setGoldAnim", function(anim:String, isPlayer:Bool):Void {
+					var id:Int = 0;
+					if(PlayStateChangeables.flip)
+						isPlayer = !isPlayer;
+					if(!isPlayer)
+						id = 1;
+					PlayState.instance.goldAnim[id] = anim;
+				});
 				// actors
 				
 				Lua_helper.add_callback(lua,"getRenderedNotes", function() {

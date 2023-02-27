@@ -419,6 +419,7 @@ class FreeplayState extends MusicBeatState
 				PlayState.storyWeek = songs[curSelected].week;
 				FlxG.mouse.visible = false;
 				position = songs[curSelected].listPos;
+				PlayStateChangeables.goToState = "freeplay";
 				if(songs[curSelected].message == "warning" && FlxG.save.data.enableCharchange && !FlxG.save.data.optimize){
 					openSubState(new WarningSubstate());
 				}else{

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="screen.png"><SubTexture name="screen0000" x="0" y="0" width="2075" height="1005" frameX="-11" frameY="-80" frameWidth="2086" frameHeight="1091" />
+<SubTexture name="screen0001" x="0" y="1005" width="1874" height="1005" frameX="-11" frameY="-80" frameWidth="2086" frameHeight="1091" />
+<SubTexture name="screen0002" x="2075" y="998" width="1891" height="994" frameX="0" frameY="-97" frameWidth="2086" frameHeight="1091" />
+<SubTexture name="screen0003" x="0" y="2010" width="1891" height="992" frameX="0" frameY="-99" frameWidth="2086" frameHeight="1091" />
+<SubTexture name="screen0004" x="2075" y="0" width="1891" height="998" frameX="0" frameY="-93" frameWidth="2086" frameHeight="1091" />
+</TextureAtlas>

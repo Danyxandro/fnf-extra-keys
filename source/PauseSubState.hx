@@ -256,7 +256,12 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.switchState(new MainMenuState());
 						PlayStateChangeables.weekBotplay = false;
 					}else{
-						FlxG.switchState(new FreeplayState());
+						switch(PlayStateChangeables.goToState){
+							case "betadciu":
+							FlxG.switchState(new BetadciuState());
+							default:
+							FlxG.switchState(new FreeplayState());
+						}
 					}
 				case "Botplay":
 					var texto:String;

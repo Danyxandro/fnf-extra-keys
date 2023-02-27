@@ -1,8 +1,10 @@
 stage
 halloween
 philly
+ms-mediocre
 limo
 mall
 mallEvil
 school
 schoolEvil
+annieCave

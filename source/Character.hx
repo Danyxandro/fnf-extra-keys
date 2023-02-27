@@ -833,7 +833,7 @@ class Character extends FlxSprite
 
 				playAnim('idle');
 			case 'bf-neon':
-				var tex = Paths.getSparrowAtlas('referencezip/BOYFRIEND',"shared");
+				var tex = Paths.getSparrowAtlas('neon/BOYFRIEND',"shared");
 				frames = tex;
 
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
@@ -893,7 +893,7 @@ class Character extends FlxSprite
 				flipX = true;
 			case 'gf-neon':
 				// GIRLFRIEND CODE
-				tex = Paths.getSparrowAtlas('referencezip/GF_assets',"shared");
+				tex = Paths.getSparrowAtlas('neon/GF_assets',"shared");
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
 				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
@@ -1156,6 +1156,22 @@ class Character extends FlxSprite
 					this.x -= 150;
 					this.y -= 70;
 				}
+				playAnim('idle');
+			case "OJ-menu":
+				tex = Paths.getSparrowAtlas('characters/OJ_Assets','shared');
+				frames = tex;
+				animation.addByPrefix('idle', 'OJ Idle', 24, true);
+				animation.addByPrefix('singUP', 'OJ Up', 24, false);
+				animation.addByPrefix('singLEFT', 'OJ left', 24, false);
+				animation.addByPrefix('singRIGHT', 'OJ right', 24, false);
+				antialiasing = true;
+
+				addOffset("idle", -48, 0);
+				addOffset("singUP", 31, 180);
+				addOffset("singLEFT", -90, 62);
+				addOffset("singRIGHT", -115, 72);
+				this.y -= 450;
+
 				playAnim('idle');
 			case 'whitty':
 				/*var offsetsJson:Array<Dynamic> = cast Json.parse( Assets.getText( Paths.json('offsets') ).trim() ).offsets;
@@ -1514,6 +1530,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singLEFT', 'sky annoyed left0', 24, false);
 				animation.addByPrefix('idle2', 'sky annoyed alt idle0', 24, true);
 				animation.addByPrefix('singUP-alt', 'sky annoyed alt up0', 24, false);
+				animation.addByPrefix('singHey', 'sky annoyed alt up0', 24, false);
 				animation.addByPrefix('singRIGHT-alt', 'sky annoyed alt right0', 24, false);
 				animation.addByPrefix('singDOWN-alt', 'sky annoyed alt down0', 24, false);
 				animation.addByPrefix('singLEFT-alt', 'sky annoyed alt left0', 24, false);
@@ -1536,6 +1553,7 @@ class Character extends FlxSprite
 					addOffset("singLEFT",-150,100);
 					addOffset("singDOWN",-100,100);
 					addOffset("singUP-alt",-100,100);
+					addOffset("singHey",-100,100);
 					addOffset("singRIGHT-alt",-150,100);
 					addOffset("singLEFT-alt",-60,100);
 					addOffset("singDOWN-alt",-100,100);
@@ -1555,6 +1573,7 @@ class Character extends FlxSprite
 					addOffset("singLEFT",100,100);
 					addOffset("singDOWN",100,100);
 					addOffset("singUP-alt",100,100);
+					addOffset("singHey",100,100);
 					addOffset("singRIGHT-alt",100,100);
 					addOffset("singLEFT-alt",100,100);
 					addOffset("singDOWN-alt",100,100);
@@ -2682,6 +2701,12 @@ class Character extends FlxSprite
 				animation.add("singRIGHT-alt",animation.getByName('singRIGHT').frames,24,false);
 				if(animOffsets['singRIGHT'] != null){
 					addOffset('singRIGHT-alt', animOffsets['singRIGHT'][0], animOffsets['singRIGHT'][1]);
+				}
+			}
+			if(animation.getByName('singHey-alt') == null && animation.getByName('singHey') != null){
+				animation.add("singRIGHT-alt",animation.getByName('singRIGHT').frames,24,false);
+				if(animOffsets['singHey'] != null){
+					addOffset('singHey-alt', animOffsets['singHey'][0], animOffsets['singHey'][1]);
 				}
 			}
 		}

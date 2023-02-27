@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="more_menu_assets.png"><SubTexture name="betadciu basic0000" x="0" y="821" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0001" x="0" y="821" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0002" x="0" y="821" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0003" x="681" y="821" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0004" x="681" y="821" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0005" x="681" y="821" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0006" x="0" y="955" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0007" x="0" y="955" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu basic0008" x="0" y="955" width="681" height="134" frameX="0" frameY="0" frameWidth="681" frameHeight="134" />
+<SubTexture name="betadciu white0000" x="0" y="170" width="851" height="167" frameX="-5" frameY="-4" frameWidth="859" frameHeight="172" />
+<SubTexture name="betadciu white0001" x="848" y="0" width="856" height="169" frameX="0" frameY="-3" frameWidth="859" frameHeight="172" />
+<SubTexture name="betadciu white0002" x="0" y="0" width="848" height="170" frameX="-11" frameY="0" frameWidth="859" frameHeight="172" />
+<SubTexture name="bonus songs basic0000" x="681" y="955" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0001" x="681" y="955" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0002" x="681" y="955" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0003" x="0" y="1089" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0004" x="0" y="1089" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0005" x="0" y="1089" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0006" x="0" y="1217" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0007" x="0" y="1217" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs basic0008" x="0" y="1217" width="877" height="128" frameX="0" frameY="0" frameWidth="877" frameHeight="128" />
+<SubTexture name="bonus songs white0000" x="0" y="661" width="1097" height="160" frameX="-3" frameY="-2" frameWidth="1103" frameHeight="164" />
+<SubTexture name="bonus songs white0001" x="0" y="500" width="1093" height="161" frameX="-10" frameY="0" frameWidth="1103" frameHeight="164" />
+<SubTexture name="bonus songs white0002" x="0" y="337" width="1097" height="163" frameX="0" frameY="0" frameWidth="1103" frameHeight="164" />
+<SubTexture name="extras basic0000" x="1097" y="661" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0001" x="1097" y="661" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0002" x="1097" y="661" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0003" x="877" y="1089" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0004" x="877" y="1089" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0005" x="877" y="1089" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0006" x="877" y="1217" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0007" x="877" y="1217" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras basic0008" x="877" y="1217" width="461" height="110" frameX="0" frameY="0" frameWidth="461" frameHeight="110" />
+<SubTexture name="extras white0000" x="1093" y="500" width="576" height="138" frameX="-1" frameY="-1" frameWidth="578" frameHeight="140" />
+<SubTexture name="extras white0001" x="851" y="170" width="577" height="140" frameX="0" frameY="0" frameWidth="578" frameHeight="140" />
+<SubTexture name="extras white0002" x="1097" y="337" width="576" height="140" frameX="-2" frameY="0" frameWidth="578" frameHeight="140" />
+</TextureAtlas>

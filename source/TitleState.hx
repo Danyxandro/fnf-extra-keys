@@ -51,6 +51,10 @@ class TitleState extends MusicBeatState
 
 	var wackyImage:FlxSprite;
 
+	private var uno:FlxSprite = new FlxSprite();
+	private var counter:Int = 1;
+	private var screen:FlxSprite = new FlxSprite();
+
 	override public function create():Void
 	{
 		#if polymod
@@ -94,7 +98,7 @@ class TitleState extends MusicBeatState
 		trace('NEWGROUNDS LOL');
 		#end
 
-		FlxG.save.bind('seven', 'danyxandro');
+		FlxG.save.bind('betadciu-v2', 'danyxandro');
 
 		KadeEngineData.initSave();
 
@@ -172,7 +176,26 @@ class TitleState extends MusicBeatState
 		// bg.updateHitbox();
 		add(bg);
 
-		if(Main.watermarks) {
+		uno.frames = Paths.getSparrowAtlas('bg');
+		uno.animation.addByPrefix('frame1',"bg1",1,false);
+		uno.animation.addByPrefix('frame2',"bg2",1,false);
+		uno.animation.addByPrefix('frame3',"bg3",1,false);
+		uno.animation.addByPrefix('frame4',"bg4",1,false);
+		uno.antialiasing = false;
+		uno.animation.play("frame1");
+		uno.alpha = 0;
+		add(uno);
+
+		screen.frames = Paths.getSparrowAtlas("screen");
+		screen.animation.addByPrefix('bump',"screen0",24,false);
+		screen.antialiasing = false;
+		screen.x = -100;
+		screen.y = -70;
+		screen.setGraphicSize(Std.int(bg.width * 1.25));
+		screen.updateHitbox();
+		add(screen);
+
+		/*if(Main.watermarks) {
 			logoBl = new FlxSprite(-150, -100);
 			logoBl.frames = Paths.getSparrowAtlas('KadeEngineLogoBumpin');
 			logoBl.antialiasing = true;
@@ -190,14 +213,23 @@ class TitleState extends MusicBeatState
 			logoBl.updateHitbox();
 			// logoBl.screenCenter();
 			// logoBl.color = FlxColor.BLACK;
-		}
+		}*/
+
+		logoBl = new FlxSprite(20, -5);
+		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
+		logoBl.antialiasing = true;
+		logoBl.animation.addByPrefix('bump', 'logo bumping 1', 24);
+		logoBl.scale.set(0.95,0.95);
+		logoBl.animation.play('bump');
+		logoBl.updateHitbox();
+		logoBl.screenCenter(X);
 
 		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
 		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		gfDance.antialiasing = true;
-		add(gfDance);
+		//add(gfDance);
 		add(logoBl);
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
@@ -390,6 +422,7 @@ class TitleState extends MusicBeatState
 		super.beatHit();
 
 		logoBl.animation.play('bump');
+		screen.animation.play("bump",true,false);
 		danceLeft = !danceLeft;
 
 		if (danceLeft)
@@ -414,18 +447,20 @@ class TitleState extends MusicBeatState
 			// credTextShit.text = 'In association \nwith';
 			// credTextShit.screenCenter();
 			case 5:
-				if (Main.watermarks)
+				/*if (Main.watermarks)
 					createCoolText(['Kade Engine', 'by']);
 				else
-					createCoolText(['In Partnership', 'with']);
+					createCoolText(['In Partnership', 'with']);*/
+				createCoolText(["Extra keys by TheZoroForce"]);
 			case 7:
-				if (Main.watermarks)
+				/*if (Main.watermarks)
 					addMoreText('KadeDeveloper');
 				else
 				{
 					addMoreText('Newgrounds');
 					ngSpr.visible = true;
-				}
+				}*/
+				addMoreText("Created by Danyxandro");
 			// credTextShit.text += '\nNewgrounds';
 			case 8:
 				deleteCoolText();
@@ -435,15 +470,15 @@ class TitleState extends MusicBeatState
 			// credTextShit.text = 'Shoutouts Tom Fulp';
 			// credTextShit.screenCenter();
 			case 9:
-				if (Main.watermarks)
+				/*if (Main.watermarks)
 					createCoolText(['Extra Keys Mod', 'by']);
-				else
+				else*/
 					createCoolText([curWacky[0]]);
 			// credTextShit.visible = true;
 			case 11:
-				if (Main.watermarks)
+				/*if (Main.watermarks)
 					addMoreText('TheZoroForce');
-				else
+				else*/
 					addMoreText(curWacky[1]);
 			// credTextShit.text += '\nlmao';
 			case 12:
@@ -463,6 +498,23 @@ class TitleState extends MusicBeatState
 			case 16:
 				skipIntro();
 		}
+
+		if(skippedIntro){
+			switch(counter){
+				case 1:
+					uno.animation.play("frame1");
+					counter++;
+				case 2:
+					uno.animation.play("frame2");
+					counter++;
+				case 3:
+					uno.animation.play("frame3");
+					counter++;
+				default:
+					uno.animation.play("frame4");
+					counter = 1;
+			}
+		}
 	}
 
 	var skippedIntro:Bool = false;
@@ -475,6 +527,7 @@ class TitleState extends MusicBeatState
 
 			FlxG.camera.flash(FlxColor.WHITE, 4);
 			remove(credGroup);
+			uno.alpha = 0.5;
 			skippedIntro = true;
 		}
 	}

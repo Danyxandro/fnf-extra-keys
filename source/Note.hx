@@ -785,6 +785,80 @@ class Note extends FlxSprite
 						offset.x += 58 * noteScale;
 					}
 				}
+			case "black":
+				frames = Paths.getSparrowAtlas('noteassets/NOTE_Black');
+				var colores = ['purple', 'blue', 'green', 'red', 'white', 'purple', 'blue', 'green', 'red'];
+				for (i in 0...9)
+					{
+						animation.addByPrefix(noteColors[i] + 'Scroll', colores[i] + '0'); // Normal notes
+						animation.addByPrefix(noteColors[i] + 'hold', colores[i] + ' hold piece'); // Hold
+						animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
+					}
+				altNotes([2]);
+				if(noteType == 2){
+					if(isSustainNote){
+						frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types');
+						for (i in 0...9)
+						{
+							animation.addByPrefix(noteColors[i] + 'Scroll', 'fire ' + noteColors[i] + '0'); // Normal notes
+							animation.addByPrefix(noteColors[i] + 'hold', 'fire hold piece'); // Hold
+							animation.addByPrefix(noteColors[i] + 'holdend', 'fire hold end'); // Tails
+						}
+					}else{
+						frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
+						colores = ['purple', 'blue', 'green', 'red', 'white', 'yellow', 'violet', 'darkred', 'dark'];
+						for (i in 0...9)
+						{
+							animation.addByIndices(noteColors[i] + 'Scroll', colores[i] + ' press', [0], "", 0, false); // Normal notes
+						}
+					}
+				}
+				setGraphicSize(Std.int(width * noteScale));
+				updateHitbox();
+				antialiasing = true;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += 201;
+						else
+							offset.y += 51;
+						offset.x += 40;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += 291 * noteScale;
+						else
+							offset.y += 71 * noteScale;
+						offset.x += 58 * noteScale;
+					}
+				}
+			case 'sacred':
+				frames = Paths.getSparrowAtlas('noteassets/Holy_Note');
+				var colores = ['purple', 'blue', 'green', 'red', 'white', 'purple', 'blue', 'green', 'red'];
+				for (i in 0...9)
+					{
+						animation.addByPrefix(noteColors[i] + 'Scroll', colores[i] + '0'); // Normal note
+						animation.addByPrefix(noteColors[i] + 'hold', colores[i] + ' hold piece'); // Hold
+						animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
+					}	
+				altNotes();
+				setGraphicSize(Std.int(width * noteScale));
+				updateHitbox();
+				antialiasing = true;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += 201;
+						else
+							offset.y += 51;
+						offset.x += 40;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += 291 * noteScale;
+						else
+							offset.y += 71 * noteScale;
+						offset.x += 58 * noteScale;
+					}
+				}
 			default:
 				frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 				for (i in 0...9)

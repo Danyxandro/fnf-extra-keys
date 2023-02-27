@@ -766,7 +766,7 @@ class PlayState extends MusicBeatState
 			{
 					curStage = 'school';
 
-					// defaultCamZoom = 0.9;
+					camFactor = 0;
 
 					var bgSky = new FlxSprite().loadGraphic(Paths.image('weeb/weebSky','week6'));
 					bgSky.scrollFactor.set(0.1, 0.1);
@@ -836,7 +836,7 @@ class PlayState extends MusicBeatState
 			case 'schoolEvil':
 			{
 					curStage = 'schoolEvil';
-
+					camFactor = 0;
 					if (!PlayStateChangeables.Optimize)
 						{
 							var waveEffectBG = new FlxWaveEffect(FlxWaveMode.ALL, 2, -1, 3, 2);
@@ -891,6 +891,72 @@ class PlayState extends MusicBeatState
 								add(waveSprite);
 								add(waveSpriteFG);
 						*/
+			}
+			case 'ms-mediocre': 
+			{
+				curStage = 'ms-mediocre';
+
+				var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('ms-mediocre/sky', 'week3'));
+				bg.scrollFactor.set(0.1, 0.1);
+				add(bg);
+
+				var city:FlxSprite = new FlxSprite(-10).loadGraphic(Paths.image('ms-mediocre/city', 'week3'));
+				city.scrollFactor.set(0.3, 0.3);
+				city.setGraphicSize(Std.int(city.width * 0.85));
+				city.updateHitbox();
+				add(city);
+
+				phillyCityLights = new FlxTypedGroup<FlxSprite>();
+				if(FlxG.save.data.distractions){
+					add(phillyCityLights);
+				}
+
+				for (i in 0...5)
+				{
+					var light:FlxSprite = new FlxSprite(city.x).loadGraphic(Paths.image('ms-mediocre/win' + i, 'week3'));
+					light.scrollFactor.set(0.3, 0.3);
+					light.visible = false;
+					light.setGraphicSize(Std.int(light.width * 0.85));
+					light.updateHitbox();
+					light.antialiasing = true;
+					phillyCityLights.add(light);
+				}
+
+				var streetBehind:FlxSprite = new FlxSprite(-40, 50).loadGraphic(Paths.image('ms-mediocre/behindTrain','week3'));
+				add(streetBehind);
+
+				phillyTrain = new FlxSprite(2000, 360).loadGraphic(Paths.image('ms-mediocre/train','week3'));
+				if(FlxG.save.data.distractions){
+					add(phillyTrain);
+				}
+
+				trainSound = new FlxSound().loadEmbedded(Paths.sound('train_passes','week3'));
+				FlxG.sound.list.add(trainSound);
+
+				// var cityLights:FlxSprite = new FlxSprite().loadGraphic(AssetPaths.win0.png);
+
+				var street:FlxSprite = new FlxSprite(-40, streetBehind.y).loadGraphic(Paths.image('ms-mediocre/street','week3'));
+				add(street);
+			}
+			case 'annieCave':
+			{
+				curStage = 'annieCave';
+				var bg:FlxSprite = new FlxSprite(-400, -500).loadGraphic(Paths.image('annieCave/evilBG','week5'));
+				bg.antialiasing = true;
+				bg.scrollFactor.set(0.2, 0.2);
+				bg.active = false;
+				bg.setGraphicSize(Std.int(bg.width * 0.8));
+				bg.updateHitbox();
+				add(bg);
+
+				var evilTree:FlxSprite = new FlxSprite(300, -300).loadGraphic(Paths.image('annieCave/evilTree','week5'));
+				evilTree.antialiasing = true;
+				evilTree.scrollFactor.set(0.2, 0.2);
+				add(evilTree);
+
+				var evilSnow:FlxSprite = new FlxSprite(-200, 700).loadGraphic(Paths.image("annieCave/evilSnow",'week5'));
+					evilSnow.antialiasing = true;
+				add(evilSnow);
 			}
 			case 'stage':
 				{
@@ -1094,8 +1160,9 @@ class PlayState extends MusicBeatState
 				bfyoffset += 220;
 				gf.x += 180;
 				gf.y += 300;
-				
-
+			case "annieCave":
+				bfxoffset += 320;
+				camPos.y -= 100;
 		}
 		if (PlayStateChangeables.flip)
 		{
@@ -1350,15 +1417,27 @@ class PlayState extends MusicBeatState
 		}
 		if(dad.colorCode.length > 0){
 			trace("Sas dad " + dad.colorCode);
-			if(!colorsMap.exists(SONG.player2))
-				colorsMap.set(SONG.player2, FlxColor.fromRGB(dad.colorCode[0],dad.colorCode[1],dad.colorCode[2]));
-			setColorBar(false,SONG.player2);
+			if(PlayStateChangeables.flip){
+				if(!colorsMap.exists(SONG.player1))
+					colorsMap.set(SONG.player1, FlxColor.fromRGB(dad.colorCode[0],dad.colorCode[1],dad.colorCode[2]));
+				setColorBar(true,SONG.player1);
+			}else{
+				if(!colorsMap.exists(SONG.player2))
+					colorsMap.set(SONG.player2, FlxColor.fromRGB(dad.colorCode[0],dad.colorCode[1],dad.colorCode[2]));
+				setColorBar(false,SONG.player2);
+			}
 		}
 		if(boyfriend.colorCode.length > 0){
 			trace("Sas bf " + boyfriend.colorCode);
-			if(!colorsMap.exists(SONG.player1))
-				colorsMap.set(SONG.player1, FlxColor.fromRGB(boyfriend.colorCode[0],boyfriend.colorCode[1],boyfriend.colorCode[2]));
-			setColorBar(true,SONG.player1);
+			if(PlayStateChangeables.flip){
+				if(!colorsMap.exists(SONG.player2))
+					colorsMap.set(SONG.player2, FlxColor.fromRGB(boyfriend.colorCode[0],boyfriend.colorCode[1],boyfriend.colorCode[2]));
+				setColorBar(false,SONG.player2);
+			}else{
+				if(!colorsMap.exists(SONG.player1))
+					colorsMap.set(SONG.player1, FlxColor.fromRGB(boyfriend.colorCode[0],boyfriend.colorCode[1],boyfriend.colorCode[2]));
+				setColorBar(true,SONG.player1);
+			}
 		}
 
 		// Add Kade Engine watermark
@@ -2936,7 +3015,105 @@ class PlayState extends MusicBeatState
 						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
 						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
 						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
-					}						
+					}
+					case "black":
+					{
+							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_Black');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'white', 'left', 'down', 'up', 'right'];
+										babyArrow.x -= Note.tooMuch;
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'white', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'white', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['SPACE'];
+										pPre = ['white'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
+										pPre = ['left', 'white', 'right'];
+	
+								}
+						
+						babyArrow.x += Note.swagWidth * i;
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}
+					case "sacred":
+					{
+							babyArrow.frames = Paths.getSparrowAtlas('noteassets/Holy_Note');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'white', 'left', 'down', 'up', 'right'];
+										babyArrow.x -= Note.tooMuch;
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'white', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'white', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['SPACE'];
+										pPre = ['white'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
+										pPre = ['left', 'white', 'right'];
+	
+								}
+						
+						babyArrow.x += Note.swagWidth * i;
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}
 					default:
 						{
 							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
@@ -3297,7 +3474,7 @@ class PlayState extends MusicBeatState
 
 		switch (curStage)
 		{
-			case 'philly':
+			case 'philly' | "ms-mediocre":
 				if (trainMoving && !PlayStateChangeables.Optimize)
 				{
 					trainFrameTiming += elapsed;
@@ -3688,7 +3865,7 @@ class PlayState extends MusicBeatState
 					dadChar = layerChars.members[dadID];
 					bfChar = layerBFs.members[bfID];
 				}
-				if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != dadChar.getMidpoint().x - 100)
+				if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != dadChar.getMidpoint().x - 160)
 					{
 						mustHitSection = false;
 						var offsetX = 0;
@@ -3703,7 +3880,7 @@ class PlayState extends MusicBeatState
 						}
 						#end
 		
-						camFollow.setPosition(dadChar.getMidpoint().x - 100, dadChar.getMidpoint().y - 100);
+						camFollow.setPosition(dadChar.getMidpoint().x - 160, dadChar.getMidpoint().y - 100);
 
 						// camFollow.setPosition(lucky.getMidpoint().x - 120, lucky.getMidpoint().y + 210);
 						switch (curStage)
@@ -3723,10 +3900,10 @@ class PlayState extends MusicBeatState
 						switch(dadChar.curCharacter){
 							case 'tankman':
 								camFollow.y = dadChar.getMidpoint().y + 100;
-								camFollow.x = dadChar.getMidpoint().x - 170;
+								camFollow.x = dadChar.getMidpoint().x - 230;
 							case 'keen-flying':
 								camFollow.y = dadChar.getMidpoint().y - 100;
-								camFollow.x = dadChar.getMidpoint().x - 350;
+								camFollow.x = dadChar.getMidpoint().x - 300;
 							case 'eder-jr':
 								camFollow.y = dadChar.getMidpoint().y - 285;
 							case 'bf-OJ':
@@ -3738,10 +3915,13 @@ class PlayState extends MusicBeatState
 									camFollow.y = dadChar.getMidpoint().y - 200;
 								}
 							case 'monika':
-								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.y = dadChar.getMidpoint().y - 550;
 								camFollow.x = dadChar.getMidpoint().x - 370;
 							case 'senpai':
-								camFollow.y = dadChar.getMidpoint().y - 430;
+								camFollow.y = dadChar.getMidpoint().y - 550;
+								camFollow.x = dadChar.getMidpoint().x - 370;
+							case 'senpai-angry':
+								camFollow.y = dadChar.getMidpoint().y - 550;
 								camFollow.x = dadChar.getMidpoint().x - 370;
 							case 'henry':
 								camFollow.y = dadChar.getMidpoint().y + 50;
@@ -3753,16 +3933,16 @@ class PlayState extends MusicBeatState
 								camFollow.y = dadChar.getMidpoint().y + 20;
 								camFollow.x = dadChar.getMidpoint().x - 400;
 							case 'pico':
-								camFollow.x = dadChar.getMidpoint().x - 200;
+								camFollow.x = dadChar.getMidpoint().x - 360;
 							case 'pico-minus':
 								camFollow.x = dadChar.getMidpoint().x - 300;
 							case 'mami':
 								camFollow.x = dadChar.getMidpoint().x - 320;
 							case 'tord':
 								camFollow.x = dadChar.getMidpoint().x - 220;
-							case 'beat' | 'bf-beat-neon':
+							case 'beat' | 'beat-neon':
 								camFollow.y = dadChar.getMidpoint().y - 140;
-								camFollow.x = dadChar.getMidpoint().x - 300;
+								camFollow.x = dadChar.getMidpoint().x - 370;
 							case 'impostor-black':
 								camFollow.y = dadChar.getMidpoint().y - 170;
 								camFollow.x = dadChar.getMidpoint().x - 750;
@@ -3985,7 +4165,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 		
-					if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != bfChar.getMidpoint().x - 100)
+					if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != bfChar.getMidpoint().x - 160)
 					{
 						mustHitSection = true;
 						var offsetX = 0;
@@ -3999,7 +4179,7 @@ class PlayState extends MusicBeatState
 							offsetY = luaModchart.getVar("followYOffset", "float");
 						}
 						#end
-						camFollow.setPosition(bfChar.getMidpoint().x - 100, bfChar.getMidpoint().y - 100);
+						camFollow.setPosition(bfChar.getMidpoint().x - 160, bfChar.getMidpoint().y - 100);
 		
 						switch (curStage)
 						{
@@ -4018,10 +4198,10 @@ class PlayState extends MusicBeatState
 						switch(bfChar.curCharacter){
 							case 'tankman':
 								camFollow.y = bfChar.getMidpoint().y + 100;
-								camFollow.x = bfChar.getMidpoint().x - 170;
+								camFollow.x = bfChar.getMidpoint().x - 230;
 							case 'keen-flying':
 								camFollow.y = bfChar.getMidpoint().y - 100;
-								camFollow.x = bfChar.getMidpoint().x - 350;
+								camFollow.x = bfChar.getMidpoint().x - 300;
 							case 'eder-jr':
 								camFollow.y = bfChar.getMidpoint().y - 285;
 							case 'bf-OJ':
@@ -4033,11 +4213,14 @@ class PlayState extends MusicBeatState
 									camFollow.y = bfChar.getMidpoint().y - 200;
 								}
 							case 'monika':
-								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.y = bfChar.getMidpoint().y - 550;
 								camFollow.x = bfChar.getMidpoint().x - 370;
 							case 'senpai':
-								camFollow.y = bfChar.getMidpoint().y - 430;
+								camFollow.y = bfChar.getMidpoint().y - 550;
 								camFollow.x = bfChar.getMidpoint().x - 370;
+							case 'senpai-angry':
+								camFollow.y = dadChar.getMidpoint().y - 550;
+								camFollow.x = dadChar.getMidpoint().x - 370;
 							case 'henry':
 								camFollow.y = bfChar.getMidpoint().y + 50;
 								camFollow.x = bfChar.getMidpoint().x - 175;
@@ -4048,16 +4231,16 @@ class PlayState extends MusicBeatState
 								camFollow.y = bfChar.getMidpoint().y + 20;
 								camFollow.x = bfChar.getMidpoint().x - 400;
 							case 'pico':
-								camFollow.x = bfChar.getMidpoint().x - 200;
+								camFollow.x = bfChar.getMidpoint().x - 360;
 							case 'pico-minus':
 								camFollow.x = bfChar.getMidpoint().x - 300;
 							case 'mami':
 								camFollow.x = bfChar.getMidpoint().x - 320;
 							case 'tord':
 								camFollow.x = bfChar.getMidpoint().x - 220;
-							case 'beat' | 'bf-beat-neon':
+							case 'beat' | 'beat-neon':
 								camFollow.y = bfChar.getMidpoint().y - 140;
-								camFollow.x = bfChar.getMidpoint().x - 300;
+								camFollow.x = bfChar.getMidpoint().x - 370;
 							case 'impostor-black':
 								camFollow.y = bfChar.getMidpoint().y - 170;
 								camFollow.x = bfChar.getMidpoint().x - 750;
@@ -4134,9 +4317,18 @@ class PlayState extends MusicBeatState
 		}
 
 		if(FlxG.save.data.singCam && curStep > 0 && moveCam){
+			var dadChar:Character;
+			var bfChar:Boyfriend; 
+			if(executeModchart && PlayStateChangeables.flip){
+				dadChar = layerFakeBFs.members[dadID];
+				bfChar = layerPlayChars.members[bfID];
+			}else{
+				dadChar = layerChars.members[dadID];
+				bfChar = layerBFs.members[bfID];
+			}
 			if(PlayStateChangeables.flip){
 				if(mustHitSection){
-					var anim:String = layerPlayChars.members[bfID].animation.curAnim.name;
+					var anim:String = bfChar.animation.curAnim.name;
 					if(anim != "singUP" && anim != "singDOWN" && anim != "singLEFT" && anim != "singRIGHT"){
 						charCam[0] = 0;
 						charCam[1] = 0;
@@ -4145,7 +4337,7 @@ class PlayState extends MusicBeatState
 						camFollow.y = posiciones[0];
 					}
 				}else{
-					var anim:String = layerFakeBFs.members[dadID].animation.curAnim.name;
+					var anim:String = dadChar.animation.curAnim.name;
 					if(!anim.startsWith("singUP") && !anim.startsWith("singDOWN") && !anim.startsWith("singLEFT") && !anim.startsWith("singRIGHT")){
 						charCam[2] = 0;
 						charCam[3] = 0;
@@ -4156,7 +4348,7 @@ class PlayState extends MusicBeatState
 				}
 			}else{
 				if(mustHitSection){
-					var anim:String = layerBFs.members[bfID].animation.curAnim.name;
+					var anim:String = bfChar.animation.curAnim.name;
 					if(anim != "singUP" && anim != "singDOWN" && anim != "singLEFT" && anim != "singRIGHT"){
 						charCam[0] = 0;
 						charCam[1] = 0;
@@ -4165,7 +4357,7 @@ class PlayState extends MusicBeatState
 						camFollow.y = posiciones[0];
 					}
 				}else{
-					var anim:String = layerChars.members[dadID].animation.curAnim.name;
+					var anim:String = dadChar.animation.curAnim.name;
 					if(!anim.startsWith("singUP") && !anim.startsWith("singDOWN") && !anim.startsWith("singLEFT") && !anim.startsWith("singRIGHT")){
 						charCam[2] = 0;
 						charCam[3] = 0;
@@ -4324,25 +4516,25 @@ class PlayState extends MusicBeatState
 				sDir = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
 				bfsDir = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
 			case 2: 
-				sDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'UP', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+				sDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 				bfsDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 			case 3: 
-				sDir = ['LEFT', 'DOWN', 'UP', 'UP', 'RIGHT'];
+				sDir = ['LEFT', 'DOWN', 'Hey', 'UP', 'RIGHT'];
 				bfsDir = ['LEFT', 'DOWN', 'Hey', 'UP', 'RIGHT'];
 			case 4: 
-				sDir = ['LEFT', 'UP', 'RIGHT', 'UP', 'LEFT', 'DOWN', 'RIGHT'];
+				sDir = ['LEFT', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'RIGHT'];
 				bfsDir = ['LEFT', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'RIGHT'];
 			case 5: 
 				sDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 				bfsDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 			case 6: 
-				sDir = ['UP'];
+				sDir = ['Hey'];
 				bfsDir = ['Hey'];
 			case 7: 
 				sDir = ['LEFT', 'RIGHT'];
 				bfsDir = ['LEFT', 'RIGHT'];
 			case 8:
-				sDir = ['LEFT', 'UP', 'RIGHT'];
+				sDir = ['LEFT', 'Hey', 'RIGHT'];
 				bfsDir = ['LEFT', 'Hey', 'RIGHT'];
 		}
 
@@ -4762,21 +4954,23 @@ class PlayState extends MusicBeatState
 												else
 												{
 													vocals.volume = 0;
-													if (theFunne && !daNote.isSustainNote)
+													if (theFunne && !daNote.isSustainNote && healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") < 0)
 													{
 														noteMiss(daNote.noteData, daNote);
 													}
 													if (daNote.isParent)
 													{
 														//health -= 0.15;  give a health punishment for failing a LN
-														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
 														songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
 														trace("hold fell over at the start\nType: " + daNote.noteType + " value: "
-															+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
+															+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus"));
 														for (i in daNote.children)
 														{
 															i.alpha = 0.3;
 															i.sustainActive = false;
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 														}
 													}
 													else
@@ -4786,13 +4980,13 @@ class PlayState extends MusicBeatState
 															&& daNote.sustainActive
 															&& daNote.spotInLine != daNote.parent.children.length)
 														{
-															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
-															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 															trace("hold fell over at " + daNote.spotInLine + "\nNote type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
 															for (i in daNote.parent.children)
 															{
 																i.alpha = 0.3;
 																i.sustainActive = false;
+																health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+																songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 															}
 															if (daNote.parent.wasGoodHit)
 																misses++;
@@ -4819,21 +5013,24 @@ class PlayState extends MusicBeatState
 														goodNoteHit(daNote);
 													}
 													else
-														noteMiss(daNote.noteData, daNote);
+														if(healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") < 0)
+															noteMiss(daNote.noteData, daNote);
 												}
 				
 												if (daNote.isParent)
 												{
 													//health -= 0.15;  give a health punishment for failing a LN
-													health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+													health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
 													songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
 													trace("hold fell over at the start\nType: " + daNote.noteType + " value: "
-														+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
+														+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus"));
 													for (i in daNote.children)
 													{
 														i.alpha = 0.3;
 														i.sustainActive = false;
 														//trace(i.alpha);
+														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 													}
 												}
 												else
@@ -4851,6 +5048,8 @@ class PlayState extends MusicBeatState
 															i.alpha = 0.3;
 															i.sustainActive = false;
 															//trace(i.alpha);
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 														}
 														if (daNote.parent.wasGoodHit)
 															misses++;
@@ -4902,7 +5101,7 @@ class PlayState extends MusicBeatState
 														{
 															spr.animation.play('confirm', true);
 														}
-														if (spr.animation.curAnim.name == 'confirm' && ((!PlayStateChangeables.flip && !style[1].startsWith('pixel')) || (PlayStateChangeables.flip && !style[0].startsWith('pixel'))))
+														if (spr.animation.curAnim.name == 'confirm' && ((!PlayStateChangeables.flip && !style[0].startsWith('pixel')) || (PlayStateChangeables.flip && !style[1].startsWith('pixel'))))
 														//if (spr.animation.curAnim.name == 'confirm' && !style[0].startsWith('pixel')/*SONG.noteStyle != 'pixel'*/)
 														{
 															spr.centerOffsets();
@@ -5072,8 +5271,8 @@ class PlayState extends MusicBeatState
 		vocals.volume = 0;
 		FlxG.sound.music.pause();
 		vocals.pause();
-		if (SONG.validScore)
-		{
+		/*if (SONG.validScore)
+		{*/
 			// adjusting the highscore song name to be compatible
 			// would read original scores if we didn't change packages
 			var songHighscore = StringTools.replace(PlayState.SONG.song, " ", "-");
@@ -5086,7 +5285,7 @@ class PlayState extends MusicBeatState
 			Highscore.saveScore(songHighscore, Math.round(songScore), storyDifficulty);
 			Highscore.saveCombo(songHighscore, Ratings.GenerateLetterRank(accuracy), storyDifficulty);
 			#end
-		}
+		//}
 
 		if (offsetTesting)
 		{
@@ -5191,7 +5390,12 @@ class PlayState extends MusicBeatState
 				if (FlxG.save.data.scoreScreen)
 					openSubState(new ResultsScreen());
 				else
-					FlxG.switchState(new FreeplayState());
+					switch(PlayStateChangeables.goToState){
+						case "betadciu":
+						FlxG.switchState(new BetadciuState());
+						default:
+						FlxG.switchState(new FreeplayState());
+					}
 			}
 		}
 	}
@@ -6574,7 +6778,7 @@ class PlayState extends MusicBeatState
 					{
 						switch(note.noteType){
 							case 4:
-								dad.playAnim(goldAnim[0], true);
+								dad.playAnim(goldAnim[1], true);
 							default:
 							if(!healthValues.get(""+note.noteType).get("damage"))
 								dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
@@ -6748,7 +6952,10 @@ class PlayState extends MusicBeatState
 
 	function badNoteHit():Void
 		{
-			boyfriend.playAnim('singHit', true);
+			if(boyfriend.animation.getByName('singHit') != null)
+				boyfriend.playAnim('singHit', true);
+			else
+				boyfriend.playAnim('singDOWN-miss', true);
 			FlxG.sound.play(Paths.soundRandom('badnoise', 1, 3), FlxG.random.float(0.7, 1));
 		}
 
@@ -7335,7 +7542,7 @@ class PlayState extends MusicBeatState
 						if (FlxG.random.bool(10) && fastCarCanDrive)
 							fastCarDrive();
 				}
-			case "philly":
+			case "philly" | "ms-mediocre":
 				if(FlxG.save.data.distractions){
 					if (!trainMoving)
 						trainCooldown += 1;
@@ -7531,7 +7738,99 @@ class PlayState extends MusicBeatState
 						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
 						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
 						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
-					}			
+					}
+					case "black":
+					{
+							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_Black');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'white', 'left', 'down', 'up', 'right'];
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'white', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'white', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['SPACE'];
+										pPre = ['white'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
+										pPre = ['left', 'white', 'right'];
+	
+								}
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}
+					case "sacred":
+					{
+							babyArrow.frames = Paths.getSparrowAtlas('noteassets/Holy_Note');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'white', 'left', 'down', 'up', 'right'];
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'SPACE', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'white', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'SPACE', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'white', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['SPACE'];
+										pPre = ['white'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
+										pPre = ['left', 'white', 'right'];
+	
+								}
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}
 					default:
 						{
 							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
@@ -7642,6 +7941,8 @@ class PlayState extends MusicBeatState
 		if(loadAll){
 			nota.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 			nota.loadGraphic(Paths.image('noteassets/pixel/arrows-pixels'), true, 17, 17);
+			nota.frames = Paths.getSparrowAtlas('noteassets/Holy_Note');
+			nota.frames = Paths.getSparrowAtlas('noteassets/NOTE_Black');
 		}
 	}
 

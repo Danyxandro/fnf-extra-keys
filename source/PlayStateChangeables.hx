@@ -16,4 +16,5 @@ class PlayStateChangeables
     public static var ghost:Bool;
     public static var usedBotplay:Bool = false;
     public static var weekBotplay:Bool = false;
+    public static var goToState:String;
 }

@@ -197,7 +197,12 @@ class ResultsScreen extends FlxSubState
                 FlxG.switchState(new MainMenuState());
             }
             else
-                FlxG.switchState(new FreeplayState());
+                switch(PlayStateChangeables.goToState){
+					case "betadciu":
+					FlxG.switchState(new BetadciuState());
+					default:
+					FlxG.switchState(new FreeplayState());
+				}
         }
 
         if (FlxG.keys.justPressed.F1)

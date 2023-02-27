@@ -29,7 +29,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'donate', 'options'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', "betadciu", 'credits', 'options'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
@@ -46,6 +46,8 @@ class MainMenuState extends MusicBeatState
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 	public static var finishedFunnyMove:Bool = false;
+
+	private var char:Boyfriend;
 
 	override function create()
 	{
@@ -84,6 +86,33 @@ class MainMenuState extends MusicBeatState
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 		// magenta.scrollFactor.set();
+		var rnd:Int = Math.round(Math.random() * 6);
+		trace("Random number: " + rnd);
+		switch(rnd){
+			default:
+				char = new Boyfriend(800,280,'bf');
+				char.animation.add("idle", char.animation.getByName('idle').frames,24,true);
+				
+			case 1:
+				char = new Boyfriend(800,280,'bf-cat');
+				char.animation.add("idle", char.animation.getByName('idle').frames,24,true);
+			case 2:
+				char = new Boyfriend(770,250,'bf-keen');
+				char.setGraphicSize(Std.int(char.width * 0.9));
+				char.animation.add("idle", char.animation.getByName('idle').frames,24,true);
+			case 3:
+				char = new Boyfriend(620,370,'beat');
+				char.setGraphicSize(Std.int(char.width * 0.8));
+			case 4:
+				char = new Boyfriend(500,410,'OJ-menu');
+				char.setGraphicSize(Std.int(char.width * 0.8));
+			case 5:
+				char = new Boyfriend(790,-60,'tankman');
+				char.setGraphicSize(Std.int(char.width * 0.8));
+		}
+		char.playAnim("idle");
+		char.scrollFactor.set(0,0);
+		add(char);
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
@@ -92,24 +121,31 @@ class MainMenuState extends MusicBeatState
 
 		for (i in 0...optionShit.length)
 		{
-			var menuItem:FlxSprite = new FlxSprite(0, FlxG.height * 1.6);
-			menuItem.frames = tex;
+			var menuItem:FlxSprite = new FlxSprite(20, FlxG.height * 1.6);
+			switch(i){
+			case 2:
+				menuItem.frames = Paths.getSparrowAtlas('more_menu_assets');
+			case 3:
+				menuItem.frames = Paths.getSparrowAtlas('menu_credits');
+			default:
+				menuItem.frames = tex;
+			}
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
-			menuItem.screenCenter(X);
+			//menuItem.screenCenter(X);
 			menuItems.add(menuItem);
-			menuItem.scrollFactor.set();
+			menuItem.scrollFactor.set(0,0.3);
 			menuItem.antialiasing = true;
 			if (firstStart)
-				FlxTween.tween(menuItem,{y: 60 + (i * 160)},1 + (i * 0.25) ,{ease: FlxEase.expoInOut, onComplete: function(flxTween:FlxTween) 
+				FlxTween.tween(menuItem,{y: -40 + (i * 160)},1 + (i * 0.25) ,{ease: FlxEase.expoInOut, onComplete: function(flxTween:FlxTween) 
 					{ 
 						finishedFunnyMove = true; 
 						changeItem();
 					}});
 			else
-				menuItem.y = 60 + (i * 160);
+				menuItem.y = -40 + (i * 160);
 		}
 
 		firstStart = false;
@@ -206,6 +242,8 @@ class MainMenuState extends MusicBeatState
 						}
 						else
 						{
+							if(optionShit[curSelected] == 'story mode' || optionShit[curSelected] == "freeplay" || optionShit[curSelected] == "betadciu")
+								char.playAnim('hey');
 							if (FlxG.save.data.flashing)
 							{
 								FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
@@ -228,10 +266,10 @@ class MainMenuState extends MusicBeatState
 
 		super.update(elapsed);
 
-		menuItems.forEach(function(spr:FlxSprite)
+		/*menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.screenCenter(X);
-		});
+		});*/
 	}
 	
 	function goToState()
@@ -248,9 +286,17 @@ class MainMenuState extends MusicBeatState
 				FlxG.switchState(new FreeplayState());
 
 				trace("Freeplay Menu Selected");
+			case 'betadciu':
+				BetadciuState.position = 0;
+				FlxG.switchState(new BetadciuState());
+
+				trace("BETADCIU Menu Selected");
 
 			case 'options':
 				FlxG.switchState(new OptionsMenu());
+
+			case 'credits':
+				FlxG.switchState(new CreditState());
 		}
 	}
 

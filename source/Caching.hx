@@ -50,7 +50,7 @@ class Caching extends MusicBeatState
 	override function create()
 	{
 
-		FlxG.save.bind('seven', 'danyxandro');
+		FlxG.save.bind('betadciu-v2', 'danyxandro');
 
 		PlayerSettings.init();
 

@@ -176,7 +176,7 @@ class ChartingState extends MusicBeatState
 		rightIcon.setPosition(gridBG.width / 2, -100);
 
 		FlxG.mouse.visible = true;
-		FlxG.save.bind('seven', 'danyxandro');
+		FlxG.save.bind('betadciu-v2', 'danyxandro');
 
 		tempBpm = _song.bpm;
 

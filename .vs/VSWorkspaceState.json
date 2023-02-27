@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\assets\\preload",
+    "\\assets\\preload\\data",
     "\\source"
   ],
+  "SelectedNode": "\\source\\TitleState.hx",
   "PreviewInSolutionExplorer": false
 }
