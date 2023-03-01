@@ -3684,6 +3684,29 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
+		if (FlxG.keys.justPressed.EIGHT)
+		{
+			if (useVideo)
+				{
+					GlobalVideo.get().stop();
+					remove(videoSprite);
+					FlxG.stage.window.onFocusOut.remove(focusOut);
+					FlxG.stage.window.onFocusIn.remove(focusIn);
+					removedVideo = true;
+				}
+
+			FlxG.switchState(new AnimationDebug(gf.curCharacter));
+			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
+			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
+			#if windows
+			if (luaModchart != null)
+			{
+				luaModchart.die();
+				luaModchart = null;
+			}
+			#end
+		}
+
 		if (FlxG.keys.justPressed.ZERO)
 		{
 			FlxG.switchState(new AnimationDebug(SONG.player1,true));
@@ -4516,26 +4539,26 @@ class PlayState extends MusicBeatState
 				sDir = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
 				bfsDir = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
 			case 2: 
-				sDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
-				bfsDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+				sDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'Center', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+				bfsDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'Center', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 			case 3: 
-				sDir = ['LEFT', 'DOWN', 'Hey', 'UP', 'RIGHT'];
-				bfsDir = ['LEFT', 'DOWN', 'Hey', 'UP', 'RIGHT'];
+				sDir = ['LEFT', 'DOWN', 'Center', 'UP', 'RIGHT'];
+				bfsDir = ['LEFT', 'DOWN', 'Center', 'UP', 'RIGHT'];
 			case 4: 
-				sDir = ['LEFT', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'RIGHT'];
-				bfsDir = ['LEFT', 'UP', 'RIGHT', 'Hey', 'LEFT', 'DOWN', 'RIGHT'];
+				sDir = ['LEFT', 'UP', 'RIGHT', 'Center', 'LEFT', 'DOWN', 'RIGHT'];
+				bfsDir = ['LEFT', 'UP', 'RIGHT', 'Center', 'LEFT', 'DOWN', 'RIGHT'];
 			case 5: 
 				sDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 				bfsDir = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
 			case 6: 
-				sDir = ['Hey'];
-				bfsDir = ['Hey'];
+				sDir = ['Center'];
+				bfsDir = ['Center'];
 			case 7: 
 				sDir = ['LEFT', 'RIGHT'];
 				bfsDir = ['LEFT', 'RIGHT'];
 			case 8:
-				sDir = ['LEFT', 'Hey', 'RIGHT'];
-				bfsDir = ['LEFT', 'Hey', 'RIGHT'];
+				sDir = ['LEFT', 'Center', 'RIGHT'];
+				bfsDir = ['LEFT', 'Center', 'RIGHT'];
 		}
 
 		if (generatedMusic)

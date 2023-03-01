@@ -1530,7 +1530,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singLEFT', 'sky annoyed left0', 24, false);
 				animation.addByPrefix('idle2', 'sky annoyed alt idle0', 24, true);
 				animation.addByPrefix('singUP-alt', 'sky annoyed alt up0', 24, false);
-				animation.addByPrefix('singHey', 'sky annoyed alt up0', 24, false);
+				animation.addByPrefix('singCenter', 'sky annoyed alt up0', 24, false);
 				animation.addByPrefix('singRIGHT-alt', 'sky annoyed alt right0', 24, false);
 				animation.addByPrefix('singDOWN-alt', 'sky annoyed alt down0', 24, false);
 				animation.addByPrefix('singLEFT-alt', 'sky annoyed alt left0', 24, false);
@@ -1553,7 +1553,7 @@ class Character extends FlxSprite
 					addOffset("singLEFT",-150,100);
 					addOffset("singDOWN",-100,100);
 					addOffset("singUP-alt",-100,100);
-					addOffset("singHey",-100,100);
+					addOffset("singCenter",-100,100);
 					addOffset("singRIGHT-alt",-150,100);
 					addOffset("singLEFT-alt",-60,100);
 					addOffset("singDOWN-alt",-100,100);
@@ -1573,7 +1573,7 @@ class Character extends FlxSprite
 					addOffset("singLEFT",100,100);
 					addOffset("singDOWN",100,100);
 					addOffset("singUP-alt",100,100);
-					addOffset("singHey",100,100);
+					addOffset("singCenter",100,100);
 					addOffset("singRIGHT-alt",100,100);
 					addOffset("singLEFT-alt",100,100);
 					addOffset("singDOWN-alt",100,100);
@@ -2153,7 +2153,7 @@ class Character extends FlxSprite
                 animation.addByPrefix('singRIGHT', 'Void Right Note Chill0', 24, false);
                 animation.addByPrefix('singLEFT', 'Void Left Note Chill0', 24, false);
 				animation.addByPrefix('singUP-alt', 'Void Up Note Hype', 24, false);
-				animation.addByPrefix('singHey', 'Void Up Note Hype', 24, false);
+				animation.addByPrefix('singCenter', 'Void Up Note Hype', 24, false);
                 animation.addByPrefix('singDOWN-alt', 'Void Down Note Hype0', 24, false);
                 animation.addByPrefix('singRIGHT-alt', 'Void Right Note Hype0', 24, false);
                 animation.addByPrefix('singLEFT-alt', 'Void Left Note Hype0', 24, false);
@@ -2171,7 +2171,7 @@ class Character extends FlxSprite
                     addOffset("singDOWN", -31, -29);
 					addOffset("singUP-alt", -7, 56);
                     addOffset("singRIGHT-alt", 52, -16);
-					addOffset("singHey", 52, -16);
+					addOffset("singCenter", 52, -16);
                     addOffset("singLEFT-alt", -10, 15);
                     addOffset("singDOWN-alt", -30, -27);
                     addOffset("hey", 40, -55);
@@ -2185,7 +2185,7 @@ class Character extends FlxSprite
                     addOffset("singLEFT", -55, -16);
                     addOffset("singDOWN", -31, -29);
 					addOffset("singUP-alt", 3, 16);
-					addOffset("singHey", 3, 16);
+					addOffset("singCenter", 3, 16);
                     addOffset("singRIGHT-alt", -8, -56);
                     addOffset("singLEFT-alt", -131, 14);
                     addOffset("singDOWN-alt", -30, -27);
@@ -2544,7 +2544,7 @@ class Character extends FlxSprite
 					var animations:Array<Dynamic> = [];
 					animations = datos.animations;
 					for (anim in animations){
-						if(anim.indices != null && anim.indices.lenght > 0){
+						if(anim.indices != null && anim.indices.length > 0){
 							animation.addByIndices(anim.anim, anim.name, anim.indices, "", anim.fps, anim.loop);
 						}else{
 							animation.addByPrefix(anim.anim, anim.name, anim.fps, anim.loop);
@@ -2555,6 +2555,20 @@ class Character extends FlxSprite
 							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
 					}
 					antialiasing = !datos.no_antialiasing;
+					if(animation.getByName("danceLeft") != null && animation.getByName("danceRight") != null){
+						isDancingIdle = true;
+						if(animation.getByName("idle") == null){
+							var danceFrames:Array<Int> = [];
+							for(frame in animation.getByName("danceLeft").frames)
+								danceFrames.push(frame);
+							for(frame in animation.getByName("danceRight").frames)
+								danceFrames.push(frame);
+							animation.add("idle",danceFrames,animation.getByName("danceLeft").frameRate,false);
+							/*animation.add("idle",animation.getByName("danceLeft").frames,animation.getByName("danceLeft").frameRate,false);
+							animation.append("idle",animation.getByName("danceRight").frames);*/
+							addOffset('idle', animOffsets['danceLeft'][0], animOffsets['danceLeft'][1]);
+						}
+					}
 					if(datos.camera_position != null)
 						cameraPosition = datos.camera_position;
 					if(isPlayer && datos.playerCameraPosition != null){
@@ -2645,6 +2659,27 @@ class Character extends FlxSprite
 				}
 			}
 		}else{
+			if(animation.getByName('singCenter') == null){
+				if(animation.getByName('hey') != null){
+					animation.add("singCenter",animation.getByName('hey').frames,24,false);
+					if(animOffsets['hey'] != null){
+						addOffset('singCenter', animOffsets['hey'][0], animOffsets['hey'][1]);
+					}
+				}else{
+					if(animation.getByName('singDOWN') != null){
+					animation.add("singCenter",animation.getByName('singDOWN').frames,24,false);
+						if(animOffsets['singDOWN'] != null){
+							addOffset('singCenter', animOffsets['singDOWN'][0], animOffsets['singDOWN'][1]);
+						}
+					}
+				}//else end
+			}
+			if(animation.getByName('singCenter-alt') == null && animation.getByName('singCenter') != null){
+				animation.add("singCenter-alt",animation.getByName('singCenter').frames,24,false);
+				if(animOffsets['singCenter'] != null){
+					addOffset('singCenter-alt', animOffsets['singCenter'][0], animOffsets['singCenter'][1]);
+				}
+			}
 			if(animation.getByName('hey') == null && animation.getByName('singUP') != null){
 				animation.add("hey",animation.getByName('singUP').frames,24,false);
 				if(animOffsets['singUP'] != null){
@@ -2701,12 +2736,6 @@ class Character extends FlxSprite
 				animation.add("singRIGHT-alt",animation.getByName('singRIGHT').frames,24,false);
 				if(animOffsets['singRIGHT'] != null){
 					addOffset('singRIGHT-alt', animOffsets['singRIGHT'][0], animOffsets['singRIGHT'][1]);
-				}
-			}
-			if(animation.getByName('singHey-alt') == null && animation.getByName('singHey') != null){
-				animation.add("singRIGHT-alt",animation.getByName('singRIGHT').frames,24,false);
-				if(animOffsets['singHey'] != null){
-					addOffset('singHey-alt', animOffsets['singHey'][0], animOffsets['singHey'][1]);
 				}
 			}
 		}
