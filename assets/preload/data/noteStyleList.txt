@@ -1,5 +1,6 @@
 normal
 pixel
 dance
+cat
 black
 sacred

@@ -859,6 +859,34 @@ class Note extends FlxSprite
 						offset.x += 58 * noteScale;
 					}
 				}
+			case "cat":
+				frames = Paths.getSparrowAtlas('noteassets/NOTE_Cat');
+				var colores = ['purple', 'blue', 'green', 'red', 'blue', 'purple', 'blue', 'green', 'red'];
+				for (i in 0...9)
+					{
+						animation.addByPrefix(noteColors[i] + 'Scroll', colores[i] + '0'); // Normal notes
+						animation.addByPrefix(noteColors[i] + 'hold', colores[i] + ' hold piece'); // Hold
+						animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
+					}
+				altNotes();
+				setGraphicSize(Std.int(width * noteScale));
+				updateHitbox();
+				antialiasing = true;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(FlxG.save.data.downscroll)
+							offset.y += 201;
+						else
+							offset.y += 51;
+						offset.x += 40;
+					}else{
+						if(FlxG.save.data.downscroll)
+							offset.y += 291 * noteScale;
+						else
+							offset.y += 71 * noteScale;
+						offset.x += 58 * noteScale;
+					}
+				}
 			default:
 				frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
 				for (i in 0...9)

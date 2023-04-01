@@ -3114,6 +3114,55 @@ class PlayState extends MusicBeatState
 						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
 						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
 					}
+					case 'cat':
+						{
+							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_Cat');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'DOWN', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'down', 'left', 'down', 'up', 'right'];
+										babyArrow.x -= Note.tooMuch;
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'down', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'DOWN', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'down', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['DOWN'];
+										pPre = ['down'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'down', 'right'];
+	
+								}
+						
+						babyArrow.x += Note.swagWidth * i;
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}
 					default:
 						{
 							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_assets');
@@ -7848,6 +7897,52 @@ class PlayState extends MusicBeatState
 									case 8: 
 										nSuf = ['LEFT', 'SPACE', 'RIGHT'];
 										pPre = ['left', 'white', 'right'];
+	
+								}
+						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);
+						babyArrow.animation.addByPrefix('pressed', pPre[i] + ' press', 24, false);
+						babyArrow.animation.addByPrefix('confirm', pPre[i] + ' confirm', 24, false);
+					}
+					case "cat":
+					{
+							babyArrow.frames = Paths.getSparrowAtlas('noteassets/NOTE_Cat');
+							babyArrow.animation.addByPrefix('green', 'arrowUP');
+							babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
+							babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
+							babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+		
+							babyArrow.antialiasing = FlxG.save.data.antialiasing;
+							babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
+	
+							var nSuf:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+							var pPre:Array<String> = ['left', 'down', 'up', 'right'];
+								switch (mania)
+								{
+									case 1:
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'left', 'down', 'right'];
+	
+									case 2:
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'DOWN', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'down', 'left', 'down', 'up', 'right'];
+									case 3: 
+										nSuf = ['LEFT', 'DOWN', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'down', 'up', 'right'];
+									case 4: 
+										nSuf = ['LEFT', 'UP', 'RIGHT', 'DOWN', 'LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'up', 'right', 'down', 'left', 'down', 'right'];
+									case 5: 
+										nSuf = ['LEFT', 'DOWN', 'UP', 'RIGHT', 'LEFT', 'DOWN', 'UP', 'RIGHT'];
+										pPre = ['left', 'down', 'up', 'right', 'left', 'down', 'up', 'right'];
+									case 6: 
+										nSuf = ['DOWN'];
+										pPre = ['down'];
+									case 7: 
+										nSuf = ['LEFT', 'RIGHT'];
+										pPre = ['left', 'right'];
+									case 8: 
+										nSuf = ['LEFT', 'DOWN', 'RIGHT'];
+										pPre = ['left', 'down', 'right'];
 	
 								}
 						babyArrow.animation.addByPrefix('static', 'arrow' + nSuf[i]);

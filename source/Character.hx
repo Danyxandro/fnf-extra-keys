@@ -673,11 +673,13 @@ class Character extends FlxSprite
 				animation.addByPrefix('singDOWN', 'Keen down instancia 1', 24, false);
 				animation.addByPrefix('singLEFT', 'Keen left instancia 1', 24, false);
 				animation.addByPrefix('singRIGHT', 'Keen right instancia 1', 24, false);
+				animation.addByPrefix('hey', 'Keen Hey instancia 1', 24, false);
 				addOffset('idle', -5,-230);
 				addOffset("singUP", -19, -243);
 				addOffset("singRIGHT", -28, -243);
 				addOffset("singLEFT", 12, -206);
 				addOffset("singDOWN", 10, -280);
+				addOffset("hey",-15,-240);
 				playAnim('idle');
 				flipX=true;
 			case 'bf-keen':
