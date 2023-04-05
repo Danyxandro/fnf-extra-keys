@@ -2653,6 +2653,7 @@ class Character extends FlxSprite
 			}
 		}
 		
+		if(!debugMode){
 		if(curCharacter.toLowerCase().startsWith('gf') || curCharacter == "speakers"){
 			if(animation.getByName('hey') == null && animation.getByName('cheer') != null){
 				animation.add("hey",animation.getByName('cheer').frames,24,false);
@@ -2741,6 +2742,7 @@ class Character extends FlxSprite
 				}
 			}
 		}
+		}//fin del if debugMode
 	}
 
 	override function update(elapsed:Float)

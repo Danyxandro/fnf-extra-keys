@@ -282,6 +282,11 @@ class PlayState extends MusicBeatState
 	public var layerPlayChars:FlxTypedGroup<Boyfriend>;
 	public var layerGF:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
 	public var layerBGs:Array<FlxTypedGroup<FlxSprite>> = [new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>()];
+	public var dialogueBG:FlxSprite = new FlxSprite();
+	private var hasDialog:Bool = false;
+	private var hasOutro:Bool = false;
+	private var doof2:DialogueEnd;
+	public var dialogueEnd:Array<String> = ['dad:blah blah blah', 'bf:coolswag'];
 	public var dadID:Int = 0;
 	public var bfID:Int = 0;
 	//cam moving stuff
@@ -517,9 +522,10 @@ class PlayState extends MusicBeatState
 		trace('INFORMATION ABOUT WHAT U PLAYIN WIT:\nFRAMES: ' + PlayStateChangeables.safeFrames + '\nZONE: ' + Conductor.safeZoneOffset + '\nTS: ' + Conductor.timeScale + '\nBotPlay : ' + PlayStateChangeables.botPlay);
 	
 		//dialogue shit
+		var dialogData;
 		switch (songLowercase)
 		{
-			case 'tutorial':
+			/*case 'tutorial':
 				dialogue = ["Hey you're pretty cute.", 'Use the arrow keys to keep up \nwith me singing.'];
 			case 'bopeebo':
 				dialogue = [
@@ -535,13 +541,32 @@ class PlayState extends MusicBeatState
 					"gah you think you're hot stuff?",
 					"If you can beat me here...",
 					"Only then I will even CONSIDER letting you\ndate my daughter!"
-				];
+				];*/
 			case 'senpai':
 				dialogue = CoolUtil.coolTextFile(Paths.txt('senpai/senpaiDialogue'));
 			case 'roses':
 				dialogue = CoolUtil.coolTextFile(Paths.txt('roses/rosesDialogue'));
 			case 'thorns':
 				dialogue = CoolUtil.coolTextFile(Paths.txt('thorns/thornsDialogue'));
+			default:
+				if(sys.FileSystem.exists("assets/data/" + SONG.song.toLowerCase() + "/introDialogue.json")){
+					var datos = cast Json.parse( sys.io.File.getContent( "assets/data/" + SONG.song.toLowerCase() + "/introDialogue.json" ).trim() );
+					trace("intro dialog json detectado");
+					if(sys.FileSystem.exists("assets/data/" + SONG.song.toLowerCase() + '/' + datos.dialogueText + ".txt")){
+						dialogue = CoolUtil.coolStringFile(sys.io.File.getContent("assets/data/" + SONG.song.toLowerCase() + '/' + datos.dialogueText + ".txt"));
+						hasDialog = true;
+						trace("entro a dialogo");
+					}
+				}
+				if(sys.FileSystem.exists("assets/data/" + SONG.song.toLowerCase() + "/outroDialogue.json")){
+					var datos = cast Json.parse( sys.io.File.getContent( "assets/data/" + SONG.song.toLowerCase() + "/outroDialogue.json" ).trim() );
+					trace("outro dialog json detectado");
+					if(sys.FileSystem.exists("assets/data/" + SONG.song.toLowerCase() + '/' + datos.dialogueText + ".txt")){
+						dialogueEnd = CoolUtil.coolStringFile(sys.io.File.getContent("assets/data/" + SONG.song.toLowerCase() + '/' + datos.dialogueText + ".txt"));
+						hasOutro = true;
+						trace("dialogos al final");
+					}
+				}
 		}
 
 		//defaults if no stage was found in chart
@@ -1235,6 +1260,8 @@ class PlayState extends MusicBeatState
 		// doof.y = FlxG.height * 0.5;
 		doof.scrollFactor.set();
 		doof.finishThing = startCountdown;
+		doof2 = new DialogueEnd(false, dialogueEnd);
+		doof2.scrollFactor.set();
 
 		Conductor.songPosition = -5000;
 		
@@ -1514,6 +1541,7 @@ class PlayState extends MusicBeatState
 		layerIcons.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
+		doof2.cameras = [camHUD];
 		if (FlxG.save.data.songPosition)
 		{
 			songPosBG.cameras = [camHUD];
@@ -1572,6 +1600,9 @@ class PlayState extends MusicBeatState
 				case 'thorns':
 					schoolIntro(doof);
 				default:
+					if(hasDialog)
+						schoolIntro(doof);
+					else
 					startCountdown();
 			}
 		}
@@ -1595,6 +1626,9 @@ class PlayState extends MusicBeatState
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void
 	{
+		dialogueBG.visible = true;
+		add(dialogueBG);
+		
 		var black:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
 		black.scrollFactor.set();
 		add(black);
@@ -2456,8 +2490,10 @@ class PlayState extends MusicBeatState
 						NoteSplash.colors = ['purple', 'white', 'red'];
 				}
 			}
-
-		FlxG.sound.music.onComplete = endSong;
+		if(hasOutro && isStoryMode){
+			FlxG.sound.music.onComplete = ending;
+		}else
+			FlxG.sound.music.onComplete = endSong;
 		vocals.play();
 
 		// Song duration in a float, useful for the time left feature
@@ -5298,13 +5334,18 @@ class PlayState extends MusicBeatState
 
 
 		#if debug
-		if (FlxG.keys.justPressed.ONE)
-			endSong();
+		if (FlxG.keys.justPressed.ONE){
+			if(isStoryMode && hasOutro)
+				ending();
+			else
+				endSong();
+		}
 		#end
 	}
 
 	function endSong():Void
 	{
+		cannotDie = true;
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
 		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
 		if (useVideo)
@@ -8116,5 +8157,57 @@ class PlayState extends MusicBeatState
 					healthValues.set(key,health2.get(key));
 		}
 		//trace(storyDifficultyText + " values:\n" + healthValues.toString());
+	}
+	private function ending():Void{
+		PlayStateChangeables.scrollSpeed = 1;
+		cannotDie = true;
+		canPause = false;
+		paused = true;
+		FlxG.sound.music.volume = 0;
+		vocals.volume = 0;
+		FlxG.sound.music.pause();
+		vocals.pause();
+		if(executeModchart && PlayStateChangeables.flip){
+			layerFakeBFs.members[dadID].flyingOffset = 0;
+			layerPlayChars.members[bfID].flyingOffset = 0;
+		}else{
+			layerChars.members[dadID].flyingOffset = 0;
+			layerBFs.members[bfID].flyingOffset = 0;
+		}
+		var dialogueBox:DialogueEnd = doof2;
+		dialogueBox.finishThing = endSong;
+		dialogueBG.visible = true;
+		if(!hasDialog)
+			add(dialogueBG);
+		playerStrums.forEach(function(spr:FlxSprite){
+			FlxTween.tween(spr, {alpha: 0}, 2, {ease: FlxEase.circOut});
+		});
+		cpuStrums.forEach(function(spr:FlxSprite){
+			FlxTween.tween(spr, {alpha: 0}, 2, {ease: FlxEase.circOut});
+		});
+		
+		if(dialogueBox.bgFlag){
+			FlxTween.tween(dialogueBG, {alpha: 1}, 2, {ease: FlxEase.circOut, onComplete: function(flxTween:FlxTween) {
+				if (dialogueBox != null)
+				{
+					inCutscene = true;
+					add(dialogueBox);
+					dialogueBox.initDialogue();
+				}else{
+					endSong();
+				}
+			}});
+		}else{
+			FlxTween.tween(dialogueBox.black, {alpha: 1}, 2, {ease: FlxEase.circOut, onComplete: function(flxTween:FlxTween) {
+				if (dialogueBox != null)
+				{
+					inCutscene = true;
+					add(dialogueBox);
+					dialogueBox.initDialogue();
+				}else{
+					endSong();
+				}
+			}});
+		}
 	}
 }//Fin de la clase
