@@ -508,7 +508,7 @@ class ChartingState extends MusicBeatState
 				var note = _song.notes[curSection].sectionNotes[i];
 
 				var half = keyAmmo[_song.mania];
-				note[1] = (note[1] + 8) % 16;
+				note[1] = (note[1] + half) % (half*2);
 				_song.notes[curSection].sectionNotes[i] = note;
 				updateGrid();
 			}
@@ -1490,7 +1490,7 @@ class ChartingState extends MusicBeatState
 		{
 			var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
 
-			var copiedNote:Array<Dynamic> = [strum, note[1], note[2]];
+			var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3]];
 			_song.notes[daSec].sectionNotes.push(copiedNote);
 		}
 

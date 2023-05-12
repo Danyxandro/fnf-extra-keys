@@ -1126,9 +1126,7 @@ class ModchartState
 				});
 
 				Lua_helper.add_callback(lua,"setDefaultCamZoom", function(zoomAmount:Float) {
-					//FlxG.camera.zoom = zoomAmount;
-					@:privateAccess
-					PlayState.instance.defaultCamZoom = zoomAmount;
+					PlayState.instance.setDefaultZoom(zoomAmount);
 				});
 
 				Lua_helper.add_callback(lua,"setBotplaytextVisible", function(visible:Bool) {
