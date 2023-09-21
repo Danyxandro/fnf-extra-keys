@@ -2891,7 +2891,7 @@ class Character extends FlxSprite
 	{
 		if (!debugMode)
 		{
-			switch (curCharacter)
+			/*switch (curCharacter)
 			{
 				case 'gf':
 					if (!animation.curAnim.name.startsWith('hair'))
@@ -2936,15 +2936,35 @@ class Character extends FlxSprite
 							playAnim('danceLeft');
 					}
 
-				/*case 'spooky':
+				case 'spooky':
 					danced = !danced;
 
 					if (danced)
 						playAnim('danceRight');
 					else
-						playAnim('danceLeft');*/
+						playAnim('danceLeft');
 				default:
 					if(isDancingIdle){
+						danced = !danced;
+						if (danced)
+							playAnim('danceRight');
+						else
+							playAnim('danceLeft');
+					}else
+						playAnim('idle');
+			}*/
+			if(curCharacter.toLowerCase().startsWith('gf') || curCharacter == "speakers"){
+				if (!animation.curAnim.name.startsWith('hair') || (animation.curAnim.name.startsWith('cheer') && animation.curAnim.finished))
+					{
+						danced = !danced;
+
+						if (danced)
+							playAnim('danceRight');
+						else
+							playAnim('danceLeft');
+					}
+			}else{
+				if(isDancingIdle){
 						danced = !danced;
 						if (danced)
 							playAnim('danceRight');

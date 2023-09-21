@@ -1279,8 +1279,8 @@ class ModchartState
 							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("miss",value);
 							case "missLN":
 							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("missLN",value);
-							case "missSus":
-							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("missSus",value);
+							case "longN":
+							PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("longN",value);
 						}
 						if(setDamage != null && noteType != 4){
 							PlayState.instance.healthValues[""+noteType].set("damage",setDamage);
@@ -1309,6 +1309,8 @@ class ModchartState
 							PlayState.instance.healthValues[""+noteType].get("score").set("missScore",value);
 							case "missLN":
 							PlayState.instance.healthValues[""+noteType].get("score").set("missLNScore",value);
+							case "longN":
+							PlayState.instance.healthValues[""+noteType].get("score").set("LNScore",value);
 						}
 						trace(property + " is: " + PlayState.instance.healthValues[""+noteType].get("score").get(property+"Score"));
 					}
@@ -1330,6 +1332,8 @@ class ModchartState
 							value = PlayState.instance.healthValues[""+noteType].get("score").get("missScore");
 							case "missLN":
 							value = PlayState.instance.healthValues[""+noteType].get("score").get("missLNScore");
+							case "longN":
+							value = PlayState.instance.healthValues[""+noteType].get("score").get("LNScore");
 						}
 					}
 					return value;
@@ -1351,8 +1355,8 @@ class ModchartState
 						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("miss");
 						case "missLN":
 						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("missLN");
-						case "missSus":
-						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).set("missSus",value);
+						case "longN":
+						value = PlayState.instance.healthValues[""+noteType].get(PlayState.instance.storyDifficultyText).get("longN");
 					}
 					if(property == "missPressed")
 						value = PlayState.instance.healthValues["missPressed"].get(PlayState.instance.storyDifficultyText);

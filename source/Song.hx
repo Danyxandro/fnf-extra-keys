@@ -117,7 +117,15 @@ class Song
 
 	public static function parseJSONshit(rawJson:String):SwagSong
 	{
-		var swagShit:SwagSong = cast Json.parse(rawJson).song;
+		var data = cast Json.parse(rawJson).song;
+		var notes:Array<Dynamic> = Reflect.field(data, "notes");
+		for(i in 0...notes.length){
+			if(notes[i].lengthInSteps == null || notes[i].lengthInSteps < 1){
+				trace("Invalid step lenght at section " + i);
+				data.notes[i].lengthInSteps = 16;
+			}
+		}
+		var swagShit:SwagSong = data;
 		swagShit.validScore = true;
 		return swagShit;
 	}

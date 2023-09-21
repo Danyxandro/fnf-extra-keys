@@ -3935,14 +3935,14 @@ class PlayState extends MusicBeatState
 									camFollow.y = dadChar.getMidpoint().y - 200;
 								}
 							case 'monika':
-								camFollow.y = dadChar.getMidpoint().y - 550;
-								camFollow.x = dadChar.getMidpoint().x - 370;
+								camFollow.y = dadChar.getMidpoint().y - 440;
+								camFollow.x = dadChar.getMidpoint().x - 390;
 							case 'senpai':
-								camFollow.y = dadChar.getMidpoint().y - 550;
-								camFollow.x = dadChar.getMidpoint().x - 370;
+								camFollow.y = dadChar.getMidpoint().y - 440;
+								camFollow.x = dadChar.getMidpoint().x - 390;
 							case 'senpai-angry':
-								camFollow.y = dadChar.getMidpoint().y - 550;
-								camFollow.x = dadChar.getMidpoint().x - 370;
+								camFollow.y = dadChar.getMidpoint().y - 440;
+								camFollow.x = dadChar.getMidpoint().x - 390;
 							case 'henry':
 								camFollow.y = dadChar.getMidpoint().y + 50;
 								camFollow.x = dadChar.getMidpoint().x - 175;
@@ -4233,14 +4233,14 @@ class PlayState extends MusicBeatState
 									camFollow.y = bfChar.getMidpoint().y - 200;
 								}
 							case 'monika':
-								camFollow.y = bfChar.getMidpoint().y - 550;
-								camFollow.x = bfChar.getMidpoint().x - 370;
+								camFollow.y = bfChar.getMidpoint().y - 440;
+								camFollow.x = bfChar.getMidpoint().x - 390;
 							case 'senpai':
-								camFollow.y = bfChar.getMidpoint().y - 550;
-								camFollow.x = bfChar.getMidpoint().x - 370;
+								camFollow.y = bfChar.getMidpoint().y - 440;
+								camFollow.x = bfChar.getMidpoint().x - 390;
 							case 'senpai-angry':
-								camFollow.y = dadChar.getMidpoint().y - 550;
-								camFollow.x = dadChar.getMidpoint().x - 370;
+								camFollow.y = dadChar.getMidpoint().y - 440;
+								camFollow.x = dadChar.getMidpoint().x - 390;
 							case 'henry':
 								camFollow.y = bfChar.getMidpoint().y + 50;
 								camFollow.x = bfChar.getMidpoint().x - 175;
@@ -4984,18 +4984,19 @@ class PlayState extends MusicBeatState
 														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
 														songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
 														trace("hold fell over at the start\nType: " + daNote.noteType + " value: "
-															+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus"));
+															+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
+														if(!healthValues.get(""+daNote.noteType).get("damage"))
 														for (i in daNote.children)
 														{
 															i.alpha = 0.3;
 															i.sustainActive = false;
-															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus");
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
 															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 														}
 													}
 													else
 													{
-														if (!daNote.wasGoodHit
+														if (!daNote.wasGoodHit && !healthValues.get(""+daNote.noteType).get("damage")
 															&& daNote.isSustainNote
 															&& daNote.sustainActive
 															&& daNote.spotInLine != daNote.parent.children.length)
@@ -5043,19 +5044,20 @@ class PlayState extends MusicBeatState
 													health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
 													songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
 													trace("hold fell over at the start\nType: " + daNote.noteType + " value: "
-														+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus"));
+														+ healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss") + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
+													if(!healthValues.get(""+daNote.noteType).get("damage"))
 													for (i in daNote.children)
 													{
 														i.alpha = 0.3;
 														i.sustainActive = false;
 														//trace(i.alpha);
-														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missSus");
+														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
 														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 													}
 												}
 												else
 												{
-													if (!daNote.wasGoodHit
+													if (!daNote.wasGoodHit && !healthValues.get(""+daNote.noteType).get("damage")
 														&& daNote.isSustainNote
 														&& daNote.sustainActive
 														&& daNote.spotInLine != daNote.parent.children.length)
@@ -5540,8 +5542,15 @@ class PlayState extends MusicBeatState
 				combo = 0;
 				misses++;
 				totalNotesHit -= 1;
-				if(daNote.noteType == 8)
+				if(daNote.noteType == 8){
 					HealthDrain();
+					if(daNote.isParent)
+						for (i in daNote.children)
+						{
+							i.alpha = 0.3;
+							i.sustainActive = false;
+						}
+				}
 			}
 
 			// trace('Wife accuracy loss: ' + wife + ' | Rating: ' + daRating + ' | Score: ' + score + ' | Weight: ' + (1 - wife));
@@ -6843,9 +6852,30 @@ class PlayState extends MusicBeatState
 						}
 					}
 
+					if(note != null && !note.isParent && note.isSustainNote){
+						if(!healthValues.get(""+note.noteType).get("damage") && note.sustainActive){
+							health += healthValues[""+note.noteType].get(storyDifficultyText).get("longN");
+							songScore += healthValues[""+note.noteType].get("score").get("LNScore");
+							trace("good long note");
+						}
+						if(healthValues.get(""+note.noteType).get("damage") && note.sustainActive){
+							noteMiss(note.noteData, note);
+							health += healthValues[""+note.noteType].get(storyDifficultyText).get("longN");
+							songScore += healthValues[""+note.noteType].get("score").get("LNScore");
+							trace("bad long note");
+							if(note.noteType == 8){
+								for (i in note.parent.children)
+								{
+									i.alpha = 0.3;
+									i.sustainActive = false;
+								}
+								HealthDrain(true);
+							}
+						}
+					}
 		
 					#if windows
-					if (luaModchart != null)
+					if (luaModchart != null && !healthValues.get(""+note.noteType).get("damage")) //checking bad notes for damaging sustained notes
 						luaModchart.executeState('playerOneSing', [note.noteData, Conductor.songPosition, note.noteType, note.isSustainNote]);
 					#end
 
@@ -6966,12 +6996,15 @@ class PlayState extends MusicBeatState
 			
 		}
 
-	function HealthDrain():Void //code from vs bob
+	function HealthDrain(isSustain:Bool=false):Void //code from vs bob
 		{
 			badNoteHit();
 			new FlxTimer().start(0.01, function(tmr:FlxTimer)
 			{
-				health += healthValues.get("8").get(storyDifficultyText).get("sick");
+				if(isSustain)
+					health += healthValues.get("8").get(storyDifficultyText).get("sick")/3;
+				else
+					health += healthValues.get("8").get(storyDifficultyText).get("sick");
 			}, 150);//300);
 		}
 

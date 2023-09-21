@@ -157,7 +157,6 @@ class ChartingState extends MusicBeatState
 				asRival: false
 			};
 		}
-
 		leftIcon = new HealthIcon(_song.player1);
 		leftIcon.centerOffsets();
 		rightIcon = new HealthIcon(_song.player2);
@@ -1183,7 +1182,7 @@ class ChartingState extends MusicBeatState
 				});
 			}
 
-		if (curBeat % 4 == 0 && curStep >= 16 * (curSection + 1))
+		if (curBeat % 4 == 0 && curStep >= _song.notes[curSection].lengthInSteps * (curSection + 1))
 		{
 			trace(curStep);
 			trace((_song.notes[curSection].lengthInSteps) * (curSection + 1));
@@ -1195,6 +1194,14 @@ class ChartingState extends MusicBeatState
 			}
 
 			changeSection(curSection + 1, false);
+		}
+
+		if (curBeat % 4 == 0 && curStep < 0 && curSection >= 1)
+		{
+			trace(curStep);
+			trace('Rewind');
+
+			changeSection(curSection - 1);
 		}
 
 		FlxG.watch.addQuick('daBeat', curBeat);
@@ -1451,7 +1458,7 @@ class ChartingState extends MusicBeatState
 
 	function changeSection(sec:Int = 0, ?updateMusic:Bool = true):Void
 	{
-		trace('changing section' + sec);
+		trace('changing section ' + sec + "\n" + _song.notes[sec]);
 
 		if (_song.notes[sec] != null)
 		{
