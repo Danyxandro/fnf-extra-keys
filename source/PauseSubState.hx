@@ -254,7 +254,6 @@ class PauseSubState extends MusicBeatSubstate
 					
 					if(PlayState.isStoryMode){
 						FlxG.switchState(new MainMenuState());
-						PlayStateChangeables.weekBotplay = false;
 					}else{
 						switch(PlayStateChangeables.goToState){
 							case "betadciu":
@@ -273,8 +272,6 @@ class PauseSubState extends MusicBeatSubstate
 					}else{
 						PlayStateChangeables.botPlay = true;
 						PlayStateChangeables.usedBotplay = true;
-						if(PlayState.isStoryMode)
-							PlayStateChangeables.weekBotplay = true;
 						texto = "Disable botplay";
 						PlayState.instance.botPlayState.alpha = 1;
 						if(botFlag)

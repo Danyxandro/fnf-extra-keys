@@ -12,16 +12,20 @@ using StringTools;
 
 class Stage{
 	private var background:FlxGroup = new FlxGroup();
-	private var foreground:FlxGroup = new FlxGroup();
-	private var hasForeground:Bool = false;
 	private var stage:String;
+	private var modchartExists:Bool = false;
 	private var offsets:Array<Float> = [0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0];
+	private var layers:Map<String, flixel.group.FlxGroup.FlxTypedGroup<FlxSprite>> = new Map<String, flixel.group.FlxGroup.FlxTypedGroup<FlxSprite>>();
+	private var modchartSprites:Map<String, FlxSprite> = new Map<String, FlxSprite>();
+	public var hasLua:Bool = false;
 
 	public function new(stage:String){
 		if(stage == null)
 			stage = "stage";
 		PlayState.curStage = "" + stage;
 		this.stage = stage;
+		@:privateAccess
+		modchartExists = PlayState.instance.executeModchart;
 	}
 
 	public function createStage(){
@@ -89,38 +93,75 @@ class Stage{
 					for(spr in sprites){
 						var bg:FlxSprite = new FlxSprite(spr.x,spr.y);
 						var png:String = "assets/stages/"+stage.toLowerCase()+"/"+spr.image+".png";
-						if(FileSystem.exists(png)){
-							if(spr.xml != null && sys.FileSystem.exists("assets/stages/"+stage.toLowerCase()+"/"+spr.xml+".xml")){
-								bg.frames = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile(png), File.getContent("assets/stages/"+stage.toLowerCase()+"/"+spr.xml+".xml"));
-								if(spr.animations != null){
-									var anims:Array<Dynamic> = spr.animations;
-									for(anim in anims){
-										bg.animation.addByPrefix(anim[0],anim[1],anim[2],anim[3]);
-									}
-									if(spr.startAnim != null)
-										bg.animation.play(spr.startAnim);
+						if(spr.layerName != null && modchartExists){
+							var layer:flixel.group.FlxGroup.FlxTypedGroup<FlxSprite> = new flixel.group.FlxGroup.FlxTypedGroup<FlxSprite>();
+							if(spr.zPos != null){
+								switch(spr.zPos){
+									case 1:
+										PlayState.instance.layerBGs[1].add(layer);
+									case 2:
+										PlayState.instance.layerBGs[2].add(layer);
+									case 3:
+										PlayState.instance.layerBGs[3].add(layer);
+									case 4:
+										PlayState.instance.layerBGs[4].add(layer);
+									default:
+										background.add(layer);
 								}
 							}else{
-								bg.loadGraphic(openfl.display.BitmapData.fromFile(png));
+								background.add(layer);
 							}
-						}
-						bg.scrollFactor.set(spr.scrollX,spr.scrollY);
-						bg.scale.set(spr.scale,spr.scale);
-						bg.updateHitbox();
-						if(spr.onTop != null){
-							if(spr.onTop){
-								foreground.add(bg);
-								hasForeground = true;
+							this.layers.set("" + spr.layerName,layer);
+						}else{
+							if(FileSystem.exists(png)){
+								if(spr.xml != null && sys.FileSystem.exists("assets/stages/"+stage.toLowerCase()+"/"+spr.xml+".xml")){
+									bg.frames = FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile(png), File.getContent("assets/stages/"+stage.toLowerCase()+"/"+spr.xml+".xml"));
+									if(spr.animations != null){
+										var anims:Array<Dynamic> = spr.animations;
+										for(anim in anims){
+											bg.animation.addByPrefix(anim[0],anim[1],anim[2],anim[3]);
+										}
+										if(spr.startAnim != null)
+											bg.animation.play(spr.startAnim);
+									}
+								}else{
+									bg.loadGraphic(openfl.display.BitmapData.fromFile(png));
+								}
+							}
+							bg.scrollFactor.set(spr.scrollX,spr.scrollY);
+							bg.scale.set(spr.scale,spr.scale);
+							bg.updateHitbox();
+							if(spr.zPos != null){
+								switch(spr.zPos){
+									case 1:
+										PlayState.instance.layerBGs[1].add(bg);
+									case 2:
+										PlayState.instance.layerBGs[2].add(bg);
+									case 3:
+										PlayState.instance.layerBGs[3].add(bg);
+									case 4:
+										PlayState.instance.layerBGs[4].add(bg);
+									default:
+										background.add(bg);
+								}
 							}else{
 								background.add(bg);
 							}
-						}else{
-							background.add(bg);
-						}
+							if(spr.antialiasing != null){
+								if(spr.antialiasing){
+									bg.antialiasing = true;
+								}
+							}
+							if(spr.spriteName != null){
+								modchartSprites.set("" + spr.spriteName,bg);
+							}
+						}//fin del else layername != null
 					}//fin del for
 					offsets = [stageData.player1X,stageData.player1Y,stageData.player2X,stageData.player2Y,stageData.gfX,stageData.gfY];
 				}else
 					addDefaultStage();
+				var luaRoute = "assets/stages/"+stage.toLowerCase()+"/modchart.lua";
+				hasLua = FileSystem.exists(luaRoute);
 			}//fin del default
 		}//fin del switch
 	}//fin del new
@@ -152,15 +193,6 @@ class Stage{
 		background.add(stageCurtains);
 	}
 
-	public function addForeground(){
-		switch(this.stage){
-			default:
-				if(hasForeground)
-					@:privateAccess
-					PlayState.instance.add(foreground);
-		}
-	}
-
 	public function setPlaces(offsetX1:Float,offsetY1:Float,offsetX2:Float,offsetY2:Float,gf:Character){
 		if(offsets[0] != 0)
 			offsetX1 = offsets[0] *1;
@@ -174,5 +206,17 @@ class Stage{
 			gf.x += offsets[4] *1;
 		if(offsets[5] != 0)
 			gf.y += offsets[5] *1;
+	}
+
+	public function modchartSetting():Void{
+		if(modchartExists || hasLua){
+			for(layer in layers.keys()){
+				PlayState.luaModchart.layers.set(layer,layers[layer]);
+			}
+			for(spr in modchartSprites.keys()){
+				@:privateAccess
+				ModchartState.luaSprites.set(spr,modchartSprites[spr]);
+			}
+		}
 	}
 }//fin de la clase

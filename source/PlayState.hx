@@ -45,6 +45,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -281,7 +282,8 @@ class PlayState extends MusicBeatState
 	public var layerFakeBFs:FlxTypedGroup<Character>;
 	public var layerPlayChars:FlxTypedGroup<Boyfriend>;
 	public var layerGF:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
-	public var layerBGs:Array<FlxTypedGroup<FlxSprite>> = [new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>()];
+	//public var layerBGs:Array<FlxTypedGroup<FlxSprite>> = [new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>()];
+	public var layerBGs:Array<FlxGroup> = [new FlxGroup(), new FlxGroup(), new FlxGroup(), new FlxGroup(), new FlxGroup()];
 	public var dialogueBG:FlxSprite = new FlxSprite();
 	private var hasDialog:Bool = false;
 	private var hasOutro:Bool = false;
@@ -347,8 +349,6 @@ class PlayState extends MusicBeatState
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
 		if(FlxG.save.data.botplay){
 			PlayStateChangeables.usedBotplay = true;
-			if(isStoryMode)
-				PlayStateChangeables.weekBotplay = true;
 		}
 		PlayStateChangeables.Optimize = FlxG.save.data.optimize;
 		PlayStateChangeables.zoom = FlxG.save.data.zoom;
@@ -1146,7 +1146,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 		add(layerBGs[2]);
-		stageObj.addForeground();
 		layerBGs[3].cameras = [camHUD];
 		add(layerBGs[3]);
 		layerBGs[4].cameras = [cam3];
@@ -1682,7 +1681,15 @@ class PlayState extends MusicBeatState
 		if (executeModchart)
 		{
 			luaModchart = ModchartState.createModchartState();
+			stageObj.modchartSetting();
 			luaModchart.executeState('start',[songLowercase]);
+		}else{
+			if(stageObj.hasLua){
+				luaModchart = ModchartState.createModchartState(true);
+				stageObj.modchartSetting();
+				luaModchart.executeState('start',[songLowercase]);
+				executeModchart = true;
+			}
 		}
 		#end
 		talking = false;
@@ -5325,7 +5332,8 @@ class PlayState extends MusicBeatState
 		{
 			if (isStoryMode)
 			{
-				campaignScore += Math.round(songScore);
+				if(!PlayStateChangeables.usedBotplay)
+					campaignScore += Math.round(songScore);
 
 				storyPlaylist.remove(storyPlaylist[0]);
 
@@ -5344,7 +5352,6 @@ class PlayState extends MusicBeatState
 					{
 						FlxG.sound.playMusic(Paths.music('freakyMenu'));
 						FlxG.switchState(new MainMenuState());
-						PlayStateChangeables.weekBotplay = false;
 					}
 
 					#if windows

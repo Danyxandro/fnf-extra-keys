@@ -29,6 +29,7 @@ class ModchartState
 	private var ids:Map<String,Int> = [PlayState.SONG.player2 => 0];
 	private var idsBF:Map<String,Int> = [PlayState.SONG.player1 => 0];
 	public var gfs:Map<String, Int> = [PlayState.gf.curCharacter => 0];
+	public var layers:Map<String, flixel.group.FlxGroup.FlxTypedGroup<FlxSprite>> = [];
 	private var sprites:Map<String, FlxSprite> = [];
 	private var curChar = 0;
 	private var curBF = 0;
@@ -417,35 +418,7 @@ class ModchartState
 			var bfs = PlayState.instance.layerBFs;
 			var gfs = PlayState.instance.layerGF;*/
 
-			@:privateAccess
-			{
-				/*if (drawBehind)
-				{
-					PlayState.instance.removeObject(gfs);
-					PlayState.instance.removeObject(chars);
-					PlayState.instance.removeObject(bfs);
-					PlayState.instance.layerBG.add(sprite);
-				}else
-				PlayState.instance.addObject(sprite);
-				if (drawBehind)
-				{
-					PlayState.instance.addObject(gfs);
-					PlayState.instance.addObject(chars);
-					PlayState.instance.addObject(bfs);
-				}*/
-				switch(""+drawBehind){
-					case "0" | "true":
-						PlayState.instance.layerBGs[0].add(sprite);
-					case "1":
-						PlayState.instance.layerBGs[1].add(sprite);
-					case "3":
-						PlayState.instance.layerBGs[3].add(sprite);
-					case "4":
-						PlayState.instance.layerBGs[4].add(sprite);
-					default:
-						PlayState.instance.layerBGs[2].add(sprite);
-				}
-			}
+			addToLayer(drawBehind,sprite);
 			sprites[name] = sprite;
 			luaSprites.set(name,sprite);
 			sprite.animation.play(initialAnimation);
@@ -488,26 +461,7 @@ class ModchartState
 		luaSprites.set(toBeCalled,sprite);
 		// and I quote:
 		// shitty layering but it works!
-        @:privateAccess
-        {
-            /*if (drawBehind)
-            {
-                PlayState.instance.layerBG.add(sprite);
-            }else
-				PlayState.instance.addObject(sprite);*/
-			switch(""+drawBehind){
-				case "0" | "true":
-					PlayState.instance.layerBGs[0].add(sprite);
-				case "1":
-					PlayState.instance.layerBGs[1].add(sprite);
-				case "3":
-					PlayState.instance.layerBGs[3].add(sprite);
-				case "4":
-					PlayState.instance.layerBGs[4].add(sprite);
-				default:
-					PlayState.instance.layerBGs[2].add(sprite);
-			}
-        }
+        addToLayer(drawBehind,sprite);
 		#end
 		return toBeCalled;
 	}
@@ -521,7 +475,7 @@ class ModchartState
 	public var luaWiggles:Map<String,WiggleEffect> = new Map<String,WiggleEffect>();
     // LUA SHIT
 
-    function new()
+    function new(?fromStage:Bool=false)
     {
         		trace('opening a lua state (because we are cool :))');
 				lua = LuaL.newstate();
@@ -539,7 +493,14 @@ class ModchartState
 					case 'philly-nice': songLowercase = 'philly';
 				}
 
-				var result = LuaL.dofile(lua, Paths.lua(songLowercase + "/modchart")); // execute le file
+				var result;
+				if(fromStage){
+					var luaRoute = "assets/stages/"+PlayState.curStage+"/modchart.lua";
+					result = LuaL.dofile(lua,luaRoute);
+					//result = LuaL.dofile(lua, Paths.lua(luaRoute));
+					trace("Loaded lua from stage: " + PlayState.curStage);
+				}else
+					result = LuaL.dofile(lua, Paths.lua(songLowercase + "/modchart")); // execute le file
 	
 				if (result != 0)
 				{
@@ -1794,9 +1755,44 @@ class ModchartState
         return Lua.tostring(lua,callLua(name, args));
     }
 
-    public static function createModchartState():ModchartState
+    public static function createModchartState(?fromStage:Bool = false):ModchartState
     {
-        return new ModchartState();
+        return new ModchartState(fromStage);
     }
+
+	private function addToLayer(layer=false,sprite:FlxSprite):Void{
+		@:privateAccess
+		{
+			/*if (layer)
+			{
+				PlayState.instance.removeObject(gfs);
+				PlayState.instance.removeObject(chars);
+				PlayState.instance.removeObject(bfs);
+				PlayState.instance.layerBG.add(sprite);
+			}else
+			PlayState.instance.addObject(sprite);
+			if (layer)
+			{
+				PlayState.instance.addObject(gfs);
+				PlayState.instance.addObject(chars);
+				PlayState.instance.addObject(bfs);
+			}*/
+			switch(""+layer){
+				case "0" | "true":
+					PlayState.instance.layerBGs[0].add(sprite);
+				case "1":
+					PlayState.instance.layerBGs[1].add(sprite);
+				case "3":
+					PlayState.instance.layerBGs[3].add(sprite);
+				case "4":
+					PlayState.instance.layerBGs[4].add(sprite);
+				default:
+					if(layers.exists(""+layer)){
+						layers.get(""+layer).add(sprite);
+					}else
+						PlayState.instance.layerBGs[2].add(sprite);
+			}
+		}
+	}
 }
 #end
