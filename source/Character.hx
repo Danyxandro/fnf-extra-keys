@@ -835,7 +835,7 @@ class Character extends FlxSprite
 
 				playAnim('idle');
 			case 'bf-neon':
-				var tex = Paths.getSparrowAtlas('neon/BOYFRIEND',"shared");
+				var tex = Paths.getSparrowAtlas('characters/bf-neon',"shared");
 				frames = tex;
 
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
@@ -895,7 +895,7 @@ class Character extends FlxSprite
 				flipX = true;
 			case 'gf-neon':
 				// GIRLFRIEND CODE
-				tex = Paths.getSparrowAtlas('neon/GF_assets',"shared");
+				tex = Paths.getSparrowAtlas('characters/GF_neon',"shared");
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
 				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
@@ -927,7 +927,7 @@ class Character extends FlxSprite
 
 				isDancingIdle = true;
 			case 'gf-alt':
-				tex = Paths.getSparrowAtlas('keen/gf_whitty',"shared");
+				tex = Paths.getSparrowAtlas('characters/gf_whitty',"shared");
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF FEAR', 24, false);
 				animation.addByPrefix('singLEFT', 'GF FEAR', 24, false);
@@ -959,7 +959,7 @@ class Character extends FlxSprite
 				playAnim('danceRight');
 				isDancingIdle = true;
 			case 'bf-cat':
-				var tex = Paths.getSparrowAtlas('keen/BOYFRIEND',"shared");
+				var tex = Paths.getSparrowAtlas('characters/bfCat',"shared");
 				frames = tex;
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
@@ -998,7 +998,7 @@ class Character extends FlxSprite
 				flipX = true;
 			case 'gf-guns':
 				// GIRLFRIEND CODE
-				tex = Paths.getSparrowAtlas('tankman/gfTankman','shared');
+				tex = Paths.getSparrowAtlas('characters/tankmanChars/gfTankman','shared');
 				frames = tex;
 				animation.addByPrefix('cheer', 'GF Cheer', 24, false);
 				animation.addByPrefix('singLEFT', 'GF left note', 24, false);
@@ -1031,7 +1031,7 @@ class Character extends FlxSprite
 				isDancingIdle = true;
 			case 'pico-speaker':
 				// GIRLFRIEND CODE
-				tex = Paths.getSparrowAtlas('tankman/picoSpeaker','shared');
+				tex = Paths.getSparrowAtlas('characters/tankmanChars/picoSpeaker','shared');
 				frames = tex;
 				animation.addByIndices('idle', 'Pico shoot 2', CoolUtil.numberArray(59,41),"",24, false);
 				animation.addByIndices('danceLeft', 'Pico shoot 3', CoolUtil.numberArray(62,45),"",24, false);
@@ -1059,7 +1059,7 @@ class Character extends FlxSprite
 				this.y -= 200;
 				isDancingIdle = true;
 			case 'bf-holding-gf':
-				var tex = Paths.getSparrowAtlas('tankman/bfAndGF','shared');
+				var tex = Paths.getSparrowAtlas('characters/tankmanChars/bfAndGF','shared');
 				frames = tex;				
 				
 				animation.addByPrefix('idle', 'BF idle dance w gf', 24, false);
@@ -1099,18 +1099,6 @@ class Character extends FlxSprite
 					addOffset('singDOWNmiss', -39, -16);
 					this.y += 350;
 				}
-				flipX = true;
-			case 'bf-holding-dead':
-				var tex = Paths.getSparrowAtlas('tankman/bfHoldingGF-DEAD','shared');
-        
-				frames = tex;
-				animation.addByPrefix('firstDeath', 'BF Dies with GF', 24, false);
-				animation.addByPrefix('deathLoop','BF Dead with GF Loop', 24, true);
-				animation.addByPrefix('deathConfirm', 'RETRY confirm holding gf', 24, false);
-
-				addOffset('firstDeath', 37, 14);
-				addOffset('deathLoop', 37, -3);
-				addOffset('deathConfirm', 37, 28);
 				flipX = true;
 			case 'OJ':
 				var tex = Paths.getSparrowAtlas('characters/OJ_Assets','shared');

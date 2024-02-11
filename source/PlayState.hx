@@ -363,7 +363,6 @@ class PlayState extends MusicBeatState
 
 		if(PlayStateChangeables.Optimize){
 			PlayStateChangeables.allowChanging = false;
-			SONG.stage = "none";
 			camFactor = 0;
 		}
 		if(isStoryMode){
@@ -950,6 +949,8 @@ class PlayState extends MusicBeatState
 					stageObj.createStage();
 				}
 			}
+		}else{
+			stageObj.createStage(false);
 		}
 		//defaults if no gf was found in chart
 		var gfCheck:String = 'gf';
@@ -1097,7 +1098,14 @@ class PlayState extends MusicBeatState
 				bfxoffset += 320;
 				camPos.y -= 100;
 			default:
-				stageObj.setPlaces(bfxoffset,bfyoffset,dadxoffset,dadyoffset,gf);
+				//stageObj.setPlaces(bfxoffset,bfyoffset,dadxoffset,dadyoffset,gf);
+				var pos:Array<Float> = stageObj.getPlaces();
+				bfxoffset += pos[0];
+				bfyoffset += pos[1];
+				dadxoffset += pos[2];
+				dadxoffset += pos[3];
+				gf.x += pos[4];
+				gf.y += pos[5];
 		}
 		if (PlayStateChangeables.flip)
 		{
@@ -1124,7 +1132,7 @@ class PlayState extends MusicBeatState
 
 			add(layerChars);
 			add(layerBFs);
-			if(PlayStateChangeables.flip && executeModchart){
+			if(PlayStateChangeables.flip && (executeModchart || stageObj.hasLua)){
 				layerFakeBFs = new FlxTypedGroup<Character>();
 				layerPlayChars = new FlxTypedGroup<Boyfriend>();
 				layerChars.remove(dad);
@@ -1136,7 +1144,7 @@ class PlayState extends MusicBeatState
 			}
 		}else{
 			add(layerBGs[1]);
-			if(PlayStateChangeables.flip && executeModchart){
+			if(PlayStateChangeables.flip && (executeModchart || stageObj.hasLua)){
 				layerFakeBFs = new FlxTypedGroup<Character>();
 				layerPlayChars = new FlxTypedGroup<Boyfriend>();
 				layerChars.remove(dad);
@@ -3232,9 +3240,12 @@ class PlayState extends MusicBeatState
 					}
 				}else{
 					if(PlayStateChangeables.flip)
-						babyArrow.x += (FlxG.width / 2) - Note.swagWidth * keyAmmo[mania]/2 /*+ (Note.swagWidth * i)*/;
+						babyArrow.x += (FlxG.width / 2) - Note.swagWidth/2 - Note.swagWidth * keyAmmo[mania]/2 /*+ (Note.swagWidth * i)*/;
 					else{
-						babyArrow.x += 275;
+						if(keyAmmo[mania]<=4)
+							babyArrow.x -= 275 + Note.swagWidth * (keyAmmo[mania]-4)/2;
+						else
+							babyArrow.x -= 275;
 					}
 				}
 			}
@@ -8014,8 +8025,10 @@ class PlayState extends MusicBeatState
 		}else{
 			if(isPlayer){
 				healthBar.createFilledBar(barColors[0], 0xFF66FF33);
+				barColors[1] = 0xFF66FF33;
 			}else{
 				healthBar.createFilledBar(0xFFFF0000, barColors[1]);
+				barColors[0] = 0xFFFF0000;
 			}
 		}
 		healthBar.updateBar();
@@ -8035,16 +8048,6 @@ class PlayState extends MusicBeatState
 
 	public function preloadNotes(?loadAll:Bool = false){
 		var nota:FlxSprite = new FlxSprite();
-		/*nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrows-pixels'), true, 17, 17);
-		nota.loadGraphic(Paths.image('noteassets/pixel/firenotes/arrowEnds'), true, 7, 6);
-		nota.loadGraphic(Paths.image('noteassets/pixel/halo/arrows-pixels'), true, 17, 17);
-		nota.loadGraphic(Paths.image('noteassets/pixel/halo/arrowEnds'), true, 7, 6);
-		nota.loadGraphic(Paths.image('noteassets/pixel/warning/arrows-pixels'), true, 17, 17);
-		nota.loadGraphic(Paths.image('noteassets/pixel/warning/arrowEnds'), true, 7, 6);
-		nota.loadGraphic(Paths.image('noteassets/pixel/angel/arrows-pixels'), true, 17, 17);
-		nota.loadGraphic(Paths.image('noteassets/pixel/angel/arrowEnds'), true, 7, 6);
-		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrows-pixels'), true, 17, 17);
-		nota.loadGraphic(Paths.image('noteassets/pixel/bob/arrowEnds'), true, 7, 6);*/
 		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_types');
 		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_fire');
 		nota.frames = Paths.getSparrowAtlas('noteassets/notetypes/HURTNote');

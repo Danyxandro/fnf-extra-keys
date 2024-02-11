@@ -183,7 +183,7 @@ class ChartingState extends MusicBeatState
 
 		// sections = _song.notes;
 
-		updateGrid();
+		//updateGrid();
 
 		loadSong(_song.song);
 		Conductor.changeBPM(_song.bpm);
@@ -223,6 +223,7 @@ class ChartingState extends MusicBeatState
 
 		super.create();
 
+		updateGrid();
 		updateSectionUI();
 	}
 

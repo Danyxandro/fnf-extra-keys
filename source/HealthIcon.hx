@@ -174,6 +174,7 @@ class HealthIcon extends FlxSprite
 			animation.add('keen-flying-win', [101], 0, false, isPlayer);
 			animation.add('keen-flying-lose', [27], 0, false, isPlayer);
 			var mapping:Map<String,Array<Int>> = new Map<String,Array<Int>>();
+			mapping.set('bf-tankman-pixel', [8, 9]);
 			mapping.set('beat', [24, 25]);
 			mapping.set('beat-neon', [24, 25]);
 			mapping.set('bf-neon', [0, 1]);

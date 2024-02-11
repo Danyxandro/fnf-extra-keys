@@ -400,7 +400,7 @@ class ModchartState
 		#end
 	}*/
 
-	function makeAnimatedSprite(name:String,fileName:String,initialAnimation:String,prefix:String,?drawBehind=false){
+	function makeAnimatedSprite(name:String,fileName:String,initialAnimation:String,prefix:String,?drawBehind:Dynamic=false){
 		var sprite:FlxSprite = new FlxSprite();
 
 		var songLowercase:String = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
@@ -427,7 +427,7 @@ class ModchartState
 		return name;
 	}
 
-	function makeLuaSprite(spritePath:String,toBeCalled:String, ?drawBehind=false)
+	function makeLuaSprite(spritePath:String,toBeCalled:String, ?drawBehind:Dynamic=false)
 	{
 		#if sys
 		// pre lowercasing the song name (makeLuaSprite)
@@ -518,6 +518,7 @@ class ModchartState
 				setVar("downscroll", FlxG.save.data.downscroll);
 				setVar("flashing", FlxG.save.data.flashing);
 				setVar("distractions", FlxG.save.data.distractions);
+				setVar("optimization",PlayStateChangeables.Optimize);
 	
 				setVar("curStep", 0);
 				setVar("curBeat", 0);
@@ -1760,7 +1761,9 @@ class ModchartState
         return new ModchartState(fromStage);
     }
 
-	private function addToLayer(layer=false,sprite:FlxSprite):Void{
+	private function addToLayer(layer:Dynamic,sprite:FlxSprite):Void{
+		if (layer == null) layer = false;
+		trace("agregando sprite en capa " + layer);
 		@:privateAccess
 		{
 			/*if (layer)
@@ -1789,6 +1792,7 @@ class ModchartState
 				default:
 					if(layers.exists(""+layer)){
 						layers.get(""+layer).add(sprite);
+						trace("agregado en capa: "+layer);
 					}else
 						PlayState.instance.layerBGs[2].add(sprite);
 			}

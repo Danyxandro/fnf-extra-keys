@@ -26,12 +26,17 @@ class Stage{
 		this.stage = stage;
 		@:privateAccess
 		modchartExists = PlayState.instance.executeModchart;
+		var luaRoute = "assets/stages/"+stage+"/modchart.lua";
+		this.hasLua = FileSystem.exists(luaRoute);
+		trace("Song lua: "+modchartExists+" stage lua: "+this.hasLua);
 	}
 
-	public function createStage(){
+	public function createStage(insertSprites:Bool = true){
 		@:privateAccess{
-			PlayState.instance.add(background);
+			if(insertSprites)
+				PlayState.instance.add(background);
 		}
+		trace("agregar escenario custom: "+insertSprites);
 		switch(this.stage)
 		{
 			case 'mallEvil':
@@ -93,9 +98,9 @@ class Stage{
 					for(spr in sprites){
 						var bg:FlxSprite = new FlxSprite(spr.x,spr.y);
 						var png:String = "assets/stages/"+stage.toLowerCase()+"/"+spr.image+".png";
-						if(spr.layerName != null && modchartExists){
+						if(spr.layerName != null && insertSprites){
 							var layer:flixel.group.FlxGroup.FlxTypedGroup<FlxSprite> = new flixel.group.FlxGroup.FlxTypedGroup<FlxSprite>();
-							if(spr.zPos != null){
+							if(spr.zPos != null && insertSprites){
 								switch(spr.zPos){
 									case 1:
 										PlayState.instance.layerBGs[1].add(layer);
@@ -109,7 +114,8 @@ class Stage{
 										background.add(layer);
 								}
 							}else{
-								background.add(layer);
+								if(insertSprites)
+									background.add(layer);
 							}
 							this.layers.set("" + spr.layerName,layer);
 						}else{
@@ -131,7 +137,7 @@ class Stage{
 							bg.scrollFactor.set(spr.scrollX,spr.scrollY);
 							bg.scale.set(spr.scale,spr.scale);
 							bg.updateHitbox();
-							if(spr.zPos != null){
+							if(spr.zPos != null && insertSprites){
 								switch(spr.zPos){
 									case 1:
 										PlayState.instance.layerBGs[1].add(bg);
@@ -145,7 +151,8 @@ class Stage{
 										background.add(bg);
 								}
 							}else{
-								background.add(bg);
+								if(insertSprites)
+									background.add(bg);
 							}
 							if(spr.antialiasing != null){
 								if(spr.antialiasing){
@@ -160,8 +167,6 @@ class Stage{
 					offsets = [stageData.player1X,stageData.player1Y,stageData.player2X,stageData.player2Y,stageData.gfX,stageData.gfY];
 				}else
 					addDefaultStage();
-				var luaRoute = "assets/stages/"+stage.toLowerCase()+"/modchart.lua";
-				hasLua = FileSystem.exists(luaRoute);
 			}//fin del default
 		}//fin del switch
 	}//fin del new
@@ -193,19 +198,20 @@ class Stage{
 		background.add(stageCurtains);
 	}
 
-	public function setPlaces(offsetX1:Float,offsetY1:Float,offsetX2:Float,offsetY2:Float,gf:Character){
-		if(offsets[0] != 0)
-			offsetX1 = offsets[0] *1;
+	public function getPlaces(/*offsetX1:Float,offsetY1:Float,offsetX2:Float,offsetY2:Float,gf:Character*/):Array<Float>{
+		/*if(offsets[0] != 0)
+			offsetX1 += offsets[0] *1;
 		if(offsets[1] != 0)
-			offsetY1 = offsets[1] *1;
+			offsetY1 += offsets[1] *1;
 		if(offsets[2] != 0)
-			offsetX2 = offsets[2] *1;
+			offsetX2 += offsets[2] *1;
 		if(offsets[3] != 0)
-			offsetY2 = offsets[3] *1;
+			offsetY2 += offsets[3] *1;
 		if(offsets[4] != 0)
 			gf.x += offsets[4] *1;
 		if(offsets[5] != 0)
-			gf.y += offsets[5] *1;
+			gf.y += offsets[5] *1;*/
+		return this.offsets;
 	}
 
 	public function modchartSetting():Void{
@@ -214,8 +220,8 @@ class Stage{
 				PlayState.luaModchart.layers.set(layer,layers[layer]);
 			}
 			for(spr in modchartSprites.keys()){
-				@:privateAccess
 				ModchartState.luaSprites.set(spr,modchartSprites[spr]);
+				trace("agregados " + ModchartState.luaSprites + "\n" + modchartExists+":"+hasLua);
 			}
 		}
 	}
