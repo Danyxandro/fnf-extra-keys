@@ -20,6 +20,10 @@ import llua.LuaL;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
+import haxe.Json;
+import haxe.format.JsonParser;
+
+using StringTools;
 
 class ModchartState 
 {
@@ -232,6 +236,10 @@ class ModchartState
 				if(PlayStateChangeables.flip)
 					return PlayState.boyfriend;
 				return PlayState.dad;
+				}
+			case "healthbar":
+				@:privateAccess{
+					return PlayState.instance.healthGrp;
 				}
 		}
 		// lua objects or what ever
@@ -515,7 +523,8 @@ class ModchartState
 				setVar("bpm", Conductor.bpm);
 				setVar("scrollspeed", FlxG.save.data.scrollSpeed != 1 ? FlxG.save.data.scrollSpeed : PlayState.SONG.speed);
 				setVar("fpsCap", FlxG.save.data.fpsCap);
-				setVar("downscroll", FlxG.save.data.downscroll);
+				setVar("downscroll", PlayStateChangeables.useDownscroll);
+				setVar("cpuDownscroll", PlayStateChangeables.cpuDownscroll);
 				setVar("flashing", FlxG.save.data.flashing);
 				setVar("distractions", FlxG.save.data.distractions);
 				setVar("optimization",PlayStateChangeables.Optimize);
@@ -580,6 +589,8 @@ class ModchartState
 					ids = [PlayState.SONG.player1 => 0];
 					idsBF = [PlayState.SONG.player2 => 0];
 					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerFakeBFs.members[0]);
+					luaSprites.set("icon2", PlayState.instance.iconP1);
+					luaSprites.set("icon1", PlayState.instance.iconP2);
 					ids.set("bf-" + PlayState.SONG.player1, 0);
 					if(PlayState.SONG.player2 == "dad"){
 						luaSprites.set("daddy", PlayState.instance.layerPlayChars.members[0]);
@@ -590,6 +601,8 @@ class ModchartState
 					}
 				}else{
 					luaSprites.set("bf-" + PlayState.SONG.player1, PlayState.instance.layerBFs.members[0]);
+					luaSprites.set("icon2", PlayState.instance.iconP2);
+					luaSprites.set("icon1", PlayState.instance.iconP1);
 					idsBF.set("bf-" + PlayState.SONG.player1, 0);
 					if(PlayState.SONG.player2 == "dad"){
 						luaSprites.set("daddy", PlayState.instance.layerChars.members[0]);
@@ -1333,6 +1346,59 @@ class ModchartState
 					if(!isPlayer)
 						id = 1;
 					PlayState.instance.goldAnim[id] = anim;
+				});
+
+				Lua_helper.add_callback(lua,"setDownscroll", function(downscroll:Bool, ?toPlayer:Int = 0):Void {
+					switch(toPlayer){
+						case 1:
+							PlayStateChangeables.useDownscroll = downscroll;
+							setVar("downscroll", downscroll);
+						case 2:
+							PlayStateChangeables.cpuDownscroll = downscroll;
+							setVar("cpuDownscroll", downscroll);
+						default:
+							PlayStateChangeables.useDownscroll = downscroll;
+							setVar("downscroll", downscroll);
+							PlayStateChangeables.cpuDownscroll = downscroll;
+							setVar("cpuDownscroll", downscroll);
+					}
+				});
+
+				Lua_helper.add_callback(lua,"jsonParse", function(file:String) {
+					var object = {};
+					var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
+					switch (songLowercase) {
+						case 'dad-battle': songLowercase = 'dadbattle';
+						case 'philly-nice': songLowercase = 'philly';
+					}
+					var ruta:String = "assets/data/" + songLowercase + "/" + file +".json";
+					if(sys.FileSystem.exists(ruta) ){
+						object = cast Json.parse(sys.io.File.getContent( ruta ).trim());
+					}
+						trace("Object returned: "+object);
+						return object;
+				});
+
+				Lua_helper.add_callback(lua,"getObjectProperty",function(id:String,property:String) {
+					var obj:Dynamic;
+					switch(id)
+					{
+						case 'this' | 'instance' | 'game':
+							obj = PlayState.instance;
+						
+						default:
+							obj = getActorByName(id);
+					}
+					var split:Array<String> = property.split('.');
+					for (i in 0...split.length){
+						var aux:Dynamic = Reflect.getProperty(obj, split[i]);
+						if (aux == null){
+							obj = {};
+							break;
+						}else
+							obj = aux;
+					}
+					return obj;
 				});
 				// actors
 				

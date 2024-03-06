@@ -36,21 +36,27 @@ class OptionsMenu extends MusicBeatState
 		new OptionCategory("Gameplay", [
 			new GhostTapOption("Ghost Tapping is when you tap a direction and it doesn't give you a miss."),
 			new GraceTmr("Turn off the Grace Timer for the real Chad Input"),
-			new DFJKOption(controls),
+			/*new DFJKOption(controls),
 			new FiveKeyMenu(controls),
 			new SixKeyMenu(controls),
-			new NineKeyMenu(controls),
+			new NineKeyMenu(controls),*/
 			new DownscrollOption("Change the layout of the strumline."),
 			new Judgement("Customize your Hit Timings (LEFT or RIGHT)"),
 			#if desktop
 			new FPSCapOption("Cap your FPS"),
 			#end
-			new ScrollSpeedOption("Change your scroll speed (1 = Chart dependent)"),
+			//new ScrollSpeedOption("Change your scroll speed (1 = Chart dependent)"),
 			new InstantRespawn("Toggle if you instantly respawn after dying."),
 			new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
 			new ResetButtonOption("Toggle pressing R to gameover."),
 			// new OffsetMenu("Get a note offset based off of your inputs!"),
 			new CustomizeGameplay("Drag'n'Drop Gameplay Modules around to your preference")
+		]),
+		new OptionCategory("Key bindings", [
+			new DFJKOption(controls),
+			new FiveKeyMenu(controls),
+			new SixKeyMenu(controls),
+			new NineKeyMenu(controls)
 		]),
 		new OptionCategory("Appearance", [
 			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),

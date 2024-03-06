@@ -33,6 +33,7 @@ class Character extends FlxSprite
 	public var hasFocus:Bool = true;
 	public var colorCode:Array<Int> = [];
 	public var isDancingIdle:Bool = false;
+	private var singDuration:Float = 4;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?synch:Bool = false)
 	{
@@ -159,6 +160,7 @@ class Character extends FlxSprite
 				addOffset("singDOWN", 0, -30);
 
 				playAnim('idle');
+				singDuration = 6.1;
 			case 'spooky':
 				tex = Paths.getSparrowAtlas('characters/spooky_kids_assets',"shared");
 				frames = tex;
@@ -1033,9 +1035,11 @@ class Character extends FlxSprite
 				// GIRLFRIEND CODE
 				tex = Paths.getSparrowAtlas('characters/tankmanChars/picoSpeaker','shared');
 				frames = tex;
-				animation.addByIndices('idle', 'Pico shoot 2', CoolUtil.numberArray(59,41),"",24, false);
-				animation.addByIndices('danceLeft', 'Pico shoot 3', CoolUtil.numberArray(62,45),"",24, false);
-				animation.addByIndices('danceRight', 'Pico shoot 2', CoolUtil.numberArray(62,45),"",24, false);
+				//animation.addByIndices('idle', 'Pico shoot 2', CoolUtil.numberArray(59,41),"",24, false);
+				animation.addByIndices('idle', 'Pico shoot 2', CoolUtil.numberArray(58,4),"",24, false);
+				//animation.addByIndices('danceLeft', 'Pico shoot 3', CoolUtil.numberArray(62,45),"",24, false);
+				animation.addByIndices('danceLeft', 'Pico shoot 2', CoolUtil.numberArray(58,22),"",24, false);
+				animation.addByIndices('danceRight', 'Pico shoot 2', CoolUtil.numberArray(58,4),"",24, false);
 				animation.addByPrefix('shoot1', 'Pico shoot 1',  24, false);
 				animation.addByPrefix('shoot2', 'Pico shoot 2',  24, false);
 				animation.addByPrefix('shoot3', 'Pico shoot 3', 24, false);
@@ -1050,11 +1054,12 @@ class Character extends FlxSprite
 				addOffset('shoot3', 412, -64);
 				addOffset('shoot4', 439, -19);
 
-				addOffset('danceLeft', 412, -64);
+				//addOffset('danceLeft', 412, -64);
+				addOffset('danceLeft', -1, -128);
 				addOffset('danceRight', -1, -128);
 				addOffset('idle', -1, -128);
 
-				playAnim('danceRight');
+				playAnim('idle');
 
 				this.y -= 200;
 				isDancingIdle = true;
@@ -2559,12 +2564,14 @@ class Character extends FlxSprite
 							addOffset('idle', animOffsets['danceLeft'][0], animOffsets['danceLeft'][1]);
 						}
 					}
+					if(datos.sing_duration != 0)
+						singDuration = datos.sing_duration;
 					if(datos.camera_position != null)
 						cameraPosition = datos.camera_position;
 					if(isPlayer && datos.playerCameraPosition != null){
 						cameraPosition = datos.playerCameraPosition;
 					}
-					if(datos.scale != 1){
+					if(datos.scale != 0){
 						this.scale.set(datos.scale,datos.scale);
 						this.updateHitbox();
 					}
@@ -2744,11 +2751,17 @@ class Character extends FlxSprite
 						holdTimer += elapsed;
 					}
 		
-					var dadVar:Float = 4;
+					/*var dadVar:Float = 4;
 		
 					if (curCharacter == 'dad')
 						dadVar = 6.1;
 					if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
+					{
+						trace('dance');
+						dance();
+						holdTimer = 0;
+					}*/
+					if (holdTimer >= Conductor.stepCrochet * singDuration * 0.001)
 					{
 						trace('dance');
 						dance();
@@ -2766,11 +2779,7 @@ class Character extends FlxSprite
 						holdTimer += elapsed;
 					}
 		
-					var dadVar:Float = 4;
-		
-					if (curCharacter == 'dad')
-						dadVar = 6.1;
-					if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
+					if (holdTimer >= Conductor.stepCrochet * singDuration * 0.001)
 					{
 						trace('dance');
 						dance();
@@ -2814,13 +2823,13 @@ class Character extends FlxSprite
 
 		if(this.isDancingIdle){
 			if((!isPlayingAsBF && isPlayer) || (isPlayingAsBF && !isPlayer)){
-				if(!animation.curAnim.name.startsWith('sing') && !animation.curAnim.name.startsWith('dance') && animation.curAnim.finished){
+				if(!animation.curAnim.name.startsWith('sing') && !animation.curAnim.name.startsWith('death') && !animation.curAnim.name.startsWith('dance') && animation.curAnim.finished){
 					dance();
 				}
 			}
 		}else{
 			if((!isPlayingAsBF && isPlayer) || (isPlayingAsBF && !isPlayer)){
-				if(!animation.curAnim.name.startsWith('sing') && animation.curAnim.name != "idle" && animation.curAnim.finished){
+				if(!animation.curAnim.name.startsWith('sing') && !animation.curAnim.name.startsWith('death') && animation.curAnim.name != "idle" && animation.curAnim.finished){
 					dance();
 				}
 			}

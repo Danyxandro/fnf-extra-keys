@@ -81,6 +81,8 @@ class Note extends FlxSprite
 	private var useStyle1:Bool;
 	private var isTrailNote:Bool = false;
 	public var wrongHit:Bool = false;
+	public var downscroll:Bool = false;
+	private var defaulOffsets:Array<Float> = [];
 
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?noteType:Int = 0, ?_mustPress:Bool = false, ?inCharter:Bool = false, ?useStyle1:Bool=true)
 	{
@@ -257,7 +259,16 @@ class Note extends FlxSprite
 		} else {noteTypeCheck = PlayState.SONG.noteStyle;}
 		this.estilo = noteTypeCheck;
 
+		defaulOffsets[0] = offset.x;
+		defaulOffsets[1] = offset.y;
+
 		setGraphic(noteTypeCheck, true);
+
+		if (useStyle1){
+			this.downscroll = PlayStateChangeables.useDownscroll;
+		}else{
+			this.downscroll = PlayStateChangeables.cpuDownscroll;
+		}
 	}
 
 	override function update(elapsed:Float)
@@ -538,15 +549,29 @@ class Note extends FlxSprite
 			if(/*noteType == 0 &&*/ PlayState.instance.style[0] != this.estilo){
 				setGraphic(PlayState.instance.style[0]);
 			}
+			if (isSustainNote)
+				flipY = PlayStateChangeables.useDownscroll;
+			if(!isSustainNote && noteType == 1 && this.downscroll != PlayStateChangeables.useDownscroll){
+				this.downscroll = PlayStateChangeables.useDownscroll;
+				setGraphic(PlayState.instance.style[0]);
+			}
 		}else{
 			if(/*noteType == 0 &&*/ PlayState.instance.style[1] != this.estilo){
 				setGraphic(PlayState.instance.style[1]);
+			}
+			if (isSustainNote)
+				flipY = PlayStateChangeables.cpuDownscroll;
+			if(!isSustainNote && noteType == 1 && this.downscroll != PlayStateChangeables.cpuDownscroll){
+				this.downscroll = PlayStateChangeables.cpuDownscroll;
+				setGraphic(PlayState.instance.style[0]);
 			}
 		}
 
 	}//fin del Update
 
 	function setGraphic(estilo:String,?tailNote:Bool=false):Void{
+		 offset.x = defaulOffsets[0];
+		 offset.y = defaulOffsets[1];
 		switch (estilo)
 		{
 			case 'pixel':
@@ -571,7 +596,7 @@ class Note extends FlxSprite
 							}
 						}else{
 							loadGraphic(Paths.image('noteassets/pixel/NOTE_fire-pixel'),true,21,31);
-							if(FlxG.save.data.downscroll){
+							if(this.downscroll){
 								animation.add('purpleScroll', [0,1,2],12,true);
 								animation.add('greenScroll', [3,4,5],12,true);
 								animation.add('blueScroll', [6,7,8],12,true);
@@ -739,13 +764,13 @@ class Note extends FlxSprite
 				updateHitbox();
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 66;
 						else
 							offset.y += 26;
 						offset.x += 10;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 52;
 						else
 							offset.y += 20;
@@ -772,13 +797,13 @@ class Note extends FlxSprite
 				antialiasing = true;
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 201;
 						else
 							offset.y += 51;
 						offset.x += 40;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 291 * noteScale;
 						else
 							offset.y += 71 * noteScale;
@@ -818,13 +843,13 @@ class Note extends FlxSprite
 				antialiasing = true;
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 201;
 						else
 							offset.y += 51;
 						offset.x += 40;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 291 * noteScale;
 						else
 							offset.y += 71 * noteScale;
@@ -846,13 +871,13 @@ class Note extends FlxSprite
 				antialiasing = true;
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 201;
 						else
 							offset.y += 51;
 						offset.x += 40;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 291 * noteScale;
 						else
 							offset.y += 71 * noteScale;
@@ -874,13 +899,13 @@ class Note extends FlxSprite
 				antialiasing = true;
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 201;
 						else
 							offset.y += 51;
 						offset.x += 40;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 291 * noteScale;
 						else
 							offset.y += 71 * noteScale;
@@ -950,13 +975,13 @@ class Note extends FlxSprite
 				antialiasing = true;
 				if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 201;
 						else
 							offset.y += 51;
 						offset.x += 40;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += 291 * noteScale;
 						else
 							offset.y += 71 * noteScale;
@@ -965,13 +990,13 @@ class Note extends FlxSprite
 				}
 				/*if(noteType == 1 && !isSustainNote){
 					if(noteScale == 0.7){
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += PlayState.instance.noteOffsets.downscroll.trickyYNormal;
 						else
 							offset.y += PlayState.instance.noteOffsets.upscroll.trickyYNormal;
 						offset.x += PlayState.instance.noteOffsets.trickyXNormal;
 					}else{
-						if(FlxG.save.data.downscroll)
+						if(this.downscroll)
 							offset.y += PlayState.instance.noteOffsets.downscroll.trickyYSmall * noteScale;
 						else
 							offset.y += PlayState.instance.noteOffsets.upscroll.trickyYSmall  * noteScale;
@@ -1010,7 +1035,7 @@ class Note extends FlxSprite
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
 		// and flip it so it doesn't look weird.
 		// THIS DOESN'T FUCKING FLIP THE NOTE, CONTRIBUTERS DON'T JUST COMMENT THIS OUT JESUS
-		if (FlxG.save.data.downscroll && isSustainNote) 
+		if (this.downscroll && isSustainNote) 
 			flipY = true;
 
 
@@ -1083,7 +1108,7 @@ class Note extends FlxSprite
 			}else{
 				frames = Paths.getSparrowAtlas('noteassets/notetypes/NOTE_fire');
 				var colores:Array<String> = ['purple', 'blue', 'green', 'red', 'blue', 'purple', 'blue', 'green', 'red'];
-				if(FlxG.save.data.downscroll){
+				if(this.downscroll){
 					colores = ['purple', 'green', 'blue', 'red', 'blue', 'purple', 'green', 'blue', 'red'];
 					this.flipY = true;
 				}

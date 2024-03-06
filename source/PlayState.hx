@@ -136,7 +136,7 @@ class PlayState extends MusicBeatState
 	public var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
-	var replacableTypeList:Array<Int> = [4,5,6]; //note types do wanna hit
+	var replacableTypeList:Array<Int> = [4,5,6,7]; //note types do wanna hit
 	var nonReplacableTypeList:Array<Int> = [1,2,3,8]; //note types you dont wanna hit
 
 	private var camFollow:FlxObject;
@@ -274,7 +274,8 @@ class PlayState extends MusicBeatState
 	public var style:Array<String> = ["normal","normal"];
 	private var musica:FlxSoundAsset;
 	public var animatedIcons:Map<String,HealthIcon> = new Map<String,HealthIcon>();
-	public var layerIcons:FlxTypedGroup<HealthIcon> = new FlxTypedGroup<HealthIcon>();
+	//public var layerIcons:FlxTypedGroup<HealthIcon> = new FlxTypedGroup<HealthIcon>();
+	public var layerIcons:flixel.group.FlxSpriteGroup = new flixel.group.FlxSpriteGroup();
 	private var barColors:Array<FlxColor> = [0xFFFF0000, 0xFF66FF33];
 	public var colorsMap:Map<String,FlxColor> = [];
 	public var layerChars:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
@@ -301,23 +302,7 @@ class PlayState extends MusicBeatState
 	public var goldAnim:Array<String> = ['singHey','singHey'];
 	private var health2:Map<String,Dynamic> = new Map<String,Dynamic>();
 	private var stageObj:Stage;
-	/*public var noteOffsets = {
-		downscroll:{
-		trickyYNormal:161,
-		trickyYSmall:161,
-		pixelYNormal:66,
-		pixelYSmall:66
-	},
-	trickyXNormal:30,
-	trickyXSmall:18,
-	pixelXNormal:35,
-	pixelXSmall:46,
-	upscroll:{
-		trickyYNormal:51,
-		trickyYSmall:31,
-		pixelYNormal:26,
-		pixelYSmall:26
-	}};*/
+	public var healthGrp:flixel.group.FlxSpriteGroup = new flixel.group.FlxSpriteGroup();
 
 	override public function create()
 	{
@@ -343,7 +328,8 @@ class PlayState extends MusicBeatState
 		repReleases = 0;
 
 
-		PlayStateChangeables.useDownscroll = FlxG.save.data.downscroll;
+		PlayStateChangeables.useDownscroll = !!FlxG.save.data.downscroll;
+		PlayStateChangeables.cpuDownscroll = !!FlxG.save.data.downscroll;
 		PlayStateChangeables.safeFrames = FlxG.save.data.frames;
 		PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed;
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
@@ -1164,7 +1150,8 @@ class PlayState extends MusicBeatState
 			FlxG.watch.addQuick('rep releases',repReleases);
 			// FlxG.watch.addQuick('Queued',inputsQueued);
 
-			PlayStateChangeables.useDownscroll = rep.replay.isDownscroll;
+			PlayStateChangeables.useDownscroll = !!rep.replay.isDownscroll;
+			PlayStateChangeables.cpuDownscroll = !!rep.replay.isDownscroll;
 			PlayStateChangeables.safeFrames = rep.replay.sf;
 			PlayStateChangeables.botPlay = true;
 		}
@@ -1238,10 +1225,6 @@ class PlayState extends MusicBeatState
 									dunceNote.y = (playerStrums.members[Math.floor(Math.abs(dunceNote.noteData))].y
 										+ 0.45 * (startTime - dunceNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
 											2)) - dunceNote.noteYOff;
-								else
-									dunceNote.y = (strumLineNotes.members[Math.floor(Math.abs(dunceNote.noteData))].y
-										+ 0.45 * (startTime - dunceNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
-											2)) - dunceNote.noteYOff;
 							}
 							else
 							{
@@ -1249,7 +1232,14 @@ class PlayState extends MusicBeatState
 									dunceNote.y = (playerStrums.members[Math.floor(Math.abs(dunceNote.noteData))].y
 										- 0.45 * (startTime - dunceNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
 											2)) + dunceNote.noteYOff;
-								else
+							}
+							if(PlayStateChangeables.cpuDownscroll){
+								if (!dunceNote.mustPress)
+									dunceNote.y = (strumLineNotes.members[Math.floor(Math.abs(dunceNote.noteData))].y
+										+ 0.45 * (startTime - dunceNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) - dunceNote.noteYOff;
+							}else{
+								if (!dunceNote.mustPress)
 									dunceNote.y = (strumLineNotes.members[Math.floor(Math.abs(dunceNote.noteData))].y
 										- 0.45 * (startTime - dunceNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
 											2)) + dunceNote.noteYOff;
@@ -1313,33 +1303,38 @@ class PlayState extends MusicBeatState
 		healthBarBG = new FlxSprite(0, FlxG.height * 0.9).loadGraphic(Paths.image('healthBar'));
 		if (PlayStateChangeables.useDownscroll)
 			healthBarBG.y = 50;
-		healthBarBG.screenCenter(X);
+		/*healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
-		add(healthBarBG);
+		add(healthBarBG);*/
+		healthGrp.add(healthBarBG);
 
 		if (!PlayStateChangeables.flip)
 			{
 				healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
 				'health', 0, 2);
-				healthBar.scrollFactor.set();
+				//healthBar.scrollFactor.set();
 				healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
 			}
 			else
 			{
 				healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, LEFT_TO_RIGHT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
 				'health', 0, 2);
-				healthBar.scrollFactor.set();
+				//healthBar.scrollFactor.set();
 				healthBar.createFilledBar(0xFF66FF33, 0xFFFF0000);
 			}
 		// healthBar
-		add(healthBar);
+		healthGrp.add(healthBar);
 
 		overhealthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
 		'health', 2.2, 4);
-		overhealthBar.scrollFactor.set();
+		//overhealthBar.scrollFactor.set();
 		overhealthBar.createFilledBar(0x00000000, 0xFFFFFF00);
 		// healthBar
-		add(overhealthBar);
+		healthGrp.scrollFactor.set();
+		healthGrp.screenCenter(X);
+		/*if (PlayStateChangeables.useDownscroll)
+			healthGrp.y = 50;*/
+		healthGrp.add(overhealthBar);
 
 		if (FileSystem.exists(Paths.json('healthBar'))){
 			var datos:haxe.DynamicAccess<Dynamic> = cast Json.parse( Assets.getText( Paths.json('healthBar') ).trim() );
@@ -1444,16 +1439,18 @@ class PlayState extends MusicBeatState
 
 		layerIcons.add(animatedIcons["default1"]);
 		layerIcons.add(animatedIcons["default2"]);
-		add(iconP1);
-		add(iconP2);
-		add(layerIcons);
+		healthGrp.add(iconP1);
+		healthGrp.add(iconP2);
+		healthGrp.add(layerIcons);
+		add(healthGrp);
 
 		noteSplashes.cameras = [camNotes];
 		strumLineNotes.cameras = [camNotes];
 		notes.cameras = [camNotes];
-		healthBar.cameras = [camHUD];
+		/*healthBar.cameras = [camHUD];
 		overhealthBar.cameras = [camHUD];
-		healthBarBG.cameras = [camHUD];
+		healthBarBG.cameras = [camHUD];*/
+		healthGrp.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
 		layerIcons.cameras = [camHUD];
@@ -3382,7 +3379,10 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-
+		/*healthBarBG.x = healthBar.x - 4;
+		healthBarBG.y = healthBar.y - 4;
+		overhealthBar.x = healthBar.x * 1;
+		overhealthBar.y = healthBar.y * 1;*/
 		
 		#if windows
 		if (executeModchart && luaModchart != null && songStarted)
@@ -4645,15 +4645,11 @@ class PlayState extends MusicBeatState
 									daNote.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y
 										+ 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
 											2)) - daNote.noteYOff;
-								else
-									daNote.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
-										+ 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
-											2)) - daNote.noteYOff;
-								if (daNote.isSustainNote)
+								if (daNote.isSustainNote && daNote.mustPress)
 								{
 									// Remember = minus makes notes go up, plus makes them go down
 									if (daNote.animation.curAnim.name.endsWith('end') && daNote.prevNote != null)
-										daNote.y += daNote.prevNote.height;
+										daNote.y += daNote.prevNote.height/2;
 									else
 										daNote.y += daNote.height / 2;
 		
@@ -4663,7 +4659,7 @@ class PlayState extends MusicBeatState
 										if ((!daNote.mustPress || daNote.wasGoodHit || daNote.prevNote.wasGoodHit || holdArray[Math.floor(Math.abs(daNote.noteData))] && !daNote.tooLate)
 											&& daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= (strumLine.y + Note.swagWidth / 2))
 										{
-											// Clip to strumline
+											//Clip to strumline
 											var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
 											swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
 												+ Note.swagWidth / 2
@@ -4675,19 +4671,10 @@ class PlayState extends MusicBeatState
 									}
 									else
 									{
-										if(!daNote.mustPress){
-										var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
-										swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
-											+ Note.swagWidth / 2
-											- daNote.y) / daNote.scale.y;
-										swagRect.y = daNote.frameHeight - swagRect.height;
-		
-										daNote.clipRect = swagRect;
-
-										}else{
+										if(daNote.mustPress){
 											if(!healthValues.get(""+daNote.noteType).get("damage")){
 											var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
-											swagRect.height = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
+											swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
 											swagRect.y = daNote.frameHeight - swagRect.height;
 	
 											daNote.clipRect = swagRect;
@@ -4702,11 +4689,7 @@ class PlayState extends MusicBeatState
 									daNote.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y
 										- 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
 											2)) + daNote.noteYOff;
-								else
-									daNote.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
-										- 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
-											2)) + daNote.noteYOff;
-								if (daNote.isSustainNote)
+								if (daNote.isSustainNote && daNote.mustPress)
 								{
 									daNote.y -= daNote.height / 2;
 		
@@ -4727,6 +4710,87 @@ class PlayState extends MusicBeatState
 									}
 									else
 									{
+										if(daNote.mustPress){
+										var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
+										swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+											+ Note.swagWidth / 2
+											- daNote.y) / daNote.scale.y;
+										swagRect.height -= swagRect.y;
+		
+										daNote.clipRect = swagRect;
+										}
+									}
+								}
+							}
+							if (PlayStateChangeables.cpuDownscroll)
+							{
+								if (!daNote.mustPress)
+									daNote.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+										+ 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) - daNote.noteYOff;
+								if (daNote.isSustainNote && !daNote.mustPress)
+								{
+									// Remember = minus makes notes go up, plus makes them go down
+									if (daNote.animation.curAnim.name.endsWith('end') && daNote.prevNote != null)
+										daNote.y += daNote.prevNote.height/2;
+									else
+										daNote.y += daNote.height / 2;
+		
+									/*if (!PlayStateChangeables.botPlay)
+									{
+										if (daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= (strumLine.y + Note.swagWidth / 2))
+										{
+											// Clip to strumline
+											var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
+											swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+												+ Note.swagWidth / 2
+												- daNote.y) / daNote.scale.y;
+											swagRect.y = daNote.frameHeight - swagRect.height;
+		
+											daNote.clipRect = swagRect;
+										}
+									}
+									else
+									{*/
+										if(!daNote.mustPress){
+										var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
+										swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+											+ Note.swagWidth / 2
+											- daNote.y) / daNote.scale.y;
+										swagRect.y = daNote.frameHeight - swagRect.height;
+		
+										daNote.clipRect = swagRect;
+
+										}
+									//}
+								}
+							}
+							else
+							{
+								if (!daNote.mustPress)
+									daNote.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+										- 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) + daNote.noteYOff;
+								if (daNote.isSustainNote && !daNote.mustPress)
+								{
+									daNote.y -= daNote.height / 2;
+		
+									/*if (!PlayStateChangeables.botPlay)
+									{
+										if (daNote.y + daNote.offset.y * daNote.scale.y <= (strumLine.y + Note.swagWidth / 2))
+										{
+											// Clip to strumline
+											var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
+											swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+												+ Note.swagWidth / 2
+												- daNote.y) / daNote.scale.y;
+											swagRect.height -= swagRect.y;
+		
+											daNote.clipRect = swagRect;
+										}
+									}
+									else
+									{*/
 										if(!daNote.mustPress){
 										var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
 										swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
@@ -4735,16 +4799,8 @@ class PlayState extends MusicBeatState
 										swagRect.height -= swagRect.y;
 		
 										daNote.clipRect = swagRect;
-										}else{
-											if(!healthValues.get(""+daNote.noteType).get("damage")){
-											var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
-											swagRect.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
-											swagRect.height -= swagRect.y;
-	
-											daNote.clipRect = swagRect;
-											}
 										}
-									}
+									//}
 								}
 							}
 						}
@@ -5112,8 +5168,10 @@ class PlayState extends MusicBeatState
 								//}fin del default
 							}//fin del if note.damage
 						}
-						if(PlayStateChangeables.useDownscroll && daNote.y > strumLine.y ||
-							!PlayStateChangeables.useDownscroll && daNote.y < strumLine.y)
+						/*if(PlayStateChangeables.useDownscroll && daNote.y > strumLine.y ||
+							!PlayStateChangeables.useDownscroll && daNote.y < strumLine.y)*/
+						if(PlayStateChangeables.useDownscroll && daNote.y > strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y ||
+							!PlayStateChangeables.useDownscroll && daNote.y < strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y)
 							{
 									// Force good note hit regardless if it's too late to hit it or not as a fail safe
 									if(PlayStateChangeables.botPlay && daNote.canBeHit && daNote.mustPress ||
@@ -5298,6 +5356,7 @@ class PlayState extends MusicBeatState
 			PlayStateChangeables.botPlay = false;
 			PlayStateChangeables.scrollSpeed = 1;
 			PlayStateChangeables.useDownscroll = false;
+			PlayStateChangeables.cpuDownscroll = false;
 		}
 
 		if (FlxG.save.data.fpsCap > 290)
