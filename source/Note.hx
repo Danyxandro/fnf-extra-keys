@@ -549,8 +549,12 @@ class Note extends FlxSprite
 			if(/*noteType == 0 &&*/ PlayState.instance.style[0] != this.estilo){
 				setGraphic(PlayState.instance.style[0]);
 			}
-			if (isSustainNote)
-				flipY = PlayStateChangeables.useDownscroll;
+			if (isSustainNote){
+				if(PlayStateChangeables.flip)
+					flipY = PlayStateChangeables.cpuDownscroll;
+				else
+					flipY = PlayStateChangeables.useDownscroll;
+			}
 			if(!isSustainNote && noteType == 1 && this.downscroll != PlayStateChangeables.useDownscroll){
 				this.downscroll = PlayStateChangeables.useDownscroll;
 				setGraphic(PlayState.instance.style[0]);
@@ -559,8 +563,12 @@ class Note extends FlxSprite
 			if(/*noteType == 0 &&*/ PlayState.instance.style[1] != this.estilo){
 				setGraphic(PlayState.instance.style[1]);
 			}
-			if (isSustainNote)
-				flipY = PlayStateChangeables.cpuDownscroll;
+			if (isSustainNote){
+				if(!PlayStateChangeables.flip)
+					flipY = PlayStateChangeables.cpuDownscroll;
+				else
+					flipY = PlayStateChangeables.useDownscroll;
+			}
 			if(!isSustainNote && noteType == 1 && this.downscroll != PlayStateChangeables.cpuDownscroll){
 				this.downscroll = PlayStateChangeables.cpuDownscroll;
 				setGraphic(PlayState.instance.style[0]);

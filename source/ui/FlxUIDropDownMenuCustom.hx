@@ -451,6 +451,25 @@ class FlxUIDropDownMenuCustom extends FlxUIGroup implements IFlxUIWidget impleme
 			{
 				showList(false);
 			}
+			if(list.length > 1 && canScroll) {
+				if(FlxG.keys.justPressed.PAGEUP) {
+					// Go up
+					currentScroll -= 24;
+					if(currentScroll < 0) currentScroll = 0;
+					updateButtonPositions();
+				}
+				else if (FlxG.keys.justPressed.PAGEDOWN) {
+					// Go down
+					currentScroll += 24;
+					if(currentScroll >= list.length) currentScroll = list.length-1;
+					updateButtonPositions();
+				}
+			}
+
+			if (FlxG.mouse.justPressed && !mouseOverlapping())
+			{
+				showList(false);
+			}
 		}
 		#end
 	}

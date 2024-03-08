@@ -303,6 +303,7 @@ class PlayState extends MusicBeatState
 	private var health2:Map<String,Dynamic> = new Map<String,Dynamic>();
 	private var stageObj:Stage;
 	public var healthGrp:flixel.group.FlxSpriteGroup = new flixel.group.FlxSpriteGroup();
+	private var flipFlags:Array<Bool> = [false,true];
 
 	override public function create()
 	{
@@ -1436,6 +1437,8 @@ class PlayState extends MusicBeatState
 		animatedIcons["default2"] = new HealthIcon("dad", false);
 		animatedIcons["default2"].y = iconP2.y;
 		animatedIcons["default2"].alpha = 0.001;
+		flipFlags[0] = iconP1.flipX;
+		flipFlags[1] = iconP2.flipX;
 
 		layerIcons.add(animatedIcons["default1"]);
 		layerIcons.add(animatedIcons["default2"]);
@@ -3379,10 +3382,6 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-		/*healthBarBG.x = healthBar.x - 4;
-		healthBarBG.y = healthBar.y - 4;
-		overhealthBar.x = healthBar.x * 1;
-		overhealthBar.y = healthBar.y * 1;*/
 		
 		#if windows
 		if (executeModchart && luaModchart != null && songStarted)
@@ -3511,7 +3510,7 @@ class PlayState extends MusicBeatState
 
 		scoreTxt.x = (originalX - (lengthInPx / 2)) + 285;
 
-		if (controls.PAUSE && startedCountdown && canPause && !cannotDie)
+		if (controls.PAUSE && curBeat > -3/*startedCountdown*/ && canPause && !cannotDie)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
@@ -3569,18 +3568,36 @@ class PlayState extends MusicBeatState
 
 		var iconOffset:Int = 26;
 
-		if (!PlayStateChangeables.flip)
-		{
-			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
-			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);	
-		}
-		else
-		{
-			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 100, 0, 100, 0) * 0.01) - iconOffset);
-			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 100, 0, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+		if(healthGrp.flipX){
+			if (PlayStateChangeables.flip)
+			{
+				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
+				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP1.width - iconOffset);	
+			}
+			else
+			{
+				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 100, 0, 100, 0) * 0.01) - iconOffset);
+				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 100, 0, 100, 0) * 0.01)) - (iconP1.width - iconOffset);
+			}
+			iconP1.flipX = !flipFlags[0];
+			iconP2.flipX = !flipFlags[1];
+		}else{
+			if (!PlayStateChangeables.flip)
+			{
+				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
+				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);	
+			}
+			else
+			{
+				iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 100, 0, 100, 0) * 0.01) - iconOffset);
+				iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 100, 0, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+			}
+			iconP1.flipX = flipFlags[0];
+			iconP2.flipX = flipFlags[1];
 		}
 		if (health > 4)
 			health = 4;
+		FlxG.watch.addQuick("Health",health);
 		if (!PlayStateChangeables.flip)
 			{
 				if (healthBar.percent > 80)
@@ -5319,7 +5336,7 @@ class PlayState extends MusicBeatState
 				}
 		}
 
-		if (!inCutscene && songStarted)
+		if (!inCutscene && curBeat > -3/*songStarted*/)
 			keyShit();
 
 
@@ -7645,7 +7662,7 @@ class PlayState extends MusicBeatState
 		if (curBeat % 16 == 15 && SONG.song == 'Tutorial' && dad.curCharacter == 'gf' && curBeat > 16 && curBeat < 48)
 			{
 				if(!PlayStateChangeables.flip){
-					boyfriend.playAnim('hey', true);
+					boyfriend.playAnim('singhey', true);
 					dad.playAnim('cheer', true);
 				}else{
 					dad.playAnim('singHey', true);
@@ -8072,6 +8089,7 @@ class PlayState extends MusicBeatState
 	}//Fin changeStyle
 
 	public function setColorBar(isPlayer:Bool,character:String):Void{
+		//if((PlayStateChangeables.flip && !healthGrp.flipX) || (!PlayStateChangeables.flip && healthGrp.flipX))
 		if(PlayStateChangeables.flip)
 			isPlayer = !isPlayer;
 		if (colorsMap.exists(character)){

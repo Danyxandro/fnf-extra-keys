@@ -1549,6 +1549,17 @@ class ModchartState
 				Lua_helper.add_callback(lua, "setActorFlipX", function(flip:Bool, id:String)
 				{
 					getActorByName(id).flipX = flip;
+					@:privateAccess{
+						if(id=="healthbar"){
+							if(flip){
+								PlayState.instance.healthBar.flipX = false;
+								PlayState.instance.healthBar.angle = PlayState.instance.healthGrp.angle + 180; //easily "flips" the healthbar without messing with anything
+							}else{
+								PlayState.instance.healthBar.angle = PlayState.instance.healthGrp.angle;
+							}
+						}
+						
+					}
 				});
 
 				Lua_helper.add_callback(lua, "setActorFlipY", function(flip:Bool, id:String)
