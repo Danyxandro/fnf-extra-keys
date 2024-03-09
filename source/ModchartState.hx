@@ -1553,9 +1553,6 @@ class ModchartState
 						if(id=="healthbar"){
 							if(flip){
 								PlayState.instance.healthBar.flipX = false;
-								PlayState.instance.healthBar.angle = PlayState.instance.healthGrp.angle + 180; //easily "flips" the healthbar without messing with anything
-							}else{
-								PlayState.instance.healthBar.angle = PlayState.instance.healthGrp.angle;
 							}
 						}
 						

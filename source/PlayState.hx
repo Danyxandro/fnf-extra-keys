@@ -3581,6 +3581,7 @@ class PlayState extends MusicBeatState
 			}
 			iconP1.flipX = !flipFlags[0];
 			iconP2.flipX = !flipFlags[1];
+			PlayState.instance.healthBar.angle = PlayState.instance.healthGrp.angle + 180; //easily "flips" the healthbar without messing with anything
 		}else{
 			if (!PlayStateChangeables.flip)
 			{
@@ -3594,6 +3595,7 @@ class PlayState extends MusicBeatState
 			}
 			iconP1.flipX = flipFlags[0];
 			iconP2.flipX = flipFlags[1];
+			PlayState.instance.healthBar.angle = PlayState.instance.healthGrp.angle;
 		}
 		if (health > 4)
 			health = 4;
