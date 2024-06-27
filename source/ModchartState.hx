@@ -9,6 +9,7 @@ import flixel.tweens.FlxEase;
 import openfl.filters.ShaderFilter;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.text.FlxText;
 import openfl.geom.Matrix;
 import openfl.display.BitmapData;
 import lime.app.Application;
@@ -22,6 +23,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import haxe.Json;
 import haxe.format.JsonParser;
+import openfl.display.BlendMode;
 
 using StringTools;
 
@@ -245,9 +247,13 @@ class ModchartState
 		// lua objects or what ever
 		if (luaSprites.get(id) == null)
 		{
-			if (Std.parseInt(id) == null)
-				return Reflect.getProperty(PlayState.instance,id);
-			return PlayState.PlayState.strumLineNotes.members[Std.parseInt(id)];
+			if (luaTrails.get(id) == null)
+			{
+				if (Std.parseInt(id) == null)
+					return Reflect.getProperty(PlayState.instance,id);
+				return PlayState.PlayState.strumLineNotes.members[Std.parseInt(id)];
+			}
+			return luaTrails.get(id);
 		}
 		return luaSprites.get(id);
 	}
@@ -258,6 +264,7 @@ class ModchartState
 	}
 
 	public static var luaSprites:Map<String,FlxSprite> = [];
+	public static var luaTrails:Map<String,ui.DeltaTrail> = [];
 
 	function changeDadCharacter(id:String,?swap:Bool = true,?noteStyle:String)
 	{
@@ -762,7 +769,166 @@ class ModchartState
 
 				//custom
 
+				/*Lua_helper.add_callback(lua, "loadCharacter", function(character:String,x:Float,y:Float,isPlayer:Bool = false,?options:Dynamic){
+					var name:String = "" + character;
+					var mapID:String = "" + character;
+					var sync:Bool = false;
+					var flipped:Bool = false;
+					var id:String;
+					if(options != null){
+						if(Std.isOfType(options,Bool))
+							sync = options;
+						else{
+							if(Reflect.getProperty(options, "sync") != null)
+								sync = Reflect.getProperty(options, "sync");
+							if(Reflect.getProperty(options, "sync") != null)
+								sync = Reflect.getProperty(options, "sync");
+						}
+					}
+					if(allowChanging){
+						if(isPlayer){
+							if(PlayStateChangeables.flip){
+								var bf:Character = new Character(x,y,character,!flipped,sync); //(x,y,character,true,sync);
+								trace("loaded rival (bf side): " + character);
+								PlayState.instance.layerFakeBFs.add(bf);
+								if(flipped)
+									mapID = character+"-flipped";
+								ids[mapID] = PlayState.instance.layerFakeBFs.members.length-1;
+								if(id==null||id!=""){
+									if(flipped){
+										name = "bf-" + character + "-flipped";
+									}else{
+										name = "bf-" + character;
+									}
+									luaSprites.set(name, PlayState.instance.layerFakeBFs.members[ids[mapID]]);
+								}else{
+									name = id;
+									luaSprites.set(id, PlayState.instance.layerFakeBFs.members[ids[mapID]]);
+								}
+								bf.active = false;
+								bf.hasFocus = false;
+								bf.alpha = getVar("dadFadeAlpha","float");
+								if(bf.isCustom){
+									PlayState.instance.animatedIcons[mapID] = new HealthIcon(character,true);
+									PlayState.instance.animatedIcons[mapID].y = PlayState.instance.iconP1.y;
+									PlayState.instance.animatedIcons[mapID].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[mapID]);
+									if(!PlayState.instance.colorsMap.exists(character) && bf.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(bf.colorCode[0],bf.colorCode[1],bf.colorCode[2]));
+								}
+							}else{
+								var bf:Boyfriend = new Boyfriend(x,y,character,!flipped,sync); //(x,y,character,true,sync);
+								trace("loaded player: " + character);
+								PlayState.instance.layerBFs.add(bf);
+								if(flipped)
+									mapID = character+"-flipped";
+								idsBF[mapID] = PlayState.instance.layerBFs.members.length-1;
+								if(id==null||id!=""){
+									if(flipped)
+										name = "bf-" + character + "-flipped";
+									else
+										name = "bf-" + character;
+									luaSprites.set(name, PlayState.instance.layerBFs.members[idsBF[mapID]]);
+								}else{
+									name = id;
+									luaSprites.set(id, PlayState.instance.layerBFs.members[idsBF[mapID]]);
+								}
+								bf.active = false;
+								bf.hasFocus = false;
+								bf.alpha = getVar("bfFadeAlpha","float");
+								if(bf.isCustom){
+									PlayState.instance.animatedIcons[mapID] = new HealthIcon(character,true);
+									PlayState.instance.animatedIcons[mapID].y = PlayState.instance.iconP1.y;
+									PlayState.instance.animatedIcons[mapID].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[mapID]);
+									if(!PlayState.instance.colorsMap.exists(character) && bf.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(mapID, FlxColor.fromRGB(bf.colorCode[0],bf.colorCode[1],bf.colorCode[2]));
+								}
+							}
+						}else{
+							if(PlayStateChangeables.flip){
+								var char:Boyfriend = new Boyfriend(x,y,character,flipped,sync); //(x,y,character,false,sync);
+								trace("loaded bf? (rival side): " + character);
+								PlayState.instance.layerPlayChars.add(char);
+								if(flipped)
+									mapID = character+"-flipped";
+								idsBF[mapID] = PlayState.instance.layerPlayChars.members.length-1;
+								if(id==null||id!=""){
+									if(character == "dad"){
+										name = "daddy";
+									}
+									if(flipped)
+										name = name + "-flipped";
+									luaSprites.set(name, PlayState.instance.layerPlayChars.members[idsBF[mapID]]);
+								}else{
+									name = id;
+									luaSprites.set(id, PlayState.instance.layerPlayChars.members[idsBF[mapID]]);
+								}
+								char.active = false;
+								char.hasFocus = false;
+								//char.alpha = 0.5;
+								char.alpha = getVar("bfFadeAlpha","float");
+								if(char.isCustom){
+									PlayState.instance.animatedIcons[mapID + "2"] = new HealthIcon(character,false);
+									PlayState.instance.animatedIcons[mapID + "2"].y = PlayState.instance.iconP2.y;
+									PlayState.instance.animatedIcons[mapID + "2"].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[mapID + "2"]);
+									if(!PlayState.instance.colorsMap.exists(character) && char.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(char.colorCode[0],char.colorCode[1],char.colorCode[2]));
+								}
+							}else{
+								var char:Character = new Character(x,y,character,flipped,sync); //(x,y,character,false,sync);
+								trace("loaded rival: " + character);
+								PlayState.instance.layerChars.add(char);
+								if(flipped)
+									mapID = character+"-flipped";
+								ids[mapID] = PlayState.instance.layerChars.members.length-1;
+								if(id==null||id!=""){
+									if(character == "dad"){
+										name = "daddy";
+									}
+									if(flipped)
+										name = name + "-flipped";
+									luaSprites.set(name, PlayState.instance.layerChars.members[ids[mapID]]);
+								}else{
+									name = id;
+									luaSprites.set(character, PlayState.instance.layerChars.members[ids[mapID]]);
+								}
+								char.active = false;
+								char.hasFocus = false;
+								char.alpha = getVar("dadFadeAlpha","float");
+								if(char.isCustom){
+									PlayState.instance.animatedIcons[mapID + "2"] = new HealthIcon(character,false);
+									PlayState.instance.animatedIcons[mapID + "2"].y = PlayState.instance.iconP2.y;
+									PlayState.instance.animatedIcons[mapID + "2"].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[mapID + "2"]);
+									if(!PlayState.instance.colorsMap.exists(character) && char.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(char.colorCode[0],char.colorCode[1],char.colorCode[2]));
+								}
+							}
+						}
+					}else{					
+						if(isPlayer){
+							if(PlayState.instance.animatedIcons["default1"].animation.getByName(character) == null){
+								PlayState.instance.animatedIcons[mapID] = new HealthIcon(character,true);
+								PlayState.instance.animatedIcons[mapID].y = PlayState.instance.iconP1.y;
+								PlayState.instance.animatedIcons[mapID].alpha = 0.001;
+								PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[mapID]);
+							}
+						}else{
+							if(PlayState.instance.animatedIcons["default2"].animation.getByName(character) == null){
+								PlayState.instance.animatedIcons[mapID + "2"] = new HealthIcon(character,false);
+								PlayState.instance.animatedIcons[mapID + "2"].y = PlayState.instance.iconP2.y;
+								PlayState.instance.animatedIcons[mapID + "2"].alpha = 0.001;
+								PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[mapID + "2"]);
+							}
+						}
+					}
+					return character;
+				});*/
+
 				Lua_helper.add_callback(lua, "loadCharacter", function(character:String,x:Float,y:Float,?isPlayer:Bool = false,?sync:Bool = false){
+					var name:String = "" + character;
 					if(allowChanging){
 						if(isPlayer){
 							if(PlayStateChangeables.flip){
@@ -770,7 +936,8 @@ class ModchartState
 								trace("loaded rival (bf side): " + character);
 								PlayState.instance.layerFakeBFs.add(bf);
 								ids[character] = PlayState.instance.layerFakeBFs.members.length-1;
-								luaSprites.set("bf-" + character, PlayState.instance.layerFakeBFs.members[ids[character]]);
+								name = "bf-" + character;
+								luaSprites.set(name, PlayState.instance.layerFakeBFs.members[ids[character]]);
 								bf.active = false;
 								bf.hasFocus = false;
 								bf.alpha = getVar("dadFadeAlpha","float");
@@ -787,7 +954,8 @@ class ModchartState
 								trace("loaded player: " + character);
 								PlayState.instance.layerBFs.add(bf);
 								idsBF[character] = PlayState.instance.layerBFs.members.length-1;
-								luaSprites.set("bf-" + character, PlayState.instance.layerBFs.members[idsBF[character]]);
+								name = "bf-" + character;
+								luaSprites.set(name, PlayState.instance.layerBFs.members[idsBF[character]]);
 								bf.active = false;
 								bf.hasFocus = false;
 								bf.alpha = getVar("bfFadeAlpha","float");
@@ -807,9 +975,8 @@ class ModchartState
 								PlayState.instance.layerPlayChars.add(char);
 								idsBF[character] = PlayState.instance.layerPlayChars.members.length-1;
 								if(character == "dad")
-									luaSprites.set("daddy", PlayState.instance.layerPlayChars.members[idsBF[character]]);
-								else
-									luaSprites.set(character, PlayState.instance.layerPlayChars.members[idsBF[character]]);
+									name = "daddy";
+								luaSprites.set(name, PlayState.instance.layerPlayChars.members[idsBF[character]]);
 								char.active = false;
 								char.hasFocus = false;
 								//char.alpha = 0.5;
@@ -828,9 +995,8 @@ class ModchartState
 								PlayState.instance.layerChars.add(char);
 								ids[character] = PlayState.instance.layerChars.members.length-1;
 								if(character == "dad")
-									luaSprites.set("daddy", PlayState.instance.layerChars.members[ids[character]]);
-								else
-									luaSprites.set(character, PlayState.instance.layerChars.members[ids[character]]);
+									name="daddy";
+								luaSprites.set(name, PlayState.instance.layerChars.members[ids[character]]);
 								char.active = false;
 								char.hasFocus = false;
 								char.alpha = getVar("dadFadeAlpha","float");
@@ -861,7 +1027,115 @@ class ModchartState
 							}
 						}
 					}
-					return character;
+					return name;
+				});
+
+				Lua_helper.add_callback(lua, "loadFlippedCharacter", function(character:String,x:Float,y:Float,?isPlayer:Bool = false,?sync:Bool = false){
+					var name:String = character + "-flipped";
+					var mapID:String = character + "-flipped";
+					if(allowChanging){
+						if(isPlayer){
+							if(PlayStateChangeables.flip){
+								var bf:Character = new Character(x,y,character,false,sync);
+								bf.markAsFlipped(); //prevents some bugs
+								trace("flipped rival (bf side): " + character);
+								PlayState.instance.layerFakeBFs.add(bf);
+								ids[mapID] = PlayState.instance.layerFakeBFs.members.length-1;
+								name = "bf-" + character + "-flipped";
+								luaSprites.set(name, PlayState.instance.layerFakeBFs.members[ids[mapID]]);
+								bf.active = false;
+								bf.hasFocus = false;
+								bf.alpha = getVar("dadFadeAlpha","float");
+								if(bf.isCustom){
+									PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+									PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+									PlayState.instance.animatedIcons[character].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+									if(!PlayState.instance.colorsMap.exists(character) && bf.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(bf.colorCode[0],bf.colorCode[1],bf.colorCode[2]));
+								}
+							}else{
+								var bf:Boyfriend = new Boyfriend(x,y,character,false,sync);
+								bf.markAsFlipped();
+								trace("flipped player: " + character);
+								PlayState.instance.layerBFs.add(bf);
+								idsBF[mapID] = PlayState.instance.layerBFs.members.length-1;
+								name = "bf-" + character + "-flipped";
+								luaSprites.set(name, PlayState.instance.layerBFs.members[idsBF[mapID]]);
+								bf.active = false;
+								bf.hasFocus = false;
+								bf.alpha = getVar("bfFadeAlpha","float");
+								if(bf.isCustom){
+									PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+									PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+									PlayState.instance.animatedIcons[character].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+									if(!PlayState.instance.colorsMap.exists(character) && bf.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(bf.colorCode[0],bf.colorCode[1],bf.colorCode[2]));
+								}
+							}
+						}else{
+							if(PlayStateChangeables.flip){
+								var char:Boyfriend = new Boyfriend(x,y,character,true,sync);
+								char.markAsFlipped();
+								trace("flipped bf? (rival side): " + character);
+								PlayState.instance.layerPlayChars.add(char);
+								idsBF[mapID] = PlayState.instance.layerPlayChars.members.length-1;
+								if(character == "dad")
+									name = "daddy-flipped";
+								luaSprites.set(name, PlayState.instance.layerPlayChars.members[idsBF[mapID]]);
+								char.active = false;
+								char.hasFocus = false;
+								//char.alpha = 0.5;
+								char.alpha = getVar("bfFadeAlpha","float");
+								if(char.isCustom){
+									PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+									PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+									PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+									if(!PlayState.instance.colorsMap.exists(character) && char.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(char.colorCode[0],char.colorCode[1],char.colorCode[2]));
+								}
+							}else{
+								var char:Character = new Character(x,y,character,true,sync);
+								char.markAsFlipped();
+								trace("flipped rival: " + character);
+								PlayState.instance.layerChars.add(char);
+								ids[mapID] = PlayState.instance.layerChars.members.length-1;
+								if(character == "dad")
+									name="daddy-flipped";
+								luaSprites.set(name, PlayState.instance.layerChars.members[ids[mapID]]);
+								char.active = false;
+								char.hasFocus = false;
+								char.alpha = getVar("dadFadeAlpha","float");
+								if(char.isCustom){
+									PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+									PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+									PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+									PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+									if(!PlayState.instance.colorsMap.exists(character) && char.colorCode.length > 0)
+										PlayState.instance.colorsMap.set(character, FlxColor.fromRGB(char.colorCode[0],char.colorCode[1],char.colorCode[2]));
+								}
+							}
+						}
+					}else{					
+						if(isPlayer){
+							if(PlayState.instance.animatedIcons["default1"].animation.getByName(character) == null){
+								PlayState.instance.animatedIcons[character] = new HealthIcon(character,true);
+								PlayState.instance.animatedIcons[character].y = PlayState.instance.iconP1.y;
+								PlayState.instance.animatedIcons[character].alpha = 0.001;
+								PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character]);
+							}
+						}else{
+							if(PlayState.instance.animatedIcons["default2"].animation.getByName(character) == null){
+								PlayState.instance.animatedIcons[character + "2"] = new HealthIcon(character,false);
+								PlayState.instance.animatedIcons[character + "2"].y = PlayState.instance.iconP2.y;
+								PlayState.instance.animatedIcons[character + "2"].alpha = 0.001;
+								PlayState.instance.layerIcons.add(PlayState.instance.animatedIcons[character + "2"]);
+							}
+						}
+					}
+					return name;
 				});
 
 				Lua_helper.add_callback(lua, "loadGirlfriend", function(personaje:String, x:Float, y:Float){
@@ -1393,13 +1667,213 @@ class ModchartState
 					for (i in 0...split.length){
 						var aux:Dynamic = Reflect.getProperty(obj, split[i]);
 						if (aux == null){
-							obj = {};
+							obj = "null";
 							break;
 						}else
 							obj = aux;
 					}
 					return obj;
 				});
+
+				Lua_helper.add_callback(lua,"setObjectProperty",function(id:String,property:String,value:Dynamic) {
+					var obj:Dynamic;
+					switch(id)
+					{
+						case 'this' | 'instance' | 'game':
+							obj = PlayState.instance;
+						
+						default:
+							obj = getActorByName(id);
+					}
+					setPropertyFromString(obj,property,value);
+				});
+
+				Lua_helper.add_callback(lua,"setActorColor",function(id:String,red:Dynamic,?green:Int = -1,?blue:Int = -1,?alpha:Int = 255) {
+					var sprite:FlxSprite = getActorByName(id);
+					if(green == -1 || blue == -1){
+						if(Std.is(red, String)){
+							sprite.color = FlxColor.fromString(red);
+						}
+					}else if(Std.is(red, Int)){
+						sprite.color = FlxColor.fromRGB(red,green,blue,alpha);
+					}
+				});
+
+				Lua_helper.add_callback(lua,"setBlendMode",function(id:String,blend:String) {
+					switch(blend.toLowerCase().trim()) {
+						case 'add': getActorByName(id).blend = ADD;
+						case 'alpha': getActorByName(id).blend = ALPHA;
+						case 'darken': getActorByName(id).blend = DARKEN;
+						case 'difference': getActorByName(id).blend = DIFFERENCE;
+						case 'erase': getActorByName(id).blend = ERASE;
+						case 'hardlight': getActorByName(id).blend = HARDLIGHT;
+						case 'invert': getActorByName(id).blend = INVERT;
+						case 'layer': getActorByName(id).blend = LAYER;
+						case 'lighten': getActorByName(id).blend = LIGHTEN;
+						case 'multiply': getActorByName(id).blend = MULTIPLY;
+						case 'overlay': getActorByName(id).blend = OVERLAY;
+						case 'screen': getActorByName(id).blend = SCREEN;
+						case 'shader': getActorByName(id).blend = SHADER;
+						case 'subtract': getActorByName(id).blend = SUBTRACT;
+						default: getActorByName(id).blend = NORMAL;
+					}
+					
+				});
+
+				Lua_helper.add_callback(lua,"loadTrail", function(id:String,?Lenght:Int = 4,?Delay:Float = 12/60,?Alpha:Float = 0.3,?Diff:Float = 0.069):String {
+					var character:Character;
+					var name:String = "null";
+					switch(id){
+						/*case "boyfriend":
+							character = getActorByName(id);
+							var name:String = "sprite-" + character.curCharacter;
+							if(!PlayStateChangeables.flip){
+								name = "sprite-bf-" + character.curCharacter;
+							}
+							var trail:ui.DeltaTrail = new ui.DeltaTrail(character,null,Lenght,Delay,Alpha,Diff);
+							PlayState.instance.layerTrails.add(trail);
+							luaTrails.set(name,trail);
+							trace("agregado trail "+name);*/
+						case "boyfriend" | "dad":
+							character = getActorByName(id);
+							if(Std.is(getActorByName(id),Boyfriend))
+								name = "trail-bf-" + character.curCharacter;
+							else
+								name = "trail-" + character.curCharacter;
+							var trail:ui.DeltaTrail = new ui.DeltaTrail(character,null,Lenght,Delay,Alpha,Diff);
+							PlayState.instance.layerTrails.add(trail);
+							luaTrails.set(name,trail);
+							trace("agregado trail "+name);
+						default:
+							if(PlayStateChangeables.flip){
+								if(!sprites.exists(id) && idsBF.exists(id)){
+									character = PlayState.instance.layerPlayChars.members[idsBF[id]];
+									name = "trail-" + character.curCharacter;
+									var trail:ui.DeltaTrail = new ui.DeltaTrail(character,null,Lenght,Delay,Alpha,Diff);
+									PlayState.instance.layerTrails.add(trail);
+									luaTrails.set(name,trail);
+									trace("3 agregado trail "+name);
+								}else{
+									if(id.length > 3)
+										if(!sprites.exists(id) && ids.exists(id.substr(3))){
+											character = PlayState.instance.layerFakeBFs.members[ids[id]];
+											name = "trail-" + character.curCharacter;
+											var trail:ui.DeltaTrail = new ui.DeltaTrail(character,null,Lenght,Delay,Alpha,Diff);
+											PlayState.instance.layerTrails.add(trail);
+											luaTrails.set(name,trail);
+											trace("3 agregado trail "+name);
+										}
+								}
+							}else{
+								if(!sprites.exists(id) && ids.exists(id)){
+									character = PlayState.instance.layerChars.members[ids[id]];
+									name = "trail-" + character.curCharacter;
+									var trail:ui.DeltaTrail = new ui.DeltaTrail(character,null,Lenght,Delay,Alpha,Diff);
+									PlayState.instance.layerTrails.add(trail);
+									luaTrails.set(name,trail);
+									trace("3 agregado trail "+name);
+								}else{
+									if(id.length > 3)
+										if(!sprites.exists(id) && idsBF.exists(id.substr(3))){
+											character = PlayState.instance.layerBFs.members[idsBF[id]];
+											name = "trail-" + character.curCharacter;
+											var trail:ui.DeltaTrail = new ui.DeltaTrail(character,null,Lenght,Delay,Alpha,Diff);
+											PlayState.instance.layerTrails.add(trail);
+											luaTrails.set(name,trail);
+											trace("3 agregado trail "+name);
+										}
+								}
+							}
+					}
+					return name;
+				});
+
+				/*Lua_helper.add_callback(lua, "flipCharacter", function(character:String){
+					switch(character){
+						case 'dad':
+							if(PlayStateChangeables.flip){
+								var bf:Boyfriend = PlayState.instance.layerPlayChars.members[curBF];
+								PlayState.instance.layerPlayChars.members[curBF] = new Boyfriend(bf.coords[0],bf.coords[1],bf.curCharacter,!bf.isPlayer,bf.isSynchronous(),Reflect.getProperty(bf, "frames"));
+								PlayState.boyfriend = PlayState.instance.layerPlayChars.members[curBF];
+								bf.destroy();
+							}else{
+								var dad:Character = PlayState.instance.layerChars.members[curChar];
+								PlayState.instance.layerChars.members[curChar] = new Character(dad.coords[0],dad.coords[1],dad.curCharacter,!dad.isPlayer,dad.isSynchronous(),Reflect.getProperty(dad, "frames"));
+								PlayState.dad = PlayState.instance.layerChars.members[curChar];
+								dad.destroy();
+							}
+						case 'boyfriend':
+							if(!PlayStateChangeables.flip){
+								var bf:Boyfriend = PlayState.instance.layerBFs.members[curBF];
+								PlayState.instance.layerBFs.members[curBF] = new Boyfriend(bf.coords[0],bf.coords[1],bf.curCharacter,!bf.isPlayer,bf.isSynchronous(),Reflect.getProperty(bf, "frames"));
+								PlayState.boyfriend = PlayState.instance.layerBFs.members[curBF];
+								bf.destroy();
+							}else{
+								var bf:Character = PlayState.instance.layerFakeBFs.members[curChar];
+								PlayState.instance.layerFakeBFs.members[curChar] = new Character(bf.coords[0],bf.coords[1],bf.curCharacter,!bf.isPlayer,bf.isSynchronous(),Reflect.getProperty(bf, "frames"));
+								PlayState.dad = PlayState.instance.layerFakeBFs.members[curChar];
+								bf.destroy();
+							}
+						case 'girlfriend':
+							var gf:Character = PlayState.instance.layerGF.members[curGF];
+							PlayState.instance.layerGF.members[curGF] = new Character(gf.coords[0],gf.coords[1],gf.curCharacter,!gf.isPlayer,gf.isSynchronous(),Reflect.getProperty(gf, "frames"));
+							PlayState.gf = PlayState.instance.layerGF.members[curGF];
+							gf.destroy();
+						default:
+							if(PlayStateChangeables.flip){
+								if(!sprites.exists(character) && idsBF.exists(character)){
+									var bf:Boyfriend = PlayState.instance.layerPlayChars.members[idsBF[character]];
+									PlayState.instance.layerPlayChars.members[idsBF[character]] = new Boyfriend(bf.coords[0],bf.coords[1],bf.curCharacter,!bf.isPlayer,bf.isSynchronous(),Reflect.getProperty(bf, "frames"));
+									PlayState.instance.layerPlayChars.members[idsBF[character]].hasFocus = bf.hasFocus;
+									bf.destroy();
+								}else{
+									if(character.length > 3)
+										if(!sprites.exists(character) && ids.exists(character.substr(3))){
+											var bf:Character = PlayState.instance.layerFakeBFs.members[ids[character]];
+											PlayState.instance.layerFakeBFs.members[ids[character]] = new Character(bf.coords[0],bf.coords[1],bf.curCharacter,!bf.isPlayer,bf.isSynchronous(),Reflect.getProperty(bf, "frames"));
+											PlayState.instance.layerFakeBFs.members[ids[character]].hasFocus = bf.hasFocus;
+											bf.destroy();
+										}
+								}
+							}else{
+								if(!sprites.exists(character) && ids.exists(character)){
+									var dad:Character = PlayState.instance.layerChars.members[ids[character]];
+									PlayState.instance.layerChars.members[ids[character]] = new Character(dad.coords[0],dad.coords[1],dad.curCharacter,!dad.isPlayer,dad.isSynchronous(),Reflect.getProperty(dad, "frames"));
+									PlayState.instance.layerChars.members[ids[character]].hasFocus = dad.hasFocus;
+									dad.destroy();
+								}else{
+									if(character.length > 3)
+										if(!sprites.exists(character) && idsBF.exists(character.substr(3))){
+											var bf:Boyfriend = PlayState.instance.layerBFs.members[idsBF[character]];
+											PlayState.instance.layerBFs.members[idsBF[character]] = new Boyfriend(bf.coords[0],bf.coords[1],bf.curCharacter,!bf.isPlayer,bf.isSynchronous(),Reflect.getProperty(bf, "frames"));
+											PlayState.instance.layerBFs.members[idsBF[character]].hasFocus = bf.hasFocus;
+											bf.destroy();
+										}
+								}
+							}
+					}
+				});*/
+
+				Lua_helper.add_callback(lua,"createText", function(toBeCalled:String,text:String,size:Int = 30,?drawBehind:Dynamic=false,?font:String) {
+					if(!sprites.exists(toBeCalled)){
+						var textobj:FlxText = new FlxText(0,0,0,text,size);
+						if(font!=null)
+							textobj.setFormat("assets/fonts/" + font,size);
+						sprites.set(toBeCalled,textobj);
+						luaSprites.set(toBeCalled,textobj);
+						addToLayer(drawBehind,textobj);
+					}
+				});
+
+				Lua_helper.add_callback(lua,"changeFont", function(id:String,font:String) {
+					if(sprites.exists(id)){
+						if(Std.is(sprites.get(id), FlxText)){
+							var text:FlxText = cast sprites.get(id);
+							text.setFormat("assets/fonts/" + font,text.size);
+						}
+					}
+				});
+
 				// actors
 				
 				Lua_helper.add_callback(lua,"getRenderedNotes", function() {
@@ -1790,6 +2264,10 @@ class ModchartState
     }
 
 	public function changeIcon(char:String, isPlayer, ?isCustom:Bool = false){
+		var suffix:String = "-flipped";
+        if (char.endsWith(suffix)) {
+            char = char.substr(0, char.length - suffix.length);
+        } 
 		if(isPlayer){
 			if(isCustom){
 				PlayState.instance.iconP1.alpha = 0.001;
@@ -1872,5 +2350,30 @@ class ModchartState
 			}
 		}
 	}
+
+    private function setPropertyFromString(obj:Dynamic, path:String, value:Dynamic):Void { //thanks chatGPT
+        // Split the path into parts
+        var parts:Array<String> = path.split(".");
+
+        // Traverse the object hierarchy
+        var currentObj:Dynamic = obj;
+        for (part in parts) {
+            if (Reflect.getProperty(currentObj, part) != null) {
+                // Check if the current part exists as a field
+                if (part == parts[parts.length - 1]) {
+                    // If it's the last part, set the value
+                    Reflect.setProperty(currentObj, part, value);
+                } else {
+                    // Otherwise, update the current object
+                    currentObj = Reflect.getProperty(currentObj, part);
+                }
+            } else {
+                // If any part of the path does not exist, return
+                trace("Path does not exist: " + path);
+                return;
+            }
+        }
+    }
+
 }
 #end

@@ -67,6 +67,10 @@ class FreeplayState extends MusicBeatState
 
 	public static var position:Int = 0;
 
+	private var myTween:FlxTween;
+	private var bump:Bool = true;
+	private var bg:FlxSprite;
+
 	override function create()
 	{
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
@@ -114,7 +118,7 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
 		add(bg);
 
 		grpSongs = new FlxTypedGroup<Alphabet>();
@@ -197,6 +201,14 @@ class FreeplayState extends MusicBeatState
 		add(noteTypesText);
 
 		curSelected = position;
+
+		bg.scale.set(1.15,1.15);
+		myTween = FlxTween.tween(bg.scale, { x: 1, y: 1}, Conductor.crochet/1000, {type:PERSIST, ease: FlxEase.quadInOut, onComplete: function(tween:FlxTween){
+			bg.updateHitbox();
+			bump = true;
+			bg.scale.set(1.15,1.15);
+		}});
+
 		changeSelection();
 		//changeDiff();
 
@@ -292,6 +304,14 @@ class FreeplayState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if(bump){
+			bump = false;
+			myTween.start();
+		}
+		FlxG.watch.addQuick("BPM", Conductor.bpm);
+		FlxG.watch.addQuick("TweenDuration", myTween.duration);
+		FlxG.watch.addQuick("Difficulty", curDifficulty);
 
 		if (FlxG.sound.music.volume < 0.7)
 		{
@@ -565,27 +585,13 @@ class FreeplayState extends MusicBeatState
 
 		var bullShit:Int = 0;
 
-		/*for (i in 0...iconArray.length)
-		{
-			iconArray[i].alpha = 0.6;
+		var endings:Array<String> = ["-easy","","-hard"];
+		var route:String = "assets/data/" + songs[curSelected].songName.toLowerCase() + "/";
+		if(sys.FileSystem.exists(route + songs[curSelected].songName.toLowerCase() + endings[curDifficulty] + ".json")){
+			Conductor.changeBPM(Song.loadFromJson(songs[curSelected].songName.toLowerCase() + endings[curDifficulty], songs[curSelected].songName.toLowerCase()).bpm);
+			resetTween();
 		}
 
-		iconArray[curSelected].alpha = 1;
-
-		for (item in grpSongs.members)
-		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
-			item.alpha = 0.6;
-			// item.setGraphicSize(Std.int(item.width * 0.8));
-
-			if (item.targetY == 0)
-			{
-				item.alpha = 1;
-				// item.setGraphicSize(Std.int(item.width));
-			}
-		}*/
 		for (i in 0...grpSongs.members.length)
 		{
 			var item = grpSongs.members[i];
@@ -718,6 +724,18 @@ class FreeplayState extends MusicBeatState
 			// songText.screenCenter(X);
 		}
 		changeSelection();
+	}
+
+	private function resetTween():Void{
+		myTween.cancel();
+		bg.scale.set(1.15,1.15);
+		myTween = FlxTween.tween(bg.scale, { x: 1, y: 1}, Conductor.crochet/1000, {type:PERSIST, ease: FlxEase.quadInOut, onComplete: function(tween:FlxTween){
+			bg.updateHitbox();
+			bump = true;
+			bg.scale.set(1.15,1.15);
+		}});
+		bump = false;
+		myTween.start();
 	}
 }
 

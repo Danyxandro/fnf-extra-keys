@@ -39,6 +39,7 @@ class DialogueEnd extends FlxSpriteGroup
 	private var iniciar:Bool = false;
 	public var black:FlxSprite;
 	public var bgFlag:Bool = false;
+	public var showDialog = false;
 	
 	var box:FlxSprite;
 
@@ -130,6 +131,8 @@ class DialogueEnd extends FlxSpriteGroup
 		if(sys.FileSystem.exists("assets/data/" + PlayState.SONG.song.toLowerCase() + "/outroDialogue.json")){
 			var datos = cast Json.parse( sys.io.File.getContent( "assets/data/" + PlayState.SONG.song.toLowerCase() + "/outroDialogue.json" ).trim() );
 			trace(datos);
+			if(Reflect.getProperty(datos, "showFreeplay") != null && datos.showFreeplay == true)
+				showDialog = true;
 			var bgJson:Array<Dynamic> = [];
 			if(datos.bg != null)
 				bgJson = datos.bg;

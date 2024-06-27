@@ -34,6 +34,7 @@ class Character extends FlxSprite
 	public var colorCode:Array<Int> = [];
 	public var isDancingIdle:Bool = false;
 	private var singDuration:Float = 4;
+	private var charFlipped:Bool = false;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?synch:Bool = false)
 	{
@@ -532,7 +533,7 @@ class Character extends FlxSprite
 				flipX = true;
 			case 'bf-pixel-dead':
 				frames = Paths.getSparrowAtlas('characters/bfPixelsDEAD',"shared");
-				animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
+				//animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
 				animation.addByPrefix('firstDeath', "BF Dies pixel", 24, false);
 				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
 				animation.addByPrefix('deathConfirm', "RETRY CONFIRM", 24, false);
@@ -1364,7 +1365,7 @@ class Character extends FlxSprite
 				flipX = true;
 			case 'bf-tankman-pixel-dead':
 				frames = Paths.getSparrowAtlas('characters/tankPixelsDEAD','shared');
-				animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
+				//animation.addByPrefix('singUP', "BF Dies pixel", 24, false);
 				animation.addByPrefix('firstDeath', "BF Dies pixel", 24, false);
 				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
 				animation.addByPrefix('deathConfirm', "RETRY CONFIRM", 24, false);
@@ -1871,7 +1872,7 @@ class Character extends FlxSprite
 					addOffset("singUP", 0, 50);
 					addOffset("singRIGHT", 70, 70);
 					addOffset("singLEFT", 80, 80);
-					addOffset("singDOWN", 0, -140);
+					addOffset("singDOWN", 0, 140);
 				}else{
 					addOffset("idle", 0, 0);
 					addOffset("singUP", 0, 50);
@@ -2795,7 +2796,7 @@ class Character extends FlxSprite
 					playAnim('danceRight');
 		}
 
-		if(flyingOffset > 0){
+		if(flyingOffset > 0 && !debugMode){
 			if(flag){
 				flag = false;
 				switch(fase){
@@ -3014,5 +3015,14 @@ class Character extends FlxSprite
 
 	public function isSynchronous():Bool{
 		return this.sync;
+	}
+
+	public function markAsFlipped(){
+		isPlayer = !isPlayer;
+		charFlipped = true;
+	}
+
+	public function isFlipped():Bool{
+		return charFlipped;
 	}
 }

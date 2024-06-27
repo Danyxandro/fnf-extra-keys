@@ -25,6 +25,7 @@ class AnimationDebug extends FlxState
 	var daAnim:String = 'spooky';
 	var camFollow:FlxObject;
 	var isPlayer:Bool;
+	private var charID:Int;
 
 	public function new(daAnim:String = 'spooky',?isPlayer:Bool = false)
 	{
@@ -47,12 +48,13 @@ class AnimationDebug extends FlxState
 		if (isDad)
 		{
 			dad = new Character(0, 0, daAnim);
-			dad.screenCenter();
-			dad.debugMode = true;
+			char.screenCenter();
+			char.debugMode = true;
 			add(dad);
+			charID = members.length-1;
 
 			char = dad;
-			//dad.flipX = false;
+			//char.flipX = false;
 		}
 		else
 		{
@@ -60,6 +62,7 @@ class AnimationDebug extends FlxState
 			bf.screenCenter();
 			bf.debugMode = true;
 			add(bf);
+			charID = members.length-1;
 
 			char = bf;
 			//bf.flipX = false;
@@ -160,6 +163,27 @@ class AnimationDebug extends FlxState
 		if (FlxG.keys.justPressed.S || FlxG.keys.justPressed.W || FlxG.keys.justPressed.SPACE)
 		{
 			char.playAnim(animList[curAnim]);
+
+			updateTexts();
+			genBoyOffsets(false);
+		}
+
+		if (FlxG.keys.justPressed.F)
+		{
+			var aux:Character = char;
+			if (isDad)
+			{
+				char = new Character(0, 0, daAnim, !aux.isPlayer);
+			}
+			else
+			{
+				char = new Boyfriend(0, 0, daAnim, !aux.isPlayer);
+			}
+			char.screenCenter();
+			char.debugMode = true;
+			members[charID] = char;
+			char.playAnim(animList[curAnim]);
+			aux.destroy();
 
 			updateTexts();
 			genBoyOffsets(false);

@@ -161,6 +161,10 @@ class KadeEngineData
 		if(FlxG.save.data.camFactor == null){
 			FlxG.save.data.camFactor = 35;
 		}
+		if(FlxG.save.data.gameVolume == null){
+			FlxG.save.data.gameVolume = 1;
+		}
+		FlxG.sound.volume = FlxG.save.data.gameVolume;
 		if(FlxG.save.data.healthValues == null){
 			setHealthValues();
 		}

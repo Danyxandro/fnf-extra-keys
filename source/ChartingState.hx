@@ -157,6 +157,7 @@ class ChartingState extends MusicBeatState
 				asRival: false
 			};
 		}
+		PlayState.instance.style[0] = "pixel";
 		leftIcon = new HealthIcon(_song.player1);
 		leftIcon.centerOffsets();
 		rightIcon = new HealthIcon(_song.player2);
@@ -223,8 +224,10 @@ class ChartingState extends MusicBeatState
 
 		super.create();
 
-		updateGrid();
+		PlayState.instance.style[0] = _song.noteStyle;
 		updateSectionUI();
+		updateNoteUI();
+		updateGrid();
 	}
 
 	function addSongUI():Void
@@ -398,6 +401,12 @@ class ChartingState extends MusicBeatState
 				updateNoteUI();
 				updateGrid();
 			});
+		if(_song.noteStyle == null){
+			noteStyleDropDown.selectedLabel = "normal";
+			PlayState.instance.style[0] = "normal";
+			_song.noteStyle = "normal";
+			trace("Style is null!");
+		}else
 		noteStyleDropDown.selectedLabel = _song.noteStyle;
 
 		var noteStyleLabel = new FlxText(10,280,64,'Note Skin');
@@ -409,9 +418,11 @@ class ChartingState extends MusicBeatState
 			updateNoteUI();
 			updateGrid();
 		});
-		if(_song.noteStyle2 == null)
+		if(_song.noteStyle2 == null){
 			noteStyle2DropDown.selectedLabel = _song.noteStyle;
-		else
+			PlayState.instance.style[1] = _song.noteStyle;
+			_song.noteStyle2 = _song.noteStyle;
+		}else
 			noteStyle2DropDown.selectedLabel = _song.noteStyle2;
 
 		var noteStyle2Label = new FlxText(140,280,64,'Note Skin 2');
@@ -1029,6 +1040,8 @@ class ChartingState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		FlxG.watch.addQuick('Style 1',_song.noteStyle);
+		FlxG.watch.addQuick('Style 2',_song.noteStyle2);
 		typeChangeLabel.text = noteTypes[Std.int(stepperNoteTypes.value)] + ' notes';
 		curStep = recalculateSteps();
 		if (_song.mania == 2 && gridBG.width != S_GRID_SIZE * 18)
@@ -1695,9 +1708,9 @@ class ChartingState extends MusicBeatState
 				var daStrumTime = i[0];
 				var daSus = i[2];
 				var daType:Int = i[3];
-				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]),null,false,daType);
+				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]), null, false, daType, false, true);
 				note.sustainLength = daSus;
-				note.noteType = daType;
+				//note.noteType = daType;
 				note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 				note.updateHitbox();
 	
@@ -1742,7 +1755,7 @@ class ChartingState extends MusicBeatState
 					var daStrumTime = i[0];
 					var daSus = i[2];
 					var daType = i[3];
-					var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]));
+					var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]), null, false, 0, false, true);
 					note.sustainLength = daSus;
 					note.noteType = daType;
 					note.setGraphicSize(GRID_SIZE, GRID_SIZE);
@@ -1789,7 +1802,7 @@ class ChartingState extends MusicBeatState
 				var daStrumTime = i[0];
 				var daSus = i[2];
 				var daType = i[3];
-				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]));
+				var note:Note = new Note(daStrumTime, daNoteInfo % (keyAmmo[_song.mania]), null, false, 0, false, true);
 				note.sustainLength = daSus;
 				note.noteType = daType;
 				note.setGraphicSize(GRID_SIZE, GRID_SIZE);

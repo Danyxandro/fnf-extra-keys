@@ -74,6 +74,13 @@ class MusicBeatState extends FlxUIState
 			(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
 
 		super.update(elapsed);
+
+		if(FlxG.keys.justPressed.NUMPADPLUS || FlxG.keys.justPressed.PLUS || FlxG.keys.justPressed.NUMPADMINUS || FlxG.keys.justPressed.MINUS){
+			if(FlxG.sound.volume < 0.1)
+			FlxG.save.data.gameVolume = 0;
+			else
+			FlxG.save.data.gameVolume = FlxG.sound.volume;
+		}
 	}
 
 	private function updateBeat():Void

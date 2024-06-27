@@ -37,6 +37,7 @@ class DialogueBox extends FlxSpriteGroup
 	private var curBox:String = '';
 	private var fontFile:String = 'Pixel Arial 11 Bold';
 	private var vanilla:Bool = false;
+	public var showDialog:Bool = false;
 	
 	var box:FlxSprite;
 
@@ -170,6 +171,8 @@ class DialogueBox extends FlxSpriteGroup
 			if(sys.FileSystem.exists("assets/data/" + PlayState.SONG.song.toLowerCase() + "/introDialogue.json")){
 				var datos = cast Json.parse( sys.io.File.getContent( "assets/data/" + PlayState.SONG.song.toLowerCase() + "/introDialogue.json" ).trim() );
 				trace(datos);
+				if(Reflect.getProperty(datos, "showFreeplay") != null && datos.showFreeplay == true)
+					showDialog = true;
 				var bgJson:Array<Dynamic> = [];
 				if(datos.bg != null)
 					bgJson = datos.bg;
@@ -285,13 +288,21 @@ class DialogueBox extends FlxSpriteGroup
 		}
 
 		dropText = new FlxText(242, 502, Std.int(FlxG.width * 0.6), "", 32);
-		dropText.font = fontFile;
-		dropText.color = 0xFFD89494;
+		if(sys.FileSystem.exists("assets/fonts/" + fontFile)){
+			dropText.setFormat("assets/fonts/" + fontFile, 42, FlxColor.GRAY, LEFT);
+		}else{
+			dropText.font = fontFile;
+			dropText.color = 0xFFD89494;
+		}
 		add(dropText);
 
 		swagDialogue = new FlxTypeText(240, 500, Std.int(FlxG.width * 0.6), "", 32);
-		swagDialogue.font = fontFile;
-		swagDialogue.color = 0xFF3F2021;
+		if(sys.FileSystem.exists("assets/fonts/" + fontFile)){
+			swagDialogue.setFormat("assets/fonts/" + fontFile, 42, FlxColor.WHITE, LEFT);
+		}else{
+			swagDialogue.font = fontFile;
+			swagDialogue.color = 0xFF3F2021;
+		}
 		swagDialogue.sounds = [FlxG.sound.load(Paths.sound('pixelText'), 0.6)];
 		add(swagDialogue);
 		add(hint);

@@ -34,6 +34,13 @@ class MusicBeatSubstate extends FlxSubState
 
 
 		super.update(elapsed);
+
+		if(FlxG.keys.justPressed.NUMPADPLUS || FlxG.keys.justPressed.PLUS || FlxG.keys.justPressed.NUMPADMINUS || FlxG.keys.justPressed.MINUS){
+			if(FlxG.sound.volume < 0.1)
+			FlxG.save.data.gameVolume = 0;
+			else
+			FlxG.save.data.gameVolume = FlxG.sound.volume;
+		}
 	}
 
 	private function updateCurStep():Void

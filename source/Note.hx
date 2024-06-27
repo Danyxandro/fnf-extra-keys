@@ -83,6 +83,7 @@ class Note extends FlxSprite
 	public var wrongHit:Bool = false;
 	public var downscroll:Bool = false;
 	private var defaulOffsets:Array<Float> = [];
+	private var pixelShit:String = "";
 
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?noteType:Int = 0, ?_mustPress:Bool = false, ?inCharter:Bool = false, ?useStyle1:Bool=true)
 	{
@@ -255,8 +256,20 @@ class Note extends FlxSprite
 		var noteTypeCheck:String = 'normal';
 
 		if (PlayState.SONG.noteStyle == null) {
-			switch(PlayState.storyWeek) {case 6: noteTypeCheck = 'pixel';}
-		} else {noteTypeCheck = PlayState.SONG.noteStyle;}
+			switch(PlayState.storyWeek) {
+				case 6: if(!inCharter)
+						noteTypeCheck = "pixel";
+					else
+						pixelShit = 'pixel';
+			}
+		} else {
+			if(PlayState.SONG.noteStyle.startsWith("pixel") && !inCharter)
+				pixelShit = PlayState.SONG.noteStyle;
+			else
+				noteTypeCheck = PlayState.SONG.noteStyle;
+		}
+		if(PlayState.SONG.noteStyle != pixelShit && pixelShit != "")
+			noteTypeCheck = pixelShit;
 		this.estilo = noteTypeCheck;
 
 		defaulOffsets[0] = offset.x;

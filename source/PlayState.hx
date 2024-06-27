@@ -64,6 +64,7 @@ import lime.utils.Assets;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
+import ui.DeltaTrail;
 
 #if windows
 import Discord.DiscordClient;
@@ -283,7 +284,7 @@ class PlayState extends MusicBeatState
 	public var layerFakeBFs:FlxTypedGroup<Character>;
 	public var layerPlayChars:FlxTypedGroup<Boyfriend>;
 	public var layerGF:FlxTypedGroup<Character> = new FlxTypedGroup<Character>();
-	//public var layerBGs:Array<FlxTypedGroup<FlxSprite>> = [new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>(), new FlxTypedGroup<FlxSprite>()];
+	public var layerTrails:FlxTypedGroup<DeltaTrail> = new FlxTypedGroup<DeltaTrail>();
 	public var layerBGs:Array<FlxGroup> = [new FlxGroup(), new FlxGroup(), new FlxGroup(), new FlxGroup(), new FlxGroup()];
 	public var dialogueBG:FlxSprite = new FlxSprite();
 	private var hasDialog:Bool = false;
@@ -1027,10 +1028,23 @@ class PlayState extends MusicBeatState
 						// trailArea.scrollFactor.set();
 						if (!PlayStateChangeables.Optimize)
 						{
-							var evilTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069);
+							var evilTrail:DeltaTrail;
+							if(PlayStateChangeables.flip){
+								evilTrail = new DeltaTrail(boyfriend, null, 4, 12/60, 0.3, 0.069);
+								if (executeModchart || stageObj.hasLua){
+									ModchartState.luaTrails.set("trail-spirit",evilTrail);
+								}
+							}else{
+								evilTrail = new DeltaTrail(dad, null, 4, 12/60, 0.3, 0.069);
+								if (executeModchart || stageObj.hasLua){
+									ModchartState.luaTrails.set("trail-bf-spirit",evilTrail);
+								}
+							}
 							// evilTrail.changeValuesEnabled(false, false, false, false);
 							// evilTrail.changeGraphic()
-							add(evilTrail);
+							evilTrail.velocity.x = 200;
+							layerTrails.add(evilTrail);
+							
 						}
 						// evilTrail.scrollFactor.set(1.1, 1.1);
 					}
@@ -1113,6 +1127,7 @@ class PlayState extends MusicBeatState
 		{
 			add(layerGF);
 			add(layerBGs[1]);
+			add(layerTrails);
 			// Shitty layering but whatev it works LOL
 			if (curStage == 'limo')
 				add(limo);
@@ -1529,6 +1544,9 @@ class PlayState extends MusicBeatState
 			switch (curSong.toLowerCase())
 			{
 				default:
+					if(hasDialog && doof.showDialog)
+						schoolIntro(doof);
+					else
 					startCountdown();
 			}
 		}
@@ -2417,7 +2435,8 @@ class PlayState extends MusicBeatState
 						NoteSplash.colors = ['purple', 'white', 'red'];
 				}
 			}
-		if(hasOutro && isStoryMode){
+		if(hasOutro){
+			if(isStoryMode || doof2.showDialog)
 			FlxG.sound.music.onComplete = ending;
 		}else
 			FlxG.sound.music.onComplete = endSong;
@@ -2645,7 +2664,7 @@ class PlayState extends MusicBeatState
 
 				if (PlayStateChangeables.bothSide)
 				{
-					if (!gottaHitNote)
+					if (gottaHitNote)
 					{
 						switch(daNoteData) //did this cuz duets crash game / cause issues
 						{
@@ -2708,7 +2727,7 @@ class PlayState extends MusicBeatState
 				}
 				if (PlayStateChangeables.bothSide)
 				{
-					gottaHitNote = true; //both side
+					gottaHitNote = !PlayStateChangeables.flip; //both side
 				}
 
 				var oldNote:Note;
@@ -2843,7 +2862,7 @@ class PlayState extends MusicBeatState
 				continue;*/
 
 			if (SONG.noteStyle == null) {
-				switch(storyWeek) {case 6: noteTypeCheck = 'pixel';}
+				switch(storyWeek) {case 6: noteTypeCheck = SONG.noteStyle = 'pixel';}
 			} else {noteTypeCheck = SONG.noteStyle;}
 			style[0] = noteTypeCheck;
 			style[1] = noteTypeCheck;
@@ -3201,15 +3220,15 @@ class PlayState extends MusicBeatState
 			{
 				case 0:
 					cpuStrums.add(babyArrow);
-					if (PlayStateChangeables.bothSide)
-						babyArrow.x -= 500;
+					/*if (PlayStateChangeables.bothSide)
+						babyArrow.x -= 500;*/
 				case 1:
 					playerStrums.add(babyArrow);
 			}
 
 			babyArrow.animation.play('static');
 			babyArrow.x += 50;
-			if (PlayStateChangeables.flip)
+			if (PlayStateChangeables.flip /*&& !PlayStateChangeables.bothSide*/)
 			{
 				
 				switch (player)
@@ -3225,7 +3244,7 @@ class PlayState extends MusicBeatState
 			
 			/*if (PlayStateChangeables.Optimize)
 				babyArrow.x -= 275;*/
-			if (PlayStateChangeables.Optimize && !PlayStateChangeables.bothSide){
+			if (PlayStateChangeables.Optimize || PlayStateChangeables.bothSide){
 				if(player == 0){
 					if(PlayStateChangeables.flip){
 						if(i < Std.int((keyAmmo[mania]/2)+0.5))
@@ -3250,12 +3269,14 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (PlayStateChangeables.bothSide)
-				babyArrow.x -= 350;
+			/*if (PlayStateChangeables.bothSide)
+				babyArrow.x -= 350;*/
 			
 			cpuStrums.forEach(function(spr:FlxSprite)
 			{					
 				spr.centerOffsets(); //CPU arrows start out slightly off-center
+				if (PlayStateChangeables.bothSide)
+					spr.alpha = 0;
 			});
 
 			strumLineNotes.add(babyArrow);
@@ -4011,6 +4032,9 @@ class PlayState extends MusicBeatState
 						}
 						if(dadChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
+
+						if(dadChar.isFlipped() && canPause)
+							camFollow.x += 80;
 		
 						if (dad.curCharacter == 'mom')
 							vocals.volume = 1;
@@ -4104,6 +4128,8 @@ class PlayState extends MusicBeatState
 
 						if(bfChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
+						if(bfChar.isFlipped() && canPause)
+							camFollow.x -= 80;
 						camFollow.x += offsetX;
 						camFollow.y += offsetY;
 						posiciones[0] = camFollow.y;
@@ -4198,6 +4224,8 @@ class PlayState extends MusicBeatState
 
 						if(dadChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
+						if(dadChar.isFlipped() && canPause)
+							camFollow.x -= 80;
 		
 						if (dad.curCharacter == 'mom')
 							vocals.volume = 1;
@@ -4276,8 +4304,8 @@ class PlayState extends MusicBeatState
 								camFollow.y = bfChar.getMidpoint().y - 440;
 								camFollow.x = bfChar.getMidpoint().x - 390;
 							case 'senpai-angry':
-								camFollow.y = dadChar.getMidpoint().y - 440;
-								camFollow.x = dadChar.getMidpoint().x - 390;
+								camFollow.y = bfChar.getMidpoint().y - 440;
+								camFollow.x = bfChar.getMidpoint().x - 390;
 							case 'henry':
 								camFollow.y = bfChar.getMidpoint().y + 50;
 								camFollow.x = bfChar.getMidpoint().x - 175;
@@ -4310,6 +4338,8 @@ class PlayState extends MusicBeatState
 
 						if(bfChar.flyingOffset > 0 && canPause)
 							camFollow.x += 1;
+						if(dadChar.isFlipped() && canPause)
+							camFollow.x += 80;
 						camFollow.x += offsetX;
 						camFollow.y += offsetY;
 						posiciones[0] = camFollow.y;
@@ -4660,6 +4690,8 @@ class PlayState extends MusicBeatState
 						{
 							if (PlayStateChangeables.useDownscroll)
 							{
+								var myindex:Int = 0;
+									
 								if (daNote.mustPress)
 									daNote.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y
 										+ 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
@@ -4671,16 +4703,18 @@ class PlayState extends MusicBeatState
 										daNote.y += daNote.prevNote.height/2;
 									else
 										daNote.y += daNote.height / 2;
-		
+									myindex = keyAmmo[mania];
 									// If not in botplay, only clip sustain notes when properly hit, botplay gets to clip it everytime
 									if (!PlayStateChangeables.botPlay)
 									{
+										/*if ((!daNote.mustPress || daNote.wasGoodHit || daNote.prevNote.wasGoodHit || holdArray[Math.floor(Math.abs(daNote.noteData))] && !daNote.tooLate)
+											&& daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= (strumLine.y + Note.swagWidth / 2))*/
 										if ((!daNote.mustPress || daNote.wasGoodHit || daNote.prevNote.wasGoodHit || holdArray[Math.floor(Math.abs(daNote.noteData))] && !daNote.tooLate)
-											&& daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= (strumLine.y + Note.swagWidth / 2))
+											&& daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+myindex].y + Note.swagWidth / 2))
 										{
 											//Clip to strumline
 											var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
-											swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+											swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+myindex].y
 												+ Note.swagWidth / 2
 												- daNote.y) / daNote.scale.y;
 											swagRect.y = daNote.frameHeight - swagRect.height;
@@ -4693,7 +4727,7 @@ class PlayState extends MusicBeatState
 										if(daNote.mustPress){
 											if(!healthValues.get(""+daNote.noteType).get("damage")){
 											var swagRect = new FlxRect(0, 0, daNote.frameWidth * 2, daNote.frameHeight * 2);
-											swagRect.height = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
+											swagRect.height = (strumLineNotes.members[myindex+Math.floor(Math.abs(daNote.noteData))].y + Note.swagWidth / 2 - daNote.y) / daNote.scale.y;
 											swagRect.y = daNote.frameHeight - swagRect.height;
 	
 											daNote.clipRect = swagRect;
@@ -4704,6 +4738,7 @@ class PlayState extends MusicBeatState
 							}
 							else
 							{
+								var myindex:Int = 0;
 								if (daNote.mustPress)
 									daNote.y = (playerStrums.members[Math.floor(Math.abs(daNote.noteData))].y
 										- 0.45 * (Conductor.songPosition - daNote.strumTime) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? SONG.speed : PlayStateChangeables.scrollSpeed,
@@ -4711,15 +4746,17 @@ class PlayState extends MusicBeatState
 								if (daNote.isSustainNote && daNote.mustPress)
 								{
 									daNote.y -= daNote.height / 2;
-		
+									myindex = keyAmmo[mania];
 									if (!PlayStateChangeables.botPlay)
 									{
+										/*if ((!daNote.mustPress || daNote.wasGoodHit || daNote.prevNote.wasGoodHit || holdArray[Math.floor(Math.abs(daNote.noteData))] && !daNote.tooLate)
+											&& daNote.y + daNote.offset.y * daNote.scale.y <= (strumLine.y + Note.swagWidth / 2))*/
 										if ((!daNote.mustPress || daNote.wasGoodHit || daNote.prevNote.wasGoodHit || holdArray[Math.floor(Math.abs(daNote.noteData))] && !daNote.tooLate)
-											&& daNote.y + daNote.offset.y * daNote.scale.y <= (strumLine.y + Note.swagWidth / 2))
+											&& daNote.y + daNote.offset.y * daNote.scale.y <= (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+myindex].y + Note.swagWidth / 2))
 										{
 											// Clip to strumline
 											var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
-											swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+											swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+myindex].y
 												+ Note.swagWidth / 2
 												- daNote.y) / daNote.scale.y;
 											swagRect.height -= swagRect.y;
@@ -4731,7 +4768,7 @@ class PlayState extends MusicBeatState
 									{
 										if(daNote.mustPress){
 										var swagRect = new FlxRect(0, 0, daNote.width / daNote.scale.x, daNote.height / daNote.scale.y);
-										swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y
+										swagRect.y = (strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+keyAmmo[mania]].y
 											+ Note.swagWidth / 2
 											- daNote.y) / daNote.scale.y;
 										swagRect.height -= swagRect.y;
@@ -5029,7 +5066,7 @@ class PlayState extends MusicBeatState
 						if (daNote.isSustainNote)
 						{
 							daNote.x += daNote.width / 2 + 20;
-							if (SONG.noteStyle == 'pixel')
+							if((!PlayStateChangeables.flip && style[0].startsWith('pixel')) || (PlayStateChangeables.flip && style[1].startsWith('pixel')))//if (SONG.noteStyle == 'pixel')
 								daNote.x -= 11;
 						}
 					
@@ -5081,10 +5118,11 @@ class PlayState extends MusicBeatState
 														if(!healthValues.get(""+daNote.noteType).get("damage"))
 														for (i in daNote.children)
 														{
-															i.alpha = 0.3;
+															i.alpha *= 0.3;
 															i.sustainActive = false;
-															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
-															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+															/*if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN")  > 0)
+																health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");*/
 														}
 													}
 													else
@@ -5094,13 +5132,19 @@ class PlayState extends MusicBeatState
 															&& daNote.sustainActive
 															&& daNote.spotInLine != daNote.parent.children.length)
 														{
+															/*if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN") > 0)
+																health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");*/
 															trace("hold fell over at " + daNote.spotInLine + "\nNote type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
 															for (i in daNote.parent.children)
 															{
-																i.alpha = 0.3;
+																i.alpha *= 0.3;
 																i.sustainActive = false;
-																health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
-																songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+																/*if(i.spotInLine > daNote.spotInLine){
+																	if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN")  > 0)
+																		health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+																	songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+																}*/
 															}
 															if (daNote.parent.wasGoodHit)
 																misses++;
@@ -5112,6 +5156,13 @@ class PlayState extends MusicBeatState
 															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
 															songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
 															trace("Note type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss"));
+														}
+														else if (!daNote.wasGoodHit && !healthValues.get(""+daNote.noteType).get("damage")
+														&& daNote.isSustainNote
+														&& !daNote.sustainActive){
+															if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN") > 0)
+																health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 														}
 													}
 												}
@@ -5141,11 +5192,11 @@ class PlayState extends MusicBeatState
 													if(!healthValues.get(""+daNote.noteType).get("damage"))
 													for (i in daNote.children)
 													{
-														i.alpha = 0.3;
+														i.alpha *= 0.3;
 														i.sustainActive = false;
-														//trace(i.alpha);
-														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
-														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+														/*if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN")  > 0)
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");*/
 													}
 												}
 												else
@@ -5155,16 +5206,20 @@ class PlayState extends MusicBeatState
 														&& daNote.sustainActive
 														&& daNote.spotInLine != daNote.parent.children.length)
 													{
-														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
-														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+														/*if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN") > 0)
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");*/
 														trace("hold fell over at " + daNote.spotInLine + "\nNote type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN"));
+
 														for (i in daNote.parent.children)
 														{
-															i.alpha = 0.3;
+															i.alpha *= 0.3;
 															i.sustainActive = false;
-															//trace(i.alpha);
-															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
-															songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+															/*if(i.spotInLine > daNote.spotInLine){
+																if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN") > 0)
+																	health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+																songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
+															}*/
 														}
 														if (daNote.parent.wasGoodHit)
 															misses++;
@@ -5176,6 +5231,13 @@ class PlayState extends MusicBeatState
 														health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss");
 														songScore += healthValues[""+daNote.noteType].get("score").get("missScore");
 														trace("Note type:" + daNote.noteType + " value: " + healthValues[""+daNote.noteType].get(storyDifficultyText).get("miss"));
+													}
+													else if (!daNote.wasGoodHit && !healthValues.get(""+daNote.noteType).get("damage")
+													&& daNote.isSustainNote
+													&& !daNote.sustainActive){
+														if(health + healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN") > 0)
+															health += healthValues[""+daNote.noteType].get(storyDifficultyText).get("missLN");
+														songScore += healthValues[""+daNote.noteType].get("score").get("missLNScore");
 													}
 												}
 											}
@@ -5189,8 +5251,8 @@ class PlayState extends MusicBeatState
 						}
 						/*if(PlayStateChangeables.useDownscroll && daNote.y > strumLine.y ||
 							!PlayStateChangeables.useDownscroll && daNote.y < strumLine.y)*/
-						if(PlayStateChangeables.useDownscroll && daNote.y > strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y ||
-							!PlayStateChangeables.useDownscroll && daNote.y < strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].y)
+						if(PlayStateChangeables.useDownscroll && daNote.y > strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+keyAmmo[mania]].y ||
+							!PlayStateChangeables.useDownscroll && daNote.y < strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))+keyAmmo[mania]].y)
 							{
 									// Force good note hit regardless if it's too late to hit it or not as a fail safe
 									if(PlayStateChangeables.botPlay && daNote.canBeHit && daNote.mustPress ||
@@ -5344,7 +5406,8 @@ class PlayState extends MusicBeatState
 
 		#if debug
 		if (FlxG.keys.justPressed.ONE){
-			if(isStoryMode && hasOutro)
+			if(hasOutro)
+				if(isStoryMode || doof2.showDialog)
 				ending();
 			else
 				endSong();
@@ -6594,13 +6657,14 @@ class PlayState extends MusicBeatState
 			
 					videoSprite.setGraphicSize(Std.int(videoSprite.width * 1.2));
 			
-					remove(gf);
+					/*remove(gf);
 					remove(boyfriend);
 					remove(dad);
 					add(videoSprite);
 					add(gf);
 					add(boyfriend);
-					add(dad);
+					add(dad);*/
+					layerBGs[0].add(videoSprite);
 			
 					trace('poggers');
 			
@@ -6862,7 +6926,7 @@ class PlayState extends MusicBeatState
 							}
 						}
 					}
-					else if (note.noteData /*<=*/ > 3)
+					else{ if ((PlayStateChangeables.flip && note.noteData <= 3) || (!PlayStateChangeables.flip && note.noteData /*<=*/ > 3))
 					{
 						switch(note.noteType){
 							case 4:
@@ -6904,7 +6968,7 @@ class PlayState extends MusicBeatState
 							}
 						}
 					}
-					else
+					if ((!PlayStateChangeables.flip && note.noteData <= 3) || (PlayStateChangeables.flip && note.noteData /*<=*/ > 3))
 					{
 						switch(note.noteType){
 							case 4:
@@ -6947,6 +7011,7 @@ class PlayState extends MusicBeatState
 							}
 						}
 					}
+					}//end of else bothside
 
 					if(note != null && !note.isParent && note.isSustainNote){
 						if(!healthValues.get(""+note.noteType).get("damage") && note.sustainActive){
@@ -8094,6 +8159,11 @@ class PlayState extends MusicBeatState
 		//if((PlayStateChangeables.flip && !healthGrp.flipX) || (!PlayStateChangeables.flip && healthGrp.flipX))
 		if(PlayStateChangeables.flip)
 			isPlayer = !isPlayer;
+		var suffix:String = "-flipped";
+        if (character.endsWith(suffix)) {
+            character = character.substr(0, character.length - suffix.length);
+			trace("found flipped char color: " + character);
+        } 
 		if (colorsMap.exists(character)){
 			if(isPlayer){
 				barColors[1] = colorsMap[character];
