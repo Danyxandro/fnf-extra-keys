@@ -1000,6 +1000,8 @@ class ResetSettings extends Option
 		FlxG.save.data.singCam == null;
 		FlxG.save.data.camFactor == null;
 		FlxG.save.data.enableCharchange = true;
+		FlxG.save.data.gameVolume = null;
+		FlxG.save.data.gameVersion = null;
 		KadeEngineData.setHealthValues();
 
 		KadeEngineData.initSave();

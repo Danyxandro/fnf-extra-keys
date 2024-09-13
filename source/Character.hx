@@ -2847,7 +2847,7 @@ class Character extends FlxSprite
 				}
 				/*if(PlayState.boyfriend.animation.curAnim.name.startsWith('sing') && this.animation.curAnim.finished)
 					playAnim(PlayState.boyfriend.animation.curAnim.name);*/
-				if(PlayState.boyfriend.animation.curAnim.name.startsWith('sing') && PlayState.boyfriend.holdTimer < this.holdTimer){
+				if(PlayState.boyfriend.animation.curAnim.name.startsWith('sing') && PlayState.boyfriend.holdTimer < this.holdTimer && !PlayState.boyfriend.animation.curAnim.name.contains('miss')){
 					playAnim(PlayState.boyfriend.animation.curAnim.name,true);
 					holdTimer = PlayState.boyfriend.holdTimer;
 				}
@@ -2863,7 +2863,7 @@ class Character extends FlxSprite
 				}
 				/*if(PlayState.dad.animation.curAnim.name.startsWith('sing') && this.animation.curAnim.finished)
 					playAnim(PlayState.dad.animation.curAnim.name);*/
-				if(PlayState.dad.animation.curAnim.name.startsWith('sing') && PlayState.dad.holdTimer < this.holdTimer){
+				if(PlayState.dad.animation.curAnim.name.startsWith('sing') && PlayState.dad.holdTimer < this.holdTimer && !PlayState.dad.animation.curAnim.name.contains('miss')){
 					playAnim(PlayState.dad.animation.curAnim.name,true);
 					holdTimer = PlayState.dad.holdTimer;
 				}

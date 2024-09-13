@@ -60,7 +60,7 @@ class HealthValueMenu extends FlxSubState
         add(blackBox);
 
         UI_box = new FlxUITabMenu(null, tabs, true);
-        UI_box.resize(1000, 1000);
+        UI_box.resize(1000, 1100);
 		UI_box.x = 140;
 		UI_box.y = 20;
 
@@ -98,10 +98,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,65, 0.005, FlxG.save.data.healthValues.get("0").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,65, 0.01, FlxG.save.data.healthValues.get("0").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,65, 0.01, FlxG.save.data.healthValues.get("0").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "0", stepper);
                 tab_group.add(stepper);
             }
@@ -128,10 +125,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,165, 0.005, FlxG.save.data.healthValues.get("1").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,165, 0.01, FlxG.save.data.healthValues.get("1").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,165, 0.01, FlxG.save.data.healthValues.get("1").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "1", stepper);
                 tab_group.add(stepper);
             }
@@ -158,10 +152,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,285, 0.005, FlxG.save.data.healthValues.get("2").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,285, 0.01, FlxG.save.data.healthValues.get("2").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,285, 0.01, FlxG.save.data.healthValues.get("2").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "2", stepper);
                 tab_group.add(stepper);
             }
@@ -188,10 +179,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,385, 0.005, FlxG.save.data.healthValues.get("3").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,385, 0.01, FlxG.save.data.healthValues.get("3").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,385, 0.01, FlxG.save.data.healthValues.get("3").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "3", stepper);
                 tab_group.add(stepper);
             }
@@ -218,10 +206,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                 if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,485, 0.005, FlxG.save.data.healthValues.get("4").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,485, 0.01, FlxG.save.data.healthValues.get("4").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,485, 0.01, FlxG.save.data.healthValues.get("4").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "4", stepper);
                 tab_group.add(stepper);
             }
@@ -248,10 +233,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,585, 0.005, FlxG.save.data.healthValues.get("5").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,585, 0.01, FlxG.save.data.healthValues.get("5").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,585, 0.01, FlxG.save.data.healthValues.get("5").get(texto).get(texto2), -2, 2, 2, 30);
                 var stepper:FlxCustomStepper = new FlxCustomStepper(365 + j * 67,585, 0.01, FlxG.save.data.healthValues.get("5").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "5", stepper);
                 tab_group.add(stepper);
@@ -279,10 +261,7 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,685, 0.005, FlxG.save.data.healthValues.get("6").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,685, 0.01, FlxG.save.data.healthValues.get("6").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,685, 0.01, FlxG.save.data.healthValues.get("6").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "6", stepper);
                 tab_group.add(stepper);
             }
@@ -309,11 +288,33 @@ class HealthValueMenu extends FlxSubState
                     case 6: texto2 = "longN";
                 }
                 var stepper:FlxCustomStepper;
-                if(j == 6)
-                    stepper = new FlxCustomStepper(365 + j * 67,785, 0.005, FlxG.save.data.healthValues.get("8").get(texto).get(texto2), -2, 2, 3, 35, 0.1);
-                else
-                    stepper = new FlxCustomStepper(365 + j * 67,785, 0.01, FlxG.save.data.healthValues.get("8").get(texto).get(texto2), -2, 2, 2, 30);
+                stepper = new FlxCustomStepper(365 + j * 67,785, 0.01, FlxG.save.data.healthValues.get("8").get(texto).get(texto2), -2, 2, 2, 30);
                 stepperMap.get(texto).set(texto2 + "8", stepper);
+                tab_group.add(stepper);
+            }
+
+            var beatNoteLabel:FlxText = new FlxText(220, 830,-1,'Beat notes',16);
+            var label8:FlxText = new FlxText(370, 860,-1, "Shit      Bad    Good    Sick    Miss",16);
+            var beatNote:FlxSprite = new FlxSprite();
+            beatNote.frames = Paths.getSparrowAtlas('noteassets/square_note',"shared");
+            beatNote.animation.addByPrefix('greenScroll', 'green0');
+            beatNote.animation.play("greenScroll");
+            beatNote.setGraphicSize(Std.int(beatNote.width * 0.4));
+            beatNote.updateHitbox();
+            beatNote.x = 245;
+            beatNote.y = 860;
+            for(j in 0...5){
+                var texto2:String = "sick";
+                switch(j){
+                    case 0: texto2 = "shit";
+                    case 1: texto2 = "bad";
+                    case 2: texto2 = "good";
+                    case 3: texto2 = "sick";
+                    case 4: texto2 = "miss";
+                }
+                var stepper:FlxCustomStepper;
+                stepper = new FlxCustomStepper(365 + j * 67,885, 0.01, FlxG.save.data.healthValues.get("9").get(texto).get(texto2), -2, 2, 2, 30);
+                stepperMap.get(texto).set(texto2 + "9", stepper);
                 tab_group.add(stepper);
             }
             var hint:FlxText = new FlxText(-220,300,-1,'Scroll using keys or mouse wheel',28);
@@ -323,8 +324,8 @@ class HealthValueMenu extends FlxSubState
             hint2.angle -= 90;
             tab_group.add(hint2);
 
-            var misspressLabel = new FlxText(390, 855,-1,'Miss press',16);
-            var stepperMiss:FlxCustomStepper = new FlxCustomStepper(515, 861, 0.005, FlxG.save.data.healthValues.get("missPressed").get(texto), -2, 0, 3, 35, 0.1);
+            var misspressLabel = new FlxText(390, 955,-1,'Miss press',16);
+            var stepperMiss:FlxCustomStepper = new FlxCustomStepper(515, 961, 0.005, FlxG.save.data.healthValues.get("missPressed").get(texto), -2, 0, 3, 35, 0.1);
             stepperMap.get(texto).set("missPress",stepperMiss);
             tab_group.add(misspressLabel);
             tab_group.add(stepperMiss);
@@ -361,11 +362,15 @@ class HealthValueMenu extends FlxSubState
             tab_group.add(glitchNoteLabel);
             tab_group.add(glitchNote);
 
-            var reloadBtn:FlxButton = new FlxButton(300,910, "Reset Values", function()
+            tab_group.add(label8);
+            tab_group.add(beatNoteLabel);
+            tab_group.add(beatNote);
+
+            var reloadBtn:FlxButton = new FlxButton(300,1010, "Reset Values", function()
 		    {
 			    reset();
 		    });
-            var saveBtn:FlxButton = new FlxButton(600,910, "Save", function()
+            var saveBtn:FlxButton = new FlxButton(600,1010, "Save", function()
 		    {
 			    save();
 		    });
@@ -396,8 +401,8 @@ class HealthValueMenu extends FlxSubState
 			UI_box.y += 10;
 		if (FlxG.keys.pressed.DOWN)
 			UI_box.y -= 10;
-        if(UI_box.y < -320)
-            UI_box.y = -320;
+        if(UI_box.y < -420)
+            UI_box.y = -420;
         if(UI_box.y > 20)
             UI_box.y = 20;
 	}
@@ -407,7 +412,7 @@ class HealthValueMenu extends FlxSubState
         var map:Map<String,Dynamic>;
         for(key in stepperMap.keys()){
             map = stepperMap.get(texto);
-            for(i in 0...9){
+            for(i in 0...10){
                 var j:Int = i;
                 if(i == 7)
                     j = 0;
@@ -416,8 +421,10 @@ class HealthValueMenu extends FlxSubState
                 FlxG.save.data.healthValues.get(""+i).get(texto).set("good", map.get("good"+j).value);
                 FlxG.save.data.healthValues.get(""+i).get(texto).set("sick", map.get("sick"+j).value);
                 FlxG.save.data.healthValues.get(""+i).get(texto).set("miss", map.get("miss"+j).value);
-                FlxG.save.data.healthValues.get(""+i).get(texto).set("missLN", map.get("missLN"+j).value);
-                FlxG.save.data.healthValues.get(""+i).get(texto).set("longN", map.get("longN"+j).value);
+                if(i != 9){
+                    FlxG.save.data.healthValues.get(""+i).get(texto).set("missLN", map.get("missLN"+j).value);
+                    FlxG.save.data.healthValues.get(""+i).get(texto).set("longN", map.get("longN"+j).value);
+                }
             }
             FlxG.save.data.healthValues.get("missPressed").set(texto, map.get("missPress").value);
         }
@@ -435,8 +442,10 @@ class HealthValueMenu extends FlxSubState
 				for(key2 in map2.keys()){
 					map3 = map2.get(key2);
 					if(key2 != "damage" && key2 != "score" && key != "7"){
-						for(key3 in map3.keys())
-                            stepperMap.get(key2).get(key3+key).value = map3.get(key3);
+						for(key3 in map3.keys()){
+                            if(stepperMap.get(key2).get(key3+key) != null)
+                                stepperMap.get(key2).get(key3+key).value = map3.get(key3);
+                        }
 					}
 				}
 			}else{
@@ -467,4 +476,4 @@ class HealthValueMenu extends FlxSubState
         FlxTween.tween(infoText, {alpha: 0}, 1, {ease: FlxEase.expoInOut});*/
     }
 
-}//Fin de la clase3310214059
+}//Fin de la clase

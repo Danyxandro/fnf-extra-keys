@@ -6,6 +6,8 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
 #if polymod
 import polymod.format.ParseRules.TargetSignatureElement;
 #end
@@ -84,6 +86,10 @@ class Note extends FlxSprite
 	public var downscroll:Bool = false;
 	private var defaulOffsets:Array<Float> = [];
 	private var pixelShit:String = "";
+	private var inCharter:Bool = false;
+	private var nextStep:Int = 0;
+	private var curStep:Int = 0;
+	private var stepFlag:Bool = false;
 
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?noteType:Int = 0, ?_mustPress:Bool = false, ?inCharter:Bool = false, ?useStyle1:Bool=true)
 	{
@@ -245,6 +251,10 @@ class Note extends FlxSprite
 		bob = noteType == 2;
 		glitch = noteType == 8;
 
+		if(noteType==9){
+			nextStep = Math.ceil(strumTime / Conductor.stepCrochet) - 21;
+		}
+
 		this.useStyle1 = useStyle1;
 
 		//if (FlxG.save.data.noteColor != 'darkred' && FlxG.save.data.noteColor != 'black' && FlxG.save.data.noteColor != 'orange')
@@ -254,22 +264,40 @@ class Note extends FlxSprite
 
 		//defaults if no noteStyle was found in chart
 		var noteTypeCheck:String = 'normal';
-
-		if (PlayState.SONG.noteStyle == null) {
-			switch(PlayState.storyWeek) {
-				case 6: if(!inCharter)
-						noteTypeCheck = "pixel";
-					else
-						pixelShit = 'pixel';
+		this.inCharter = inCharter;
+		if(useStyle1){
+			if (PlayState.SONG.noteStyle == null) {
+				switch(PlayState.storyWeek) {
+					case 6: if(!inCharter)
+							noteTypeCheck = "pixel";
+						else
+							pixelShit = 'pixel';
+				}
+			} else {
+				if(PlayState.SONG.noteStyle.startsWith("pixel") && !inCharter)
+					pixelShit = PlayState.SONG.noteStyle;
+				else
+					noteTypeCheck = PlayState.SONG.noteStyle;
 			}
-		} else {
-			if(PlayState.SONG.noteStyle.startsWith("pixel") && !inCharter)
-				pixelShit = PlayState.SONG.noteStyle;
-			else
-				noteTypeCheck = PlayState.SONG.noteStyle;
+			if(PlayState.SONG.noteStyle != pixelShit && pixelShit != "")
+				noteTypeCheck = pixelShit;
+		}else{
+			if (PlayState.SONG.noteStyle2 == null) {
+				switch(PlayState.storyWeek) {
+					case 6: if(!inCharter)
+							noteTypeCheck = "pixel";
+						else
+							pixelShit = 'pixel';
+				}
+			} else {
+				if(PlayState.SONG.noteStyle2.startsWith("pixel") && !inCharter)
+					pixelShit = PlayState.SONG.noteStyle2;
+				else
+					noteTypeCheck = PlayState.SONG.noteStyle2;
+			}
+			if(PlayState.SONG.noteStyle2 != pixelShit && pixelShit != "")
+				noteTypeCheck = pixelShit;
 		}
-		if(PlayState.SONG.noteStyle != pixelShit && pixelShit != "")
-			noteTypeCheck = pixelShit;
 		this.estilo = noteTypeCheck;
 
 		defaulOffsets[0] = offset.x;
@@ -291,12 +319,11 @@ class Note extends FlxSprite
 
 		if (!modifiedByLua)
 		{
-			if (!sustainActive)
+			if (!sustainActive && parent != null)
 			{
-				alpha = 0.3;
+				alpha = parent.alpha * 0.3;
 			}
 		}
-		
 
 		if (!scaleSwitch)
 			{
@@ -588,6 +615,61 @@ class Note extends FlxSprite
 			}
 		}
 
+		if(noteType == 9 && !inCharter){
+			var multiplier:Float = 0;
+			if(!tooLate && stepFlag){
+				if(this.downscroll){
+					if(estilo.startsWith("pixel"))
+						multiplier = - stepHeight * 1.5;
+					else
+						multiplier = - stepHeight * 0.5;
+				}else{
+					if(estilo.startsWith("pixel"))
+						multiplier = stepHeight*0.2;
+					else
+						multiplier = stepHeight*1.1;
+				}
+				if(this.nextStep > this.curStep)
+					modifiedByLua = true;
+					offset.y = defaulOffsets[1] + multiplier;
+				if(this.nextStep <= this.curStep && modifiedByLua){
+					var yPos:Float = 0;
+					var xPos:Float = 0;
+					var fromP1:Bool = this.useStyle1;
+					if(PlayStateChangeables.flip)
+						fromP1 = !fromP1;
+					if(fromP1 || PlayStateChangeables.bothSide){
+						xPos = PlayState.playerStrums.members[Math.floor(Math.abs(this.noteData))].x;
+						if(this.downscroll)
+							yPos = (PlayState.playerStrums.members[Math.floor(Math.abs(this.noteData))].y + 0.45 * (Conductor.songPosition - this.strumTime)
+										* FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) - this.noteYOff;
+						else
+							yPos = (PlayState.playerStrums.members[Math.floor(Math.abs(this.noteData))].y - 0.45 * (Conductor.songPosition - this.strumTime)
+										* FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) + this.noteYOff;
+					}else{
+						xPos = PlayState.strumLineNotes.members[Math.floor(Math.abs(this.noteData))].x;
+						if(this.downscroll)
+							yPos = (PlayState.strumLineNotes.members[Math.floor(Math.abs(this.noteData))].y + 0.45 * (Conductor.songPosition - this.strumTime)
+										* FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) - this.noteYOff;
+						else
+							yPos = (PlayState.strumLineNotes.members[Math.floor(Math.abs(this.noteData))].y - 0.45 * (Conductor.songPosition - this.strumTime)
+										* FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed,
+											2)) + this.noteYOff;
+					}
+					//modifiedByLua = false;
+					this.nextStep += 2;
+					FlxTween.tween(this,{x:xPos,y:yPos},(Conductor.stepCrochet-10)/1000, 
+					{ 
+						type:       ONESHOT,
+						ease:       FlxEase.quadInOut,
+						onComplete: function(flxTween:FlxTween){modifiedByLua = false;}
+					});
+				}
+			}
+		}
 	}//fin del Update
 
 	function setGraphic(estilo:String,?tailNote:Bool=false):Void{
@@ -706,6 +788,16 @@ class Note extends FlxSprite
 							animation.add(noteColors[i] + 'hold', [i]); // Holds
 							animation.add(noteColors[i] + 'holdend', [i + 9]); // Tails
 						}
+					case 9:
+						loadGraphic(Paths.image('noteassets/pixel/square'), true, 17, 17);
+						if (isSustainNote)
+							loadGraphic(Paths.image('noteassets/pixel/arrowEnds'), true, 7, 6);
+						for (i in 0...9)
+						{
+							animation.add(noteColors[i] + 'Scroll', [i+9]); // Normal notes
+							animation.add(noteColors[i] + 'hold', [i]); // Holds
+							animation.add(noteColors[i] + 'holdend', [i + 9]); // Tails
+						}
 				}
 				/*if (burning)
 					{
@@ -811,6 +903,34 @@ class Note extends FlxSprite
 						animation.addByPrefix(noteColors[i] + 'hold', colores[i] + ' hold piece'); // Hold
 						animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
 						}
+					}	
+				altNotes();
+				setGraphicSize(Std.int(width * noteScale));
+				updateHitbox();
+				antialiasing = true;
+				if(noteType == 1 && !isSustainNote){
+					if(noteScale == 0.7){
+						if(this.downscroll)
+							offset.y += 201;
+						else
+							offset.y += 51;
+						offset.x += 40;
+					}else{
+						if(this.downscroll)
+							offset.y += 291 * noteScale;
+						else
+							offset.y += 71 * noteScale;
+						offset.x += 58 * noteScale;
+					}
+				}
+			case 'stellar':
+				frames = Paths.getSparrowAtlas('keen/STELLAR_Note');
+				var colores = ['purple', 'blue', 'green', 'red', 'white', 'purple', 'blue', 'green', 'red'];
+				for (i in 0...9)
+					{
+						animation.addByPrefix(noteColors[i] + 'Scroll', colores[i] + '0'); // Normal notes
+						animation.addByPrefix(noteColors[i] + 'hold', colores[i] + ' hold piece'); // Hold
+						animation.addByPrefix(noteColors[i] + 'holdend', colores[i] + ' hold end'); // Tails
 					}	
 				altNotes();
 				setGraphicSize(Std.int(width * noteScale));
@@ -1047,10 +1167,11 @@ class Note extends FlxSprite
 
 		}
 
-		x += swagWidth * noteData;
+		if(noteType != 9)
+			x += swagWidth * noteData;
 		animation.play(frameN[noteData] + 'Scroll');
 		noteColor = noteData;
-
+		stepHeight = (0.45 * Conductor.stepCrochet * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed, 2));
 		// trace(prevNote);
 
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
@@ -1193,6 +1314,22 @@ class Note extends FlxSprite
 				animation.addByPrefix(noteColors[i] + 'hold', 'glitch hold piece'); // Hold
 				animation.addByPrefix(noteColors[i] + 'holdend', 'glitch hold end'); // Tails
 			}
+		}
+		if(!ignoreTypes.contains(9) && noteType == 9){
+			frames = Paths.getSparrowAtlas('noteassets/square_note');
+			for (i in 0...9)
+			{
+				animation.addByPrefix(noteColors[i] + 'Scroll', noteColors[i] + '0'); // Normal notes
+				animation.addByPrefix(noteColors[i] + 'hold', 'glitch hold piece'); // Hold
+				animation.addByPrefix(noteColors[i] + 'holdend', 'glitch hold end'); // Tails
+			}
+		}
+	}
+
+	public function updateStep(step:Int):Void{
+		this.curStep = step;
+		if(!stepFlag){
+			stepFlag = true;
 		}
 	}
 }

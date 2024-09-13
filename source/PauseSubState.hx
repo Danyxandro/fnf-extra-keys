@@ -248,6 +248,10 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.luaModchart.die();
 						PlayState.luaModchart = null;
 					}
+					if(DialogueBox.dialogueLua != null){
+						DialogueBox.dialogueLua.die();
+						DialogueBox.dialogueLua = null;
+					}
 					#end
 					if (FlxG.save.data.fpsCap > 290)
 						(cast (Lib.current.getChildAt(0), Main)).setFPSCap(290);

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="square_note.png"><SubTexture name="blue0000" x="0" y="0" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="green0000" x="144" y="0" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="purple0000" x="0" y="134" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="red0000" x="144" y="134" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="white0000" x="288" y="0" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="yellow0000" x="288" y="134" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="violet0000" x="0" y="268" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="darkred0000" x="144" y="268" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+<SubTexture name="dark0000" x="288" y="268" width="144" height="134" frameX="-10" frameY="-13" frameWidth="164" frameHeight="164" />
+</TextureAtlas>

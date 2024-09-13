@@ -203,11 +203,16 @@ class BetadciuState extends MusicBeatState
 
 		curSelected = position;
 
-		bg.scale.set(1.15,1.15);
+		var bgScale:Float = 1;
+		if(FlxG.save.data.camzoom){
+			bg.scale.set(1.15,1.15);
+			bgScale = 1.15;
+		}
+		bump = FlxG.save.data.camzoom;
 		myTween = FlxTween.tween(bg.scale, { x: 1, y: 1}, Conductor.crochet/1000, {type:PERSIST, ease: FlxEase.quadInOut, onComplete: function(tween:FlxTween){
 			bg.updateHitbox();
-			bump = true;
-			bg.scale.set(1.15,1.15);
+			bump = FlxG.save.data.camzoom;
+			bg.scale.set(bgScale,bgScale);
 		}});
 
 		changeSelection();
@@ -306,7 +311,7 @@ class BetadciuState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if(bump){
+		if(bump && FlxG.save.data.camzoom){
 			bump = false;
 			myTween.start();
 		}
@@ -728,14 +733,16 @@ class BetadciuState extends MusicBeatState
 	}
 
 	private function resetTween():Void{
-		myTween.cancel();
-		bg.scale.set(1.15,1.15);
-		myTween = FlxTween.tween(bg.scale, { x: 1, y: 1}, Conductor.crochet/1000, {type:PERSIST, ease: FlxEase.quadInOut, onComplete: function(tween:FlxTween){
-			bg.updateHitbox();
-			bump = true;
+		if(FlxG.save.data.camzoom){
+			myTween.cancel();
+			myTween = FlxTween.tween(bg.scale, { x: 1, y: 1}, Conductor.crochet/1000, {type:PERSIST, ease: FlxEase.quadInOut, onComplete: function(tween:FlxTween){
+				bg.updateHitbox();
+				bump = FlxG.save.data.camzoom;
+				bg.scale.set(1.15,1.15);
+			}});
+			bump = false;
 			bg.scale.set(1.15,1.15);
-		}});
-		bump = false;
-		myTween.start();
+			myTween.start();
+		}
 	}
 }

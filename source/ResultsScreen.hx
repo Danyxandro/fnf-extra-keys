@@ -207,7 +207,9 @@ class ResultsScreen extends FlxSubState
         if (FlxG.keys.justPressed.F1)
         {
             trace(PlayState.rep.path);
-            PlayState.rep = Replay.LoadReplay(PlayState.rep.path);
+            if(FlxG.save.data.savePlay){
+                PlayState.rep = Replay.LoadReplay(PlayState.rep.path);
+            }
 
             PlayState.loadRep = true;
 
