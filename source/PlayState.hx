@@ -3810,7 +3810,6 @@ class PlayState extends MusicBeatState
 		/* if (FlxG.keys.justPressed.NINE)
 			FlxG.switchState(new Charting()); */
 
-		#if debug
 		if (FlxG.keys.justPressed.SIX)
 		{
 			if (useVideo)
@@ -3821,8 +3820,12 @@ class PlayState extends MusicBeatState
 					FlxG.stage.window.onFocusIn.remove(focusIn);
 					removedVideo = true;
 				}
-
-			FlxG.switchState(new AnimationDebug(SONG.player2));
+			if (PlayStateChangeables.flip)
+				//FlxG.switchState(new AnimationDebug(boyfriend.curCharacter));
+				FlxG.switchState(new ui.CharacterEditorState(boyfriend.curCharacter,true));
+			else
+				//FlxG.switchState(new AnimationDebug(dad.curCharacter));
+				FlxG.switchState(new ui.CharacterEditorState(dad.curCharacter,true));
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
 			#if windows
@@ -3849,7 +3852,8 @@ class PlayState extends MusicBeatState
 					removedVideo = true;
 				}
 
-			FlxG.switchState(new AnimationDebug(gf.curCharacter));
+			//FlxG.switchState(new AnimationDebug(gf.curCharacter));
+			FlxG.switchState(new ui.CharacterEditorState(gf.curCharacter,true));
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
 			#if windows
@@ -3867,7 +3871,12 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.ZERO)
 		{
-			FlxG.switchState(new AnimationDebug(SONG.player1,true));
+			if (PlayStateChangeables.flip)
+				//FlxG.switchState(new AnimationDebug(dad.curCharacter,true));
+				FlxG.switchState(new ui.CharacterEditorState(dad.curCharacter,true,true));
+			else
+				//FlxG.switchState(new AnimationDebug(boyfriend.curCharacter,true));
+				FlxG.switchState(new ui.CharacterEditorState(boyfriend.curCharacter,true,true));
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN,handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
 			#if windows
@@ -3882,8 +3891,6 @@ class PlayState extends MusicBeatState
 			}
 			#end
 		}
-
-		#end
 
 		if (startingSong)
 		{
@@ -6919,9 +6926,10 @@ class PlayState extends MusicBeatState
 					{
 						switch(note.noteType){
 							case 4:
+								if(note.sustainActive)
 								boyfriend.playAnim(goldAnim[0], true);
 							default:
-							if(!healthValues.get(""+note.noteType).get("damage"))
+							if(!healthValues.get(""+note.noteType).get("damage") && note.sustainActive)
 								boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
 							else
 								if(note.wrongHit && note.noteType != 8)
@@ -6962,17 +6970,19 @@ class PlayState extends MusicBeatState
 					}
 					else{ if ((PlayStateChangeables.flip && note.noteData <= 3) || (!PlayStateChangeables.flip && note.noteData /*<=*/ > 3))
 					{
-						switch(note.noteType){
-							case 4:
-								boyfriend.playAnim(goldAnim[0], true);
-							default:
-							if(!healthValues.get(""+note.noteType).get("damage"))
-								boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
-							else
-								if(note.wrongHit && note.noteType != 8)
-									noteMiss(note.noteData,note);
+						if(note.sustainActive){
+							switch(note.noteType){
+								case 4:
+									boyfriend.playAnim(goldAnim[0], true);
+								default:
+								if(!healthValues.get(""+note.noteType).get("damage"))
+									boyfriend.playAnim('sing' + bfsDir[note.noteData] + altAnim, true);
+								else
+									if(note.wrongHit && note.noteType != 8)
+										noteMiss(note.noteData,note);
+							}
+							boyfriend.holdTimer = 0;
 						}
-						boyfriend.holdTimer = 0;
 						if(FlxG.save.data.singCam && !talking){
 							switch(bfsDir[note.noteData].toUpperCase()){
 								case "UP":
@@ -7004,18 +7014,20 @@ class PlayState extends MusicBeatState
 					}
 					if ((!PlayStateChangeables.flip && note.noteData <= 3) || (PlayStateChangeables.flip && note.noteData /*<=*/ > 3))
 					{
-						switch(note.noteType){
-							case 4:
-								dad.playAnim(goldAnim[1], true);
-							default:
-							if(!healthValues.get(""+note.noteType).get("damage"))
-								dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
-							else
-								if(note.wrongHit && note.noteType != 8)
-									dad.playAnim('sing' + sDir[note.noteData] + "-miss", true);
+						if(note.sustainActive){
+							switch(note.noteType){
+								case 4:
+									dad.playAnim(goldAnim[1], true);
+								default:
+								if(!healthValues.get(""+note.noteType).get("damage"))
+									dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
+								else
+									if(note.wrongHit && note.noteType != 8)
+										dad.playAnim('sing' + sDir[note.noteData] + "-miss", true);
+							}
+							//dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
+							dad.holdTimer = 0;
 						}
-						//dad.playAnim('sing' + sDir[note.noteData] + altAnim, true);
-						dad.holdTimer = 0;
 						if(FlxG.save.data.singCam && !talking){
 							switch(sDir[note.noteData].toUpperCase()){
 								case "UP":

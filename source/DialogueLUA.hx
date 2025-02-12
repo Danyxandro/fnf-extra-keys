@@ -937,7 +937,7 @@ class DialogueLUA
 					if(sprites[id] != null)
 						sprites[id].animation.addByPrefix(name, prefix, fps, looped);
 					else{
-						var r = new EReg("^[0-7]", "i");
+						var r = new EReg("^[0-9]", "i");
 						if(!r.match(id) && getActorByName(id) != null){
 							getActorByName(id).animation.addByPrefix(name, prefix, fps, looped);
 						}
@@ -1272,6 +1272,29 @@ class DialogueLUA
 				Lua_helper.add_callback(lua,"setCamFollowPosition", function(x:Int,y:Int) {
 					@:privateAccess
 						PlayState.instance.camFollow.setPosition(x, y);
+				});
+
+				Lua_helper.add_callback(lua,"actorScreenCenter", function(id:String,axis:String="") {
+					var spr:FlxSprite;
+					spr = getActorByName(id);
+					if (spr != null){
+						switch(axis.toLowerCase()){
+							case "y":
+								spr.screenCenter(Y);
+							case "x":
+								spr.screenCenter(X);
+							default:
+								spr.screenCenter();
+						}
+					}
+				});
+
+				Lua_helper.add_callback(lua,"setColorTransform", function(id:String,rOffset:Int=0,gOffset:Int=0,bOffset:Int=0,aOffset:Int=255) {
+					var spr:FlxSprite;
+					spr = getActorByName(id);
+					if(spr != null){
+						spr.setColorTransform(1,1,1,1,rOffset,gOffset,bOffset,aOffset);
+					}
 				});
 
 				// actors

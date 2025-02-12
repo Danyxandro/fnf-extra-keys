@@ -592,7 +592,7 @@ class FreeplayState extends MusicBeatState
 
 		var endings:Array<String> = ["-easy","","-hard"];
 		var route:String = "assets/data/" + songs[curSelected].songName.toLowerCase() + "/";
-		if(sys.FileSystem.exists(route + songs[curSelected].songName.toLowerCase() + endings[curDifficulty] + ".json")){
+		if(sys.FileSystem.exists(route + songs[curSelected].songName.toLowerCase() + endings[curDifficulty] + ".json") && !searchExtended){
 			Conductor.changeBPM(Song.loadFromJson(songs[curSelected].songName.toLowerCase() + endings[curDifficulty], songs[curSelected].songName.toLowerCase()).bpm);
 			resetTween();
 		}
@@ -617,6 +617,7 @@ class FreeplayState extends MusicBeatState
 		if (!searchExtending)
 		{
 			searchExtending = true;
+			bump = false;
 
 			if (searchExtended)
 			{
@@ -626,11 +627,14 @@ class FreeplayState extends MusicBeatState
 					onComplete: function(_) {
 						searchExtending = false;
 						searchExtended = false;
+						resetTween();
 					}
 				});
 			}
 			else
 			{
+				if(FlxG.save.data.camzoom)
+					myTween.cancel();
 				FlxTween.tween(searchGroup, {x: FlxG.width - searchGroup.width}, 0.3, {
 					onComplete: function(_) {
 						searchExtending = false;
@@ -638,6 +642,9 @@ class FreeplayState extends MusicBeatState
 						playMusic = false;
 					}
 				});
+				if(FlxG.save.data.camzoom){
+					FlxTween.tween(bg.scale,{x:1,y:1},0.3,{onComplete: function(_){}});
+				}
 			}
 		}
 	}

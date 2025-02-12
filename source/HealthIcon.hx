@@ -79,7 +79,8 @@ class HealthIcon extends FlxSprite
 			setPosition(sprTracker.x + sprTracker.width + 10, sprTracker.y - 30);
 	}
 
-	public function changeIcon(char:String, isPlayer:Bool){
+	public function changeIcon(char:String, isPlayer:Bool=false){
+		this.char = char;
 		if(sys.FileSystem.exists("assets/shared/images/characters/" + char + "/icon.png")){
 			trace("agregado: " + char);
 			var bitmap:openfl.display.BitmapData = openfl.display.BitmapData.fromFile("assets/shared/images/characters/" + char + "/icon.png");

@@ -72,7 +72,7 @@
 		<library name="week4"    preload="false" />
 		<library name="week5"    preload="false" />
 		<library name="week6"    preload="false" />
-    <library name="stages"    preload="true" />
+    <library name="stages"    preload="false" />
 	</section>
 
   <assets path="assets/fonts"    library="fonts"    exclude="*.ogg" if="web"/>
