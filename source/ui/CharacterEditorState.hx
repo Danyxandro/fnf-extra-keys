@@ -473,7 +473,7 @@ class CharacterEditorState extends MusicBeatState
 				}
 			],
 			"no_antialiasing": false,
-			"image": "characters/DADDY_DEAREST",
+			"image": "DADDY_DEAREST",
 			"position": [
 				0,
 				0
@@ -545,6 +545,8 @@ class CharacterEditorState extends MusicBeatState
 			{
 				character.animOffsets.clear();
 				character.animationsArray = parsedJson.animations;
+				character.flipX = false;
+				character.curCharacter = "dad";
 				for (anim in character.animationsArray)
 				{
 					character.addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
@@ -566,8 +568,9 @@ class CharacterEditorState extends MusicBeatState
 				//character.healthIcon = parsedJson.healthicon;
 				character.colorCode = parsedJson.healthbar_colors;
 				character.setPosition(character.posOffsets[0] + OFFSET_X + 100, character.posOffsets[1] + OFFSET_Y);
+				character.flipX = this.isPlayer;
 			}
-
+			txtHint.visible = false;
 			//reloadCharacterImage();
 			reloadCharacterDropDown();
 			reloadCharacterOptions();
@@ -1265,7 +1268,8 @@ class CharacterEditorState extends MusicBeatState
 
 	function resetHealthBarColor(setSteppers:Bool = false) {
 		if(setSteppers){
-			char.colorCode = colorsMap.get(healthIconInputText.text);
+			if(colorsMap.exists(healthIconInputText.text))
+				char.colorCode = colorsMap.get(healthIconInputText.text);
 			healthColorStepperR.value = char.colorCode[0];
 			healthColorStepperG.value = char.colorCode[1];
 			healthColorStepperB.value = char.colorCode[2];

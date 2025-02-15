@@ -2506,6 +2506,7 @@ class Character extends FlxSprite
 				var routeXML:String = "assets/shared/images/characters/" + curCharacter + "/" + curCharacter + ".xml";
 				var routeOffsets:String = "assets/shared/images/characters/" + curCharacter + "/" + curCharacter + ".json";
 				var vuelo:Float = 0;
+				var pOffset:Array<Float> = [0,0];
 
 				if(sys.FileSystem.exists(routePNG) && sys.FileSystem.exists(routeXML) && sys.FileSystem.exists(routeOffsets)){
 					var datos = Json.parse(sys.io.File.getContent(routeOffsets).trim());
@@ -2564,20 +2565,18 @@ class Character extends FlxSprite
 					if(datos.healthbar_colors != null){
 						this.colorCode = [datos.healthbar_colors[0],datos.healthbar_colors[1],datos.healthbar_colors[2]];
 					}
+					if(datos.position != null){
+						posOffsets = pOffset = datos.position;
+					}
 					if(datos.playerPosition != null){
 						if(isPlayer){
-							this.x += datos.playerPosition[0];
-							this.y += datos.playerPosition[1];
+							pOffset = datos.playerPosition;
 						}
 						playerPos = datos.playerPosition;
 					}
-					if(datos.position != null){
-						if(!isPlayer){
-							this.x += datos.position[0];
-							this.y += datos.position[1];
-						}
-						posOffsets = datos.position;
-					}
+					this.x += pOffset[0];
+					this.y += pOffset[1];
+					
 					if(datos.flying_offset != 0)
 						vuelo = datos.flying_offset;
 					this.flyingOffset = vuelo;
