@@ -89,6 +89,7 @@ class CharacterEditorState extends MusicBeatState
 	var healthBarBG:FlxSprite;
 	private var colorsMap:Map<String,Array<Int>> = [];
 	private var txtHint:FlxText;
+	private var imageHint:FlxText;
 
 	override function create()
 	{
@@ -182,9 +183,17 @@ class CharacterEditorState extends MusicBeatState
 		}
 
 		txtHint = new FlxText(30,healthBar.y + 12,0,"VANILLA CHARACTER, saving and loading may cause bugs",14);
-		txtHint.setFormat(Paths.font("karma future.ttf"), 30, FlxColor.YELLOW, LEFT, FlxTextBorderStyle.OUTLINE_FAST,FlxColor.BLACK);
+		txtHint.setFormat(Paths.font("karma future.ttf"), 30, FlxColor.YELLOW, LEFT, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
 		txtHint.cameras = [camHUD];
 		add(txtHint);
+
+		imageHint = new FlxText(FlxG.width-280,1,0,"Image and XML must be inside a folder named like\nthe character name",14);
+		imageHint.screenCenter(Y);
+		imageHint.x -= imageHint.width;
+		imageHint.setFormat(Paths.font("karma future.ttf"), 30, FlxColor.RED, RIGHT, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
+		imageHint.cameras = [camHUD];
+		imageHint.visible = false;
+		add(imageHint);
 
 		FlxG.camera.follow(camFollow);
 
@@ -1000,11 +1009,25 @@ class CharacterEditorState extends MusicBeatState
 			lastAnim = char.animation.curAnim.name;
 		}
 		var anims:Array<AnimArray> = char.animationsArray.copy();
-		if(sys.FileSystem.exists(routePNG) && sys.FileSystem.exists(routeXML)) {
-			char.setColorTransform();
-			char.frames = flixel.graphics.frames.FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile(routePNG), sys.io.File.getContent(routeXML));
+		var flagNotFound:Bool = false;
+		if(sys.FileSystem.exists("assets/shared/images/characters/" + imageInputText.text + "/")) {
+			if(sys.FileSystem.exists(routeXML) && sys.FileSystem.exists(routePNG)){
+				char.setColorTransform();
+				char.frames = flixel.graphics.frames.FlxAtlasFrames.fromSparrow(openfl.display.BitmapData.fromFile(routePNG), sys.io.File.getContent(routeXML));
+				imageHint.visible = false;
+			}else{
+				imageHint.text = "Image and XML must be named like the character name";
+				imageHint.x = FlxG.width-380-imageHint.width;
+				flagNotFound = true;
+			}
 		}else{
+			imageHint.text = "Image and XML must be inside a folder named like\nthe character name";
+			imageHint.x = FlxG.width-380-imageHint.width;
+			flagNotFound = true;
+		}
+		if(flagNotFound){
 			char.setColorTransform(1,1,1,1,255,255,255,0);
+			imageHint.visible = true;
 		}
 
 		if(char.animationsArray != null && char.animationsArray.length > 0) {
@@ -1158,11 +1181,11 @@ class CharacterEditorState extends MusicBeatState
 			flipXCheckBox.checked = char.originalFlipX;
 			noAntialiasingCheckBox.checked = !char.antialiasing;
 			resetHealthBarColor();
-			if(colorsMap.exists(daAnim)){
+			/*if(colorsMap.exists(daAnim)){
 				char.colorCode[0] = colorsMap.get(daAnim)[0];
 				char.colorCode[1] = colorsMap.get(daAnim)[1];
 				char.colorCode[2] = colorsMap.get(daAnim)[2];
-			}
+			}*/
 			leHealthIcon.changeIcon(healthIconInputText.text);
 			if(char.isPlayer && char.camPlayerPosition != null){
 				positionCameraXStepper.value = char.camPlayerPosition[0];
@@ -1178,7 +1201,9 @@ class CharacterEditorState extends MusicBeatState
 				positionXStepper.value = char.posOffsets[0];
 				positionYStepper.value = char.posOffsets[1];
 			}
+			char.setColorTransform();
 			txtHint.visible = (char.curCharacter == "daidem" || !char.isCustom);
+			imageHint.visible = false;
 			reloadAnimationDropDown();
 			updatePresence();
 		}
@@ -1240,36 +1265,33 @@ class CharacterEditorState extends MusicBeatState
 	function reloadCharacterDropDown() {
 		var charsLoaded:Map<String, Bool> = new Map();
 
-		#if MODS_ALLOWED
-		characterList = [];
-		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Paths.currentModDirectory + '/characters/'), Paths.getPreloadPath('characters/')];
-		for (i in 0...directories.length) {
-			var directory:String = directories[i];
-			if(FileSystem.exists(directory)) {
-				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
-					if (!sys.FileSystem.isDirectory(path) && file.endsWith('.json')) {
-						var charToCheck:String = file.substr(0, file.length - 5);
-						if(!charsLoaded.exists(charToCheck)) {
-							characterList.push(charToCheck);
-							charsLoaded.set(charToCheck, true);
-						}
+		characterList = CoolUtil.coolTextFile(Paths.txt('characterList'));
+
+		for(char in characterList)
+			charsLoaded.set(char,true);
+
+		var directory:String = "assets/shared/images/characters/";
+		if(sys.FileSystem.exists(directory)) {
+			for (file in sys.FileSystem.readDirectory(directory)) {
+				var path = haxe.io.Path.join([directory, file]);
+				if (sys.FileSystem.isDirectory(path) && sys.FileSystem.exists(directory+file+"/"+file+".json")) {
+					var charToCheck:String = ""+file;//file.substr(0, file.length - 5);
+					if(!charsLoaded.exists(charToCheck)) {
+						characterList.push(charToCheck);
+						charsLoaded.set(charToCheck, true);
 					}
 				}
 			}
 		}
-		#else
-		characterList = CoolUtil.coolTextFile(Paths.txt('characterList'));
-		#end
 
 		charDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(characterList, true));
 		charDropDown.selectedLabel = daAnim;
 	}
 
 	function resetHealthBarColor(setSteppers:Bool = false) {
+		if(colorsMap.exists(healthIconInputText.text) && (char.curCharacter == "daidem" || !char.isCustom))
+			char.colorCode = colorsMap.get(healthIconInputText.text);
 		if(setSteppers){
-			if(colorsMap.exists(healthIconInputText.text))
-				char.colorCode = colorsMap.get(healthIconInputText.text);
 			healthColorStepperR.value = char.colorCode[0];
 			healthColorStepperG.value = char.colorCode[1];
 			healthColorStepperB.value = char.colorCode[2];
@@ -1504,10 +1526,10 @@ class CharacterEditorState extends MusicBeatState
 			char.shiftLRAnims();
 		var json = {
 			"animations": char.animationsArray,
-			"image": daAnim,
+			"image": imageInputText.text,
 			"scale": char.scale.x,
 			"sing_duration": char.singDuration,
-			"healthicon": daAnim,
+			"healthicon": healthIconInputText.text,
 		
 			"position":	[savePos[2],savePos[3]],
 			"camera_position": [saveCam[2],saveCam[3]],

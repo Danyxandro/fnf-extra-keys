@@ -348,6 +348,36 @@ class ChartingState extends MusicBeatState
 		rivalPlaying.callback = function(){_song.asRival = false;if(rivalPlaying.checked)_song.asRival = true;};
 		bothSides.callback = function(){_song.bothSide = false;if(bothSides.checked)_song.bothSide = true;};
 
+		var charsLoaded:Map<String, Bool> = new Map();
+		var gfs:Map<String, Bool> = new Map();
+
+		for(char in characters)
+			charsLoaded.set(char,true);
+
+		for(char in gfVersions)
+			gfs.set(char,true);
+
+		var directory:String = "assets/shared/images/characters/";
+		if(sys.FileSystem.exists(directory)) {
+			for (file in sys.FileSystem.readDirectory(directory)) {
+				var path = haxe.io.Path.join([directory, file]);
+				if (sys.FileSystem.isDirectory(path) && sys.FileSystem.exists(directory+file+"/"+file+".json")) {
+					var charToCheck:String = ""+file;
+					if(charToCheck.startsWith("gf")){
+						if(!gfs.exists(charToCheck)) {
+							gfVersions.push(charToCheck);
+							gfs.set(charToCheck, true);
+						}
+					}else{
+						if(!charsLoaded.exists(charToCheck)) {
+							characters.push(charToCheck);
+							charsLoaded.set(charToCheck, true);
+						}
+					}
+				}
+			}
+		}
+
 		var player1DropDown = new FlxUIDropDownMenuCustom(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 			{
 				_song.player1 = characters[Std.parseInt(character)];
