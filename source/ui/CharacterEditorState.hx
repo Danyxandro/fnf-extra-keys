@@ -1181,11 +1181,7 @@ class CharacterEditorState extends MusicBeatState
 			flipXCheckBox.checked = char.originalFlipX;
 			noAntialiasingCheckBox.checked = !char.antialiasing;
 			resetHealthBarColor();
-			/*if(colorsMap.exists(daAnim)){
-				char.colorCode[0] = colorsMap.get(daAnim)[0];
-				char.colorCode[1] = colorsMap.get(daAnim)[1];
-				char.colorCode[2] = colorsMap.get(daAnim)[2];
-			}*/
+			flyingStepper.value = char.flyingOffset;
 			leHealthIcon.changeIcon(healthIconInputText.text);
 			if(char.isPlayer && char.camPlayerPosition != null){
 				positionCameraXStepper.value = char.camPlayerPosition[0];
