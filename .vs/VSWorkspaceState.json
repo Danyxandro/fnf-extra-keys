@@ -2,7 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\source",
+    "\\source\\shaders",
     "\\source\\ui"
   ],
+  "SelectedNode": "\\source\\shaders\\SolidColorShader.hx",
   "PreviewInSolutionExplorer": false
 }

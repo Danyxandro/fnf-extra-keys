@@ -1906,7 +1906,26 @@ class ModchartState
 					var spr:FlxSprite;
 					spr = getActorByName(id);
 					if(spr != null){
-						spr.setColorTransform(1,1,1,1,rOffset,gOffset,bOffset,aOffset);
+						var colorStuff:openfl.geom.ColorTransform;
+						colorStuff = spr.colorTransform;
+						colorStuff.blueOffset = bOffset;
+						colorStuff.greenOffset = gOffset;
+						colorStuff.redOffset = rOffset;
+						colorStuff.alphaOffset = aOffset;
+						//spr.setColorTransform(1,1,1,1,rOffset,gOffset,bOffset,aOffset);
+					}
+				});
+
+				Lua_helper.add_callback(lua,"setColorMultiplier", function(id:String,red:Float=1,green:Float=1,blue:Float=1,alfa:Float=1) {
+					var spr:FlxSprite;
+					spr = getActorByName(id);
+					if(spr != null){
+						var colorStuff:openfl.geom.ColorTransform;
+						colorStuff = spr.colorTransform;
+						colorStuff.blueMultiplier = blue;
+						colorStuff.greenMultiplier = green;
+						colorStuff.redMultiplier = red;
+						colorStuff.alphaMultiplier = alfa;
 					}
 				});
 
@@ -2264,6 +2283,33 @@ class ModchartState
 
 				//forgot and accidentally commit to master branch
 				// shader
+
+				Lua_helper.add_callback(lua,"setColorShader", function(id:String,red:Int,green:Int,blue:Int) {
+					var spr:FlxSprite;
+					spr = getActorByName(id);
+					if(spr != null){
+						var solidColorShader:shaders.SolidColorShader = null;
+						if(spr.shader == null){
+							solidColorShader = new shaders.SolidColorShader();
+							// Apply the shader to the sprite
+							spr.shader = solidColorShader;
+						}else{
+							if((spr.shader is shaders.SolidColorShader))
+								solidColorShader = (cast spr.shader);
+						}
+						if(solidColorShader != null)
+							// Set the color you want to use  in the shader
+							solidColorShader.setColor(red,green,blue);
+					}
+				});
+
+				Lua_helper.add_callback(lua,"removeShaders", function(id:String) {
+					var spr:FlxSprite;
+					spr = getActorByName(id);
+					if(spr != null){
+						spr.shader = null;
+					}
+				});
 				
 				/*Lua_helper.add_callback(lua,"createShader", function(frag:String,vert:String) {
 					var shader:LuaShader = new LuaShader(frag,vert);

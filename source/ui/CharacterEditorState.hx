@@ -90,6 +90,9 @@ class CharacterEditorState extends MusicBeatState
 	private var colorsMap:Map<String,Array<Int>> = [];
 	private var txtHint:FlxText;
 	private var imageHint:FlxText;
+	private var animHint:FlxText;
+	private var animButtons:Array<FlxButton> = [];
+	private var flag:Bool = true;
 
 	override function create()
 	{
@@ -516,6 +519,7 @@ class CharacterEditorState extends MusicBeatState
 			updatePointerPos();
 			reloadBGs();
 			ghostChar.flipX = char.flipX;
+			flag = false;
 		};
 
 		charDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(character:String)
@@ -534,6 +538,7 @@ class CharacterEditorState extends MusicBeatState
 			}
 			updatePresence();
 			reloadCharacterDropDown();
+			flag = false;
 		});
 		charDropDown.selectedLabel = daAnim;
 		reloadCharacterDropDown();
@@ -542,6 +547,7 @@ class CharacterEditorState extends MusicBeatState
 		{
 			loadChar(this.isPlayer);
 			reloadCharacterDropDown();
+			flag = false;
 		});
 
 		var templateCharacter:FlxButton = new FlxButton(140, 50, "Load Template", function()
@@ -865,8 +871,13 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 		});
+		animButtons = [addUpdateButton,removeButton];
+		animHint = new FlxText(animationIndicesInputText.x, animationIndicesInputText.y + 22, 0, "Editing animation is disabled\non playable characters", 12);
+		animHint.setFormat(null, 12, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE_FAST, FlxColor.BLACK);
+		animHint.visible = !!char.isPlayer;
 
 		tab_group.add(new FlxText(animationDropDown.x, animationDropDown.y - 18, 0, 'Animations:'));
+		tab_group.add(animHint);
 		tab_group.add(new FlxText(ghostDropDown.x, ghostDropDown.y - 18, 0, 'Animation Ghost:'));
 		tab_group.add(new FlxText(animationInputText.x, animationInputText.y - 18, 0, 'Animation name:'));
 		tab_group.add(new FlxText(animationNameFramerate.x, animationNameFramerate.y - 18, 0, 'Framerate:'));
@@ -1183,6 +1194,11 @@ class CharacterEditorState extends MusicBeatState
 			resetHealthBarColor();
 			flyingStepper.value = char.flyingOffset;
 			leHealthIcon.changeIcon(healthIconInputText.text);
+			for(button in animButtons){
+				button.active = !char.isPlayer;
+				button.visible = !char.isPlayer;
+			}
+			animHint.visible = !!char.isPlayer;
 			if(char.isPlayer && char.camPlayerPosition != null){
 				positionCameraXStepper.value = char.camPlayerPosition[0];
 				positionCameraYStepper.value = char.camPlayerPosition[1];
@@ -1465,6 +1481,13 @@ class CharacterEditorState extends MusicBeatState
 		//camMenu.zoom = FlxG.camera.zoom;
 		ghostChar.setPosition(char.x, char.y);
 		super.update(elapsed);
+		if(flag){
+			for(button in animButtons){
+				button.active = !char.isPlayer;
+				button.visible = !char.isPlayer;
+			}
+			animHint.visible = !!char.isPlayer;
+		}
 	}
 
 	var _file:FileReference;
