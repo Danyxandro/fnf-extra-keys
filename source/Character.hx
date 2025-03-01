@@ -2657,7 +2657,7 @@ class Character extends FlxSprite
 	if(!debugMode){
 		if (!isPlayingAsBF)
 		{
-			if (/*curCharacter.startsWith('bf') && !*/isPlayer)
+			if (isPlayer)
 				{
 					if (animation.curAnim.name.startsWith('sing'))
 					{
@@ -2676,7 +2676,7 @@ class Character extends FlxSprite
 					}*/
 					if (holdTimer >= Conductor.stepCrochet * singDuration * 0.001)
 					{
-						trace('dance');
+						trace('dance '+curCharacter);
 						dance();
 						holdTimer = 0;
 					}
@@ -2694,7 +2694,7 @@ class Character extends FlxSprite
 		
 					if (holdTimer >= Conductor.stepCrochet * singDuration * 0.001)
 					{
-						trace('dance');
+						trace('dance '+curCharacter);
 						dance();
 						holdTimer = 0;
 					}
@@ -2888,7 +2888,7 @@ class Character extends FlxSprite
 			}
 		}else{
 			if(!hasFocus && !curCharacter.startsWith('gf')){
-				if(this.animation.curAnim.name == "idle" && this.animation.curAnim.finished)
+				if(this.animation.curAnim.name != "idle" || this.animation.curAnim.finished)
 					playAnim("idle");
 			}//fin del has focus
 		}//fin del if sync
