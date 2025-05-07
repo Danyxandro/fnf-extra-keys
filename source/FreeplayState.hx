@@ -418,6 +418,7 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK && !searchExtended)
 		{
+			MainMenuState.curSelected = 1;
 			FlxG.switchState(new MainMenuState());
 		}
 

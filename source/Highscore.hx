@@ -59,8 +59,9 @@ class Highscore
 		NGio.postScore(score, "Week " + week);
 		#end
 
-		/*if(!FlxG.save.data.botplay)
-		{*/
+		/*if(!FlxG.save.data.botplay)*/
+		if(!PlayStateChangeables.usedBotplay)
+		{
 			//PlayState saves song scores played legally, boyplay doesn't count on the score so it's saved
 			var daWeek:String = formatSong('week' + week, diff);
 
@@ -71,7 +72,7 @@ class Highscore
 			}
 			else
 				setScore(daWeek, score);
-		//}else trace('BotPlay detected. Score saving is disabled.');
+		}else trace('BotPlay detected. Score saving is disabled.');
 	}
 
 	/**

@@ -335,7 +335,6 @@ class PlayState extends MusicBeatState
 		PlayStateChangeables.safeFrames = FlxG.save.data.frames;
 		PlayStateChangeables.scrollSpeed = FlxG.save.data.scrollSpeed;
 		PlayStateChangeables.botPlay = FlxG.save.data.botplay;
-		PlayStateChangeables.usedBotplay = false;
 		if(FlxG.save.data.botplay){
 			PlayStateChangeables.usedBotplay = true;
 		}

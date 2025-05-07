@@ -5,7 +5,7 @@ class Ratings
     public static function GenerateLetterRank(accuracy:Float) // generate a letter ranking
     {
         var ranking:String = "N/A";
-		if(FlxG.save.data.botplay && !PlayState.loadRep)
+		if(PlayStateChangeables.usedBotplay && !PlayState.loadRep)
 			ranking = "BotPlay";
 
         if (PlayState.misses == 0 && PlayState.bads == 0 && PlayState.shits == 0 && PlayState.goods == 0) // Marvelous (SICK) Full Combo
@@ -86,7 +86,7 @@ class Ratings
 
         if (accuracy == 0)
             ranking = "N/A";
-		else if(FlxG.save.data.botplay && !PlayState.loadRep)
+		if(PlayStateChangeables.usedBotplay && !PlayState.loadRep)
 			ranking = "BotPlay";
 
         return ranking;
@@ -107,7 +107,7 @@ class Ratings
 
         // trace('Hit Info\nDifference: ' + noteDiff + '\nZone: ' + Conductor.safeZoneOffset * 1.5 + "\nTS: " + customTimeScale + "\nLate: " + 155 * customTimeScale);
 
-        if (FlxG.save.data.botplay && !PlayState.loadRep)
+        if (PlayStateChangeables.botPlay && !PlayState.loadRep)
             return "sick"; // FUNNY
 	
 

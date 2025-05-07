@@ -419,6 +419,7 @@ class BetadciuState extends MusicBeatState
 
 		if (controls.BACK && !searchExtended)
 		{
+			MainMenuState.curSelected = 2;
 			FlxG.switchState(new MainMenuState());
 		}
 

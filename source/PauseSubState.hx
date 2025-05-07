@@ -235,12 +235,12 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}
-					if(PlayState.loadRep)
+					/*if(PlayState.loadRep)
 					{
 						FlxG.save.data.botplay = false;
 						FlxG.save.data.scrollSpeed = 1;
 						FlxG.save.data.downscroll = false;
-					}
+					}*/
 					PlayState.loadRep = false;
 					#if windows
 					if (PlayState.luaModchart != null)
@@ -257,6 +257,7 @@ class PauseSubState extends MusicBeatSubstate
 						(cast (Lib.current.getChildAt(0), Main)).setFPSCap(290);
 					
 					if(PlayState.isStoryMode){
+						MainMenuState.curSelected = 0;
 						FlxG.switchState(new MainMenuState());
 					}else{
 						switch(PlayStateChangeables.goToState){
