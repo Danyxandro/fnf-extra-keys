@@ -92,7 +92,6 @@ class CharacterEditorState extends MusicBeatState
 	private var imageHint:FlxText;
 	private var animHint:FlxText;
 	private var animButtons:Array<FlxButton> = [];
-	private var flag:Bool = true;
 
 	override function create()
 	{
@@ -519,7 +518,6 @@ class CharacterEditorState extends MusicBeatState
 			updatePointerPos();
 			reloadBGs();
 			ghostChar.flipX = char.flipX;
-			flag = false;
 		};
 
 		charDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(character:String)
@@ -538,7 +536,6 @@ class CharacterEditorState extends MusicBeatState
 			}
 			updatePresence();
 			reloadCharacterDropDown();
-			flag = false;
 		});
 		charDropDown.selectedLabel = daAnim;
 		reloadCharacterDropDown();
@@ -547,7 +544,6 @@ class CharacterEditorState extends MusicBeatState
 		{
 			loadChar(this.isPlayer);
 			reloadCharacterDropDown();
-			flag = false;
 		});
 
 		var templateCharacter:FlxButton = new FlxButton(140, 50, "Load Template", function()
@@ -1481,13 +1477,11 @@ class CharacterEditorState extends MusicBeatState
 		//camMenu.zoom = FlxG.camera.zoom;
 		ghostChar.setPosition(char.x, char.y);
 		super.update(elapsed);
-		if(flag){
-			for(button in animButtons){
-				button.active = !char.isPlayer;
-				button.visible = !char.isPlayer;
-			}
-			animHint.visible = !!char.isPlayer;
+		for(button in animButtons){
+			button.active = !char.isPlayer;
+			button.visible = !char.isPlayer;
 		}
+		animHint.visible = !!char.isPlayer;
 	}
 
 	var _file:FileReference;

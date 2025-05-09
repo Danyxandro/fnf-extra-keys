@@ -6,7 +6,7 @@ class Ratings
     {
         var ranking:String = "N/A";
 		if(PlayStateChangeables.usedBotplay && !PlayState.loadRep)
-			ranking = "BotPlay";
+			return "BotPlay";//ranking = "BotPlay";
 
         if (PlayState.misses == 0 && PlayState.bads == 0 && PlayState.shits == 0 && PlayState.goods == 0) // Marvelous (SICK) Full Combo
             ranking = "(MFC)";
@@ -86,8 +86,8 @@ class Ratings
 
         if (accuracy == 0)
             ranking = "N/A";
-		if(PlayStateChangeables.usedBotplay && !PlayState.loadRep)
-			ranking = "BotPlay";
+		/*else if(PlayStateChangeables.usedBotplay && !PlayState.loadRep)
+			ranking = "BotPlay";*/
 
         return ranking;
     }
