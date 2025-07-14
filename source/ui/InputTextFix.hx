@@ -19,7 +19,7 @@ class InputTextFix extends FlxUIInputText
 		BackgroundColor:Int = FlxColor.WHITE, EmbeddedFont:Bool = true)
 	{
 		super(X, Y, Width, Text, size, EmbeddedFont);
-
+		
 		texts.push(this);
 	}
 
@@ -63,6 +63,8 @@ class InputTextFix extends FlxUIInputText
 			if (FlxG.keys.justPressed.V)
 			{
 				var clip = openfl.desktop.Clipboard.generalClipboard.getData(TEXT_FORMAT);
+				if(clip == null)
+					clip = "";
 				var spl = text.split("");
 
 				trace(clip.toString());
@@ -163,8 +165,14 @@ class InputTextFix extends FlxUIInputText
 
 		if (hasFocus)
 		{
-			// Do nothing for Shift, Ctrl, Esc, and flixel console hotkey
-			if (key == 16 || key == 17 || key == 220 || key == 27 || key == 20)
+			//Ignore and do not react to TAB
+			if(key == 9){
+				canType = true;
+				e.preventDefault();
+				return;
+			}
+			// Do nothing for Shift, Ctrl, Esc, Tab and flixel console hotkey
+			if (key == 16 || key == 17 || key == 220 || key == 27 || key == 20 /*|| key == 9*/)
 			{
 				return;
 			}
@@ -227,15 +235,29 @@ class InputTextFix extends FlxUIInputText
 			else if (key == 13)
 			{
 				onChange(FlxInputText.ENTER_ACTION);
-			}
-			else
+			}else{
+				/*if (e.charCode == 0) // non-printable characters crash String.fromCharCode
+				{
+					return;
+				}
+				final newText = filter(String.fromCharCode(e.charCode));
+
+				if (newText.length > 0 && (maxLength == 0 || (text.length + newText.length) <= maxLength))
+				{
+					text = insertSubstring(text, newText, caretIndex);
+					caretIndex++;
+					onChange(FlxInputText.INPUT_ACTION);
+				}*/
 				canType = true;
+			}
+			//super.onKeyDown(e);
 		}
 	}
 
 	override function set_text(Text:String):String 
 	{
 		Text = Text.replace("\r", "");
+		Text = Text.replace("\t", "");
 		return super.set_text(Text);
 	}
 

@@ -40,7 +40,7 @@ class MainMenuState extends MusicBeatState
 
 	public static var nightly:String = "";
 
-	public static var kadeEngineVer:String = "2.5.2 EK" + nightly;
+	public static var kadeEngineVer:String = "2.6 EK" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 
 	var magenta:FlxSprite;
@@ -207,6 +207,12 @@ class MainMenuState extends MusicBeatState
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(1);
+			}
+
+			if(FlxG.keys.justPressed.EIGHT){
+				EditorsMenu.curSelected = 0;
+				FlxG.switchState(new EditorsMenu());
+				trace("Editors menu selected");
 			}
 
 			if (controls.BACK)

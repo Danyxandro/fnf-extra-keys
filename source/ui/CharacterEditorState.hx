@@ -132,7 +132,7 @@ class CharacterEditorState extends MusicBeatState
 
 		loadChar(this.isPlayer, false);
 
-		healthBarBG = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('healthBar'));
+		healthBarBG = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('healthBar',"shared"));
 		healthBarBG.scrollFactor.set();
 		add(healthBarBG);
 		healthBarBG.cameras = [camHUD];
@@ -339,12 +339,12 @@ class CharacterEditorState extends MusicBeatState
 			//changeBGbutton.text = "Regular BG";
 		} else {
 			var bg:FlxSprite = new FlxSprite(-600 + OFFSET_X - playerXDifference, -300);
-			bg.loadGraphic(Paths.image('stageback'));
+			bg.loadGraphic(Paths.image('stageback',"shared"));
 			bg.scrollFactor.set(0.9,0.9);
 			bgLayer.add(bg);
 
 			var stageFront:FlxSprite = new FlxSprite(-650 + OFFSET_X - playerXDifference, 500);
-			stageFront.loadGraphic(Paths.image('stagefront'));
+			stageFront.loadGraphic(Paths.image('stagefront',"shared"));
 			stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
 			stageFront.scrollFactor.set(0.9,0.9);
 			stageFront.updateHitbox();
@@ -1361,8 +1361,9 @@ class CharacterEditorState extends MusicBeatState
 				if(goToPlayState) {
 					FlxG.switchState(new PlayState());
 				} else {
-					FlxG.switchState(new MainMenuState());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					//FlxG.switchState(new MainMenuState());
+					FlxG.switchState(new EditorsMenu());
+					//FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
 				FlxG.mouse.visible = false;
 				return;
