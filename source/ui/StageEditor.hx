@@ -72,13 +72,14 @@ class StageEditor extends MusicBeatState
 	private var nameInput:InputTextFix;
 	private var lockControls:Bool = false;
 	private var images:Array<Dynamic> = [];
-	private var imagesIDs:Map<String,Array<Int>> = [];
-	private var curSelected:Int = 0;
 	private var anchorPoint:Array<Float>;
 	private var offsets:Array<Int>;
 	private var positions:Array<Float>;
 
 	private var objMap:Map<String,Dynamic> = [];
+	private var stepperMap:Map<String,FlxCustomStepper> = [];
+	private var checkMap:Map<String,FlxUICheckBox> = [];
+	private var dropMap:Map<String,FlxUIDropDownMenuCustom> = [];
 
 	override function create(){
 		FlxG.mouse.visible = true;
@@ -173,7 +174,16 @@ class StageEditor extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		lockControls = (InputTextFix.isTyping || stageDropDown.dropPanel.visible || imageSelector.dropPanel.visible);
+		var openedDropdown:Bool = false;
+
+		for(uiDrop in dropMap){
+			if(uiDrop.dropPanel.visible){
+				openedDropdown = true;
+				break;
+			}
+		}
+
+		lockControls = (InputTextFix.isTyping || stageDropDown.dropPanel.visible || imageSelector.dropPanel.visible || openedDropdown || imageSelector.dropPanel.visible || imageSelector2.dropPanel.visible || layerDropdown.dropPanel.visible);
 
 		if(!lockControls){
 			if (FlxG.keys.pressed.W || FlxG.keys.pressed.A || FlxG.keys.pressed.S || FlxG.keys.pressed.D)
@@ -211,8 +221,13 @@ class StageEditor extends MusicBeatState
 				return;
 			}
 		}
+		for(stepper in stepperMap)
+			stepper.active = !lockControls;
+		for(check in checkMap)
+			check.active = !lockControls;
 
 		FlxG.watch.addQuick('Cam zoom',FlxG.camera.zoom);
+		FlxG.watch.addQuick('Controls locked?',lockControls);
 		super.update(elapsed);
 	}
 
@@ -245,11 +260,17 @@ class StageEditor extends MusicBeatState
 	}
 
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
+		var steppers:Array<FlxCustomStepper> = [stepperMap.get("scrollXStepper"),stepperMap.get("scrollYStepper"),stepperMap.get("scaleStepper"),stepperMap.get("xStepper"),stepperMap.get("yStepper")];
 		if(id == FlxCustomStepper.CHANGE_EVENT && (sender is FlxCustomStepper)) {
 			if (sender == zoomDropDown)
 			{
 				camZoom = zoomDropDown.value;
 				FlxG.camera.zoom = camZoom;
+			}
+			for(stepper in steppers){
+				if(sender == stepper){
+					updateSprite();
+				}
 			}
 		}/*else if(id == InputTextFix.CHANGE_EVENT && (sender is InputTextFix)) {
 			if(sender == imageInputText) {
@@ -265,6 +286,7 @@ class StageEditor extends MusicBeatState
 	private var imageSelector:FlxUIDropDownMenuCustom;
 	private var imageSelector2:FlxUIDropDownMenuCustom;
 	private var layerDropdown:FlxUIDropDownMenuCustom;
+	private var selectedSprite:FlxSprite;
 
 	private function addUIStuff(){
 		var tipTextArray:Array<String> = "E/Q - Camera Zoom In/Out
@@ -357,19 +379,55 @@ class StageEditor extends MusicBeatState
 		imageSelector = new FlxUIDropDownMenuCustom(15, 110, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(image:String)
 		{
 			imageSelector2.selectedLabel = imageSelector.selectedLabel;
+			selectSprite(imageSelector.selectedLabel);
 		},new FlxUIDropDownHeader(200));
 
 		var removeButton:FlxButton = new FlxButton(25 + imageSelector.width, 110, "Remove", function()
 		{
-			
+			var spr:FlxSprite;
+			if(imageSelector.selectedLabel != ""){
+				var data = {"x":0.0, "y":0.0,
+				"scrollX":1.0, "scrollY":1.0,
+				"scale":1.0, "antialiasing": false,
+				"image":"none", "zPos":0,
+				"index":-1, "label":""};
+				var index:Int = 0;
+				for(obj in images){
+					index++;
+					if(obj.label == imageSelector.selectedLabel){
+						data = obj;
+						break;
+					}
+				}
+				if(data.index > -1){
+					spr = cast layerBGs[data.zPos].members[data.index];
+					trace("z: "+data.zPos+" index: "+data.index+" length: "+layerBGs[data.zPos].members.length);
+					if(spr != null)
+						layerBGs[data.zPos].remove(spr);
+					if(index < layerBGs[data.zPos].length - 1){
+						for(i in index...layerBGs[data.zPos].members.length){
+							if(!Reflect.hasField(images[i],"layerName"))
+								images[i].index = i - 1;
+						}
+					}
+					images.remove(data);
+					reloadImageList();
+				}else if(Reflect.hasField(data,"layerName")){
+					trace("layer deleted");
+					images.remove(data);
+					reloadImageList();
+				}
+				for(img in images)
+					trace(img);
+			}
 		});
 		removeButton.color = FlxColor.RED;
 		removeButton.label.color = FlxColor.WHITE;
 
 		var xStepper = new FlxCustomStepper(15, 155,1,0,-5000,5000);
-		objMap.set("xStepper",xStepper);
+		stepperMap.set("xStepper",xStepper);
 		var yStepper = new FlxCustomStepper(80, 155,1,0,-5000,5000);
-		objMap.set("yStepper",yStepper);
+		stepperMap.set("yStepper",yStepper);
 		layerDropdown = new FlxUIDropDownMenuCustom(150, 150, FlxUIDropDownMenuCustom.makeStrIdLabelArray(
 			['Behind characters','Between GF and the characters','In front of characters','On HUD behind strums and arrows','In front of HUD']
 		, true), function(layer:String)
@@ -377,15 +435,18 @@ class StageEditor extends MusicBeatState
 			
 		},new ui.FlxUIDropDownMenuCustom.FlxUIDropDownHeader(170));
 		var anti_check = new FlxUICheckBox(15, 195, null, null, "Antialiasing", 70);
-		objMap.set("anti_check",anti_check);
+		anti_check.callback = function(){
+			updateSprite();
+		};
+		checkMap.set("anti_check",anti_check);
 		var asLayer_check = new FlxUICheckBox(220, 70, null, null, "Set as layer", 70);
-		objMap.set("asLayer_check",asLayer_check);
+		checkMap.set("asLayer_check",asLayer_check);
 		var scaleStepper = new FlxCustomStepper(110, 195,0.05,1,0.05,50,2,35,1);
-		objMap.set("scaleStepper",scaleStepper);
-		var scrollXStepper = new FlxCustomStepper(195, 195,0.1,1,0.1,50,1,30,1);
-		objMap.set("scrollXStepper",scrollXStepper);
-		var scrollYStepper = new FlxCustomStepper(260, 195,0.1,1,0.1,50,1,30,1);
-		objMap.set("scrollYStepper",scrollYStepper);
+		stepperMap.set("scaleStepper",scaleStepper);
+		var scrollXStepper = new FlxCustomStepper(195, 195,0.1,1,0,50,1,30,1);
+		stepperMap.set("scrollXStepper",scrollXStepper);
+		var scrollYStepper = new FlxCustomStepper(260, 195,0.1,1,0,50,1,30,1);
+		stepperMap.set("scrollYStepper",scrollYStepper);
 
 		tab_group2.add(new FlxText(15, 12, 0, 'Image file:'));
 		tab_group2.add(imageInputText);
@@ -416,13 +477,14 @@ class StageEditor extends MusicBeatState
 		imageSelector2 = new FlxUIDropDownMenuCustom(15, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(image:String)
 		{
 			imageSelector.selectedLabel = imageSelector2.selectedLabel;
+			selectSprite(imageSelector2.selectedLabel);
 		},new FlxUIDropDownHeader(150));
 
 		var animationDropdown = new FlxUIDropDownMenuCustom(175, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(anim:String)
 		{
 			
 		},new FlxUIDropDownHeader(150));
-		objMap.set("animationDropdown",animationDropdown);
+		dropMap.set("animationDropdown",animationDropdown);
 		/*var animInput = new InputTextFix(15, 70, 135, '', 8);
 		objMap.set("animInput",animInput);*/
 		var XMLInput = new InputTextFix(/*175*/15, 70, 200, '', 8);
@@ -442,15 +504,15 @@ class StageEditor extends MusicBeatState
 		{
 			
 		},new FlxUIDropDownHeader(200));
-		objMap.set("startAnimDrop",startAnimDrop);
+		dropMap.set("startAnimDrop",startAnimDrop);
 		var animNameInput = new InputTextFix(15, 170, 150, '', 8);
 		objMap.set("animNameInput",animNameInput);
 		var prefixInput = new InputTextFix(175, 170, 150, '', 8);
 		objMap.set("prefixInput",prefixInput);
 		var fpsStepper = new FlxCustomStepper(15, 205,1,24,0,60);
-		objMap.set("fpsStepper",fpsStepper);
+		stepperMap.set("fpsStepper",fpsStepper);
 		var loop_check = new FlxUICheckBox(90, 205, null, null, "Looped", 70);
-		objMap.set("loop_check",loop_check);
+		checkMap.set("loop_check",loop_check);
 
 		tab_group3.add(new FlxText(15, imageSelector2.y - 18, 0, 'Select object to edit:'));
 		tab_group3.add(new FlxText(animationDropdown.x, animationDropdown.y - 18, 0, 'Play animation:'));
@@ -477,17 +539,17 @@ class StageEditor extends MusicBeatState
 		tab_group4.name = "Offsets";
 
 		var bfXStepper = new FlxCustomStepper(15, 30,1,0,0,80);
-		objMap.set("bfXStepper",bfXStepper);
+		stepperMap.set("bfXStepper",bfXStepper);
 		var bfYStepper = new FlxCustomStepper(175, 30,1,0,0,80);
-		objMap.set("bfYStepper",bfYStepper);
+		stepperMap.set("bfYStepper",bfYStepper);
 		var dadXStepper = new FlxCustomStepper(15, 110,1,0,0,80);
-		objMap.set("dadXStepper",dadXStepper);
+		stepperMap.set("dadXStepper",dadXStepper);
 		var dadYStepper = new FlxCustomStepper(175, 110,1,0,0,80);
-		objMap.set("dadYStepper",dadYStepper);
+		stepperMap.set("dadYStepper",dadYStepper);
 		var gfXStepper = new FlxCustomStepper(15, 70,1,0,0,80);
-		objMap.set("gfXStepper",gfXStepper);
+		stepperMap.set("gfXStepper",gfXStepper);
 		var gfYStepper = new FlxCustomStepper(175, 70,1,0,0,80);
-		objMap.set("gfYStepper",gfYStepper);
+		stepperMap.set("gfYStepper",gfYStepper);
 		tab_group4.add(new FlxText(bfXStepper.x, bfXStepper.y - 18, 0, 'Boyfriend X pos:'));
 		tab_group4.add(bfXStepper);
 		tab_group4.add(new FlxText(bfYStepper.x, bfYStepper.y - 18, 0, 'Boyfriend Y pos:'));
@@ -508,19 +570,19 @@ class StageEditor extends MusicBeatState
 
 	private function reloadImageList(){
 		var labels:Array<String> = [''];
+		var print:String = "";
 
-		for(id in imagesIDs.keys()){
-			//labels.push(images[imagesIDs.get(id)].image);
-			labels.push(id);
+		for(id in images){
+			labels.push(id.label);
+			print = print + "" + id.label + "\n";
 		}
 
 		imageSelector.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(labels, true));
 		imageSelector.selectedLabel = "";
 		imageSelector2.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(labels, true));
 		imageSelector2.selectedLabel = "";
-		curSelected = 0;
 
-		trace(images + "\n" + imagesIDs);
+		trace(print);
 	}
 
 	private function reloadStageDropDown() {
@@ -547,6 +609,7 @@ class StageEditor extends MusicBeatState
 	}
 
 	private function clearStage(){
+		var auxStepper:FlxCustomStepper;
 		for(layer in layerBGs){
 			layer.forEachAlive(function(obj:flixel.FlxBasic){
 				obj.destroy();
@@ -554,59 +617,76 @@ class StageEditor extends MusicBeatState
 			layer.clear();
 		}
 		images = [];
-		imagesIDs = [];
-		for(obj in objMap){
-			if((obj is FlxCustomStepper)){
-				var auxStepper:FlxCustomStepper = cast obj;
-				auxStepper.value = 0;
-			}else if((obj is FlxUICheckBox)){
-				var auxCheckbox:FlxUICheckBox = cast obj;
-				auxCheckbox.checked = false;
-			}else if((obj is FlxUIDropDownMenuCustom)){
-				var auxDropdown:FlxUIDropDownMenuCustom = cast obj;
-				auxDropdown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true));
-				auxDropdown.selectedLabel = "";
-			}
+		for(step in stepperMap)
+			step.value = 0;
+		for(checkBox in checkMap)
+			checkBox.checked = false;
+		for(dropdown in dropMap){
+			dropdown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true));
+			dropdown.selectedLabel = "";
 		}
 		layerDropdown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(
 		['Behind characters','Between GF and the characters','In front of characters','On HUD behind strums and arrows','In front of HUD']
 		,true));
 		layerDropdown.selectedLabel = 'Behind characters';
-		objMap.get("scaleStepper").value = 1;
-		objMap.get("scrollXStepper").value = 1;
-		objMap.get("scrollYStepper").value = 1;
-		objMap.get("fpsStepper").value = 24;
+		stepperMap.get("scaleStepper").value = 1;
+		stepperMap.get("scrollXStepper").value = 1;
+		stepperMap.get("scrollYStepper").value = 1;
+		stepperMap.get("fpsStepper").value = 24;
+		var textInput:InputTextFix = cast objMap.get("XMLInput");
+		textInput.text = "";
+		reloadImageList();
 	}
 
 	private function insertImage(){
 		var route:String;
 		var sprite:FlxSprite;
 
+		if(checkMap.get("asLayer_check").checked){
+			if(imgNameInput.text.length > 0){
+				var layer = {"layerName":imgNameInput.text,
+				"zPos":getLayerIndex(),"index":-1};
+				var count:Int = 1;
+				for(id in images){
+					if(Reflect.hasField(layer, "label") && id.label.startsWith(imgNameInput.text))
+						count++;
+				}
+				if(count>1)
+					Reflect.setField(layer, "label", imgNameInput.text + " " + count);
+				else
+					Reflect.setField(layer, "label", imgNameInput.text + " " + count);
+				images.push(layer);
+				reloadImageList();
+				trace("ses");
+			}
+		}else
 		if(imageInputText.text.length > 0 && nameInput.text.length > 0){
 			route = "assets/stages/"+nameInput.text+"/"+imageInputText.text+".png";
 			
 			if(sys.FileSystem.exists(route)) {
 				sprite = new FlxSprite();
 				sprite.loadGraphic(openfl.display.BitmapData.fromFile(route));
-				layerBGs[0].add(sprite);
+				layerBGs[getLayerIndex()].add(sprite);
 				var img = {
 					"x":0, "y":0,
 					"scrollX":1, "scrollY":1,
-					"scale":1, "antialiasing": sprite.antialiasing,
-					"image":imageInputText.text
+					"scale":1, "antialiasing": true,
+					"image":imageInputText.text,
+					"zPos":getLayerIndex(),
+					"index": layerBGs[getLayerIndex()].members.length -1
 				};
 				if(imgNameInput.text.length > 0)
 					Reflect.setField(img, "spriteName", imgNameInput.text);
+				var count:Int = 1;
+				for(id in images){
+					if(Reflect.hasField(img, "label") && id.label.startsWith(imageInputText.text))
+						count++;
+				}
+				if(count>1)
+					Reflect.setField(img, "label", nameInput.text + " " + count);
+				else
+					Reflect.setField(img, "label", nameInput.text);
 				images.push(img);
-				if(imagesIDs.exists(imageInputText.text)){
-					var count:Int = 0;
-					for(id in imagesIDs.keys()){
-						if(id.startsWith(imageInputText.text))
-							count++;
-					}
-					imagesIDs.set(imageInputText.text + " " + count,[getLayerIndex(),layerBGs[getLayerIndex()].length -1]);
-				}else
-					imagesIDs.set(imageInputText.text,[getLayerIndex(),layerBGs[getLayerIndex()].length -1]);
 				reloadImageList();
 			}
 		}
@@ -617,25 +697,25 @@ class StageEditor extends MusicBeatState
 		var routeJSON:String = "assets/stages/" + stage.toLowerCase() + ".json";
 		if(FileSystem.exists(routeJSON)){
 			var stageData = cast Json.parse(File.getContent(routeJSON).trim());
-			trace(stageData);
 			var zoom = 1.05;
 			zoom = stageData.zoom;
 			FlxG.camera.zoom = camZoom = zoomDropDown.value = zoom + 0;
 			var sprites:Array<Dynamic> = stageData.sprites;
 			for(spr in sprites){
-				images.push(spr);
 				var bg:FlxSprite = new FlxSprite(spr.x,spr.y);
 				var png:String = "assets/stages/"+stage.toLowerCase()+"/"+spr.image+".png";
 				if(spr.layerName != null){
-					if(imagesIDs.exists(spr.layerName)){
-						var count:Int = 0;
-						for(id in imagesIDs.keys()){
-							if(id.startsWith(spr.layerName))
-								count++;
-						}
-						imagesIDs.set(spr.layerName + " " + count,[spr.zPos,layerBGs[spr.zPos].length -1]);
-					}else
-						imagesIDs.set(spr.layerName,[spr.zPos,layerBGs[spr.zPos].length -1]);
+					var zPos:Int = spr.zPos;
+					var count = 1;
+					for(id in images){
+						if(Reflect.hasField(spr, "label") && id.label.startsWith(spr.layerName))
+							count++;
+					}
+					if(count>1)
+						Reflect.setField(spr, "label", spr.layerName + " " + count);
+					else
+						Reflect.setField(spr, "label", spr.layerName);
+					Reflect.setField(spr, "index", -1);
 				}else{
 					if(FileSystem.exists(png)){
 						if(spr.xml != null && sys.FileSystem.exists("assets/stages/"+stage.toLowerCase()+"/"+spr.xml+".xml")){
@@ -655,33 +735,26 @@ class StageEditor extends MusicBeatState
 					bg.scrollFactor.set(spr.scrollX,spr.scrollY);
 					bg.scale.set(spr.scale,spr.scale);
 					bg.updateHitbox();
-					switch(spr.zPos){
-						case 1:
-							layerBGs[1].add(bg);
-						case 2:
-							layerBGs[2].add(bg);
-						case 3:
-							layerBGs[3].add(bg);
-						case 4:
-							layerBGs[4].add(bg);
-						default:
-							layerBGs[0].add(bg);
+					var zIndex:Int = spr.zPos;
+					layerBGs[zIndex].add(bg);
+					var count:Int = 1;
+					for(id in images){
+						if(Reflect.hasField(spr, "label") && id.label.startsWith(spr.image))
+							count++;
 					}
-					if(imagesIDs.exists(spr.image)){
-						var count:Int = 0;
-						for(id in imagesIDs.keys()){
-							if(id.startsWith(spr.image))
-								count++;
-						}
-						imagesIDs.set(spr.image + " " + count,[spr.zPos,layerBGs[spr.zPos].length -1]);
-					}else
-						imagesIDs.set(spr.image,[spr.zPos,layerBGs[spr.zPos].length -1]);
+					if(count>1)
+						Reflect.setField(spr, "label", spr.image + " " + count);
+					else
+						Reflect.setField(spr, "label", spr.image);
+					Reflect.setField(spr, "index", layerBGs[zIndex].members.length -1);
 					if(spr.antialiasing != null){
 						if(spr.antialiasing){
 							bg.antialiasing = true;
 						}
 					}
 				}//fin del else layername != null
+				trace(spr);
+				images.push(spr);
 			}//fin del for
 			offsets = [stageData.player1X,stageData.player1Y,stageData.player2X,stageData.player2Y,stageData.gfX,stageData.gfY];
 			bf.x = positions[0] + offsets[0];
@@ -690,12 +763,12 @@ class StageEditor extends MusicBeatState
 			dad.y = positions[3] + offsets[3];
 			gf.x = positions[4] + offsets[4];
 			gf.y = positions[5] + offsets[5];
-			objMap.get("bfXStepper").value = offsets[0];
-			objMap.get("bfYStepper").value = offsets[1];
-			objMap.get("dadXStepper").value = offsets[2];
-			objMap.get("dadYStepper").value = offsets[3];
-			objMap.get("gfXStepper").value = offsets[4];
-			objMap.get("gfYStepper").value = offsets[5];
+			stepperMap.get("bfXStepper").value = offsets[0];
+			stepperMap.get("bfYStepper").value = offsets[1];
+			stepperMap.get("dadXStepper").value = offsets[2];
+			stepperMap.get("dadYStepper").value = offsets[3];
+			stepperMap.get("gfXStepper").value = offsets[4];
+			stepperMap.get("gfYStepper").value = offsets[5];
 		}else
 			setDefaultStage();
 		reloadImageList();
@@ -713,6 +786,85 @@ class StageEditor extends MusicBeatState
 				return 4;
 			default:
 				return 0;
+		}
+	}
+
+	private function updateSprite(){
+		var spr:FlxSprite;
+		var data = {
+			"x":0.0, "y":0.0,
+			"scrollX":1.0, "scrollY":1.0,
+			"scale":1.0, "antialiasing": false,
+			"image":"none", "zPos":0,
+			"index":-1, "label":""
+		};
+		if(imageSelector.selectedLabel != ""){
+			for(obj in images){
+				if(obj.label == imageSelector.selectedLabel){
+					data = obj;
+					break;
+				}
+			}
+			if(data.index > -1){
+				spr = cast layerBGs[data.zPos].members[data.index];
+				data.x = stepperMap.get("xStepper").value;
+				data.y = stepperMap.get("yStepper").value;
+				data.scrollX = stepperMap.get("scrollXStepper").value;
+				data.scrollY = stepperMap.get("scrollYStepper").value;
+				data.antialiasing = checkMap.get("anti_check").checked;
+				data.scale = stepperMap.get("scaleStepper").value;
+				spr.x = data.x;
+				spr.y = data.y;
+				spr.scrollFactor.set(data.scrollX,data.scrollY);
+				spr.antialiasing = data.antialiasing;
+				spr.scale.set(data.scale,data.scale);
+			}
+		}
+	}
+
+	private function selectSprite(name:String){
+		if(name != ''){
+			var data = {"x":0.0, "y":0.0,
+				"scrollX":1.0, "scrollY":1.0,
+				"scale":1.0, "antialiasing": false,
+				"image":"none", "zPos":0,
+				"index":-1, "label":""};
+			for(obj in images){
+				if(obj.label == name){
+					data = obj;
+					break;
+				}
+			}
+			if(data.index > -1){
+				if(selectedSprite != null){
+					selectedSprite.shader = null;
+					flixel.effects.FlxFlicker.stopFlickering(selectedSprite);
+				}
+				var solidColorShader = new shaders.SolidColorShader();
+				selectedSprite = cast layerBGs[data.zPos].members[data.index];
+				selectedSprite.shader = cast solidColorShader;
+				solidColorShader.setColor(50,50,255);
+				flixel.effects.FlxFlicker.flicker(selectedSprite,0.75,0.08,true,true,function(flicker){
+					selectedSprite.shader = null;
+				});
+				stepperMap.get("xStepper").value = data.x;
+				stepperMap.get("yStepper").value = data.y;
+				stepperMap.get("scrollXStepper").value = data.scrollX;
+				stepperMap.get("scrollYStepper").value = data.scrollY;
+				checkMap.get("anti_check").checked = data.antialiasing;
+				checkMap.get("asLayer_check").checked = false;
+				stepperMap.get("scaleStepper").value = data.scale;
+			}else{
+				for(step in stepperMap)
+					step.value = 0;
+				for(checkBox in checkMap)
+					checkBox.checked = false;
+				checkMap.get("asLayer_check").checked = true;
+				stepperMap.get("scaleStepper").value = 1;
+				stepperMap.get("scrollXStepper").value = 1;
+				stepperMap.get("scrollYStepper").value = 1;
+				stepperMap.get("fpsStepper").value = 24;
+			}
 		}
 	}
 }
