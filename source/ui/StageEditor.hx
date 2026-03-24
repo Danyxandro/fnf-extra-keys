@@ -63,10 +63,13 @@ class StageEditor extends MusicBeatState
 	private var showHUD:Bool = true;
 	private var camZoom:Float = 0.9;
 	private var stageDropDown:FlxUIDropDownMenuCustom;
+	private var animationDropdown:FlxUIDropDownMenuCustom;
+	private var startAnimDrop:FlxUIDropDownMenuCustom;
 	private var UI_box:FlxUITabMenu;
 	private var UI_imagebox:FlxUITabMenu;
 	private var HUDbutton:FlxButton;
 	private var tipGroup:FlxGroup;
+	private var solidColorShader = new shaders.SolidColorShader();
 
 	private var zoomDropDown:FlxCustomStepper;
 	private var nameInput:InputTextFix;
@@ -110,6 +113,7 @@ class StageEditor extends MusicBeatState
 		cameraFollowPointer.color = FlxColor.WHITE;
 		cameraFollowPointer.screenCenter();
 		cameraFollowPointer.cameras = [camHUD];
+		solidColorShader.setColor(50,50,255);
 
 		add(layerBGs[0]);
 		gf = new Character(400, 130, "gf");
@@ -183,7 +187,8 @@ class StageEditor extends MusicBeatState
 			}
 		}
 
-		lockControls = (InputTextFix.isTyping || stageDropDown.dropPanel.visible || imageSelector.dropPanel.visible || openedDropdown || imageSelector.dropPanel.visible || imageSelector2.dropPanel.visible || layerDropdown.dropPanel.visible);
+		lockControls = (InputTextFix.isTyping || stageDropDown.dropPanel.visible || imageSelector.dropPanel.visible || openedDropdown
+						|| imageSelector.dropPanel.visible || imageSelector2.dropPanel.visible || layerDropdown.dropPanel.visible);
 
 		if(!lockControls){
 			if (FlxG.keys.pressed.W || FlxG.keys.pressed.A || FlxG.keys.pressed.S || FlxG.keys.pressed.D)
@@ -384,43 +389,70 @@ class StageEditor extends MusicBeatState
 
 		var removeButton:FlxButton = new FlxButton(25 + imageSelector.width, 110, "Remove", function()
 		{
-			var spr:FlxSprite;
-			if(imageSelector.selectedLabel != ""){
-				var data = {"x":0.0, "y":0.0,
-				"scrollX":1.0, "scrollY":1.0,
-				"scale":1.0, "antialiasing": false,
-				"image":"none", "zPos":0,
-				"index":-1, "label":""};
-				var index:Int = 0;
-				for(obj in images){
-					index++;
-					if(obj.label == imageSelector.selectedLabel){
-						data = obj;
+			var selectedLabel:String = "";
+			if (imageSelector2.selectedLabel != "") {
+				selectedLabel = imageSelector2.selectedLabel;
+			} else if (imageSelector.selectedLabel != "") {
+				selectedLabel = imageSelector.selectedLabel;
+			}
+
+			if (selectedLabel != "") {
+				var dataToRemove: Dynamic = null;
+				var spriteToRemove: FlxSprite = null;
+				var indexToRemove: Int = -1;
+
+				for (obj in images) {
+					if (obj.label == selectedLabel) {
+						dataToRemove = obj;
 						break;
 					}
 				}
-				if(data.index > -1){
-					spr = cast layerBGs[data.zPos].members[data.index];
-					trace("z: "+data.zPos+" index: "+data.index+" length: "+layerBGs[data.zPos].members.length);
-					if(spr != null)
-						layerBGs[data.zPos].remove(spr);
-					if(index < layerBGs[data.zPos].length - 1){
-						for(i in index...layerBGs[data.zPos].members.length){
-							if(!Reflect.hasField(images[i],"layerName"))
-								images[i].index = i - 1;
+
+				if (dataToRemove != null) {
+					if (Reflect.hasField(dataToRemove, "layerName")) {
+						// This is a layer, not a sprite
+						images.remove(dataToRemove);
+						trace('Layer "${selectedLabel}" removed.');
+					} else {
+						// This is a sprite
+						indexToRemove = dataToRemove.index;
+						var zPos: Int = dataToRemove.zPos;
+
+						if (indexToRemove > -1 && zPos >= 0 && zPos < layerBGs.length && indexToRemove < layerBGs[zPos].members.length) {
+							spriteToRemove = cast(layerBGs[zPos].members[indexToRemove], FlxSprite);
+							if (spriteToRemove != null) {
+								layerBGs[zPos].remove(spriteToRemove);
+								spriteToRemove.destroy(); // Clean up the sprite
+								images.remove(dataToRemove);
+								trace('Sprite "${selectedLabel}" removed from layer ${zPos} at index ${indexToRemove}.');
+
+								// Re-index remaining sprites in the 'images' array for the affected layer
+								for (i in 0...images.length) {
+									var imgData = images[i];
+									if (Reflect.hasField(imgData, "zPos") && imgData.zPos == zPos) {
+										if (imgData.index > indexToRemove) {
+											imgData.index--;
+										}
+									}
+								}
+								selectedSprite = null;
+							} else {
+								trace('Error: Sprite object not found at index ${indexToRemove} in layer ${zPos}.');
+							}
+						} else {
+							trace('Error: Invalid index (${indexToRemove}) or zPos (${zPos}) for sprite "${selectedLabel}".');
 						}
 					}
-					images.remove(data);
 					reloadImageList();
-				}else if(Reflect.hasField(data,"layerName")){
-					trace("layer deleted");
-					images.remove(data);
-					reloadImageList();
+				} else {
+					trace('Error: No data found for label "${selectedLabel}".');
 				}
-				for(img in images)
-					trace(img);
+			} else {
+				trace('No sprite or layer selected for removal.');
 			}
-		});
+			for(img in images)
+				trace(img);
+});
 		removeButton.color = FlxColor.RED;
 		removeButton.label.color = FlxColor.WHITE;
 
@@ -480,9 +512,68 @@ class StageEditor extends MusicBeatState
 			selectSprite(imageSelector2.selectedLabel);
 		},new FlxUIDropDownHeader(150));
 
-		var animationDropdown = new FlxUIDropDownMenuCustom(175, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(anim:String)
+		animationDropdown = new FlxUIDropDownMenuCustom(175, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(anim:String)
 		{
-			
+			if(selectedSprite != null){
+				var selectedLabel:String = "";
+				var data:Dynamic = null;
+				// Find the data for the currently selected sprite
+				if (imageSelector2.selectedLabel != "") {
+					selectedLabel = imageSelector2.selectedLabel;
+				} else if (imageSelector.selectedLabel != "") {
+					selectedLabel = imageSelector.selectedLabel;
+				}
+
+				for (obj in images) {
+					if (obj.label == selectedLabel) {
+						data = obj;
+						break;
+					}
+				}
+
+				// Play the selected animation
+				selectedSprite.animation.play(animationDropdown.selectedLabel);
+
+				// Update XML Input
+				var xmlInput:InputTextFix = objMap.get("XMLInput");
+				if (data != null && Reflect.hasField(data, "xml")) {
+					xmlInput.text = "" + data.xml;
+				} else {
+					xmlInput.text = ""; // Clear if no XML data
+				}
+
+				// Find the specific animation data from the sprite's animations array
+				var animData:Dynamic = null;
+				if (data != null && Reflect.hasField(data, "animations")) {
+					var animations:Array<Dynamic> = data.animations;
+					for (animation in animations) {
+						// The structure is [animName, prefix, fps, looped]
+						if (animation[0] == animationDropdown.selectedLabel) {
+							animData = animation;
+							break;
+						}
+					}
+				}
+
+				var animNameInput:InputTextFix = objMap.get("animNameInput");
+				var prefixInput:InputTextFix = objMap.get("prefixInput");
+				var fpsStepper:FlxCustomStepper = stepperMap.get("fpsStepper");
+				var loop_check:FlxUICheckBox = checkMap.get("loop_check");
+
+				if (animData != null) {
+					// Update the input fields and steppers
+					animNameInput.text = animData[0]; // animName
+					prefixInput.text = animData[1];   // prefix
+					fpsStepper.value = animData[2];   // fps
+					loop_check.checked = animData[3]; // looped
+				} else {
+					// Clear fields if animation data not found or sprite has no animations
+					animNameInput.text = "";
+					prefixInput.text = "";
+					fpsStepper.value = 24; // Default value
+					loop_check.checked = false; // Default value
+				}
+			}
 		},new FlxUIDropDownHeader(150));
 		dropMap.set("animationDropdown",animationDropdown);
 		/*var animInput = new InputTextFix(15, 70, 135, '', 8);
@@ -496,13 +587,99 @@ class StageEditor extends MusicBeatState
 		objMap.set("addAnimBtn",addAnimBtn);
 		var removeAnimBtn:FlxUIButton = new FlxUIButton(115, 90, "Remove animation", function()
 		{
-			
+			var selectedSpriteLabel:String = "";
+			var spriteData:Dynamic = null;
+
+			// Get the selected sprite label and data
+			if (imageSelector2.selectedLabel != "") {
+				selectedSpriteLabel = imageSelector2.selectedLabel;
+			} else if (imageSelector.selectedLabel != "") {
+				selectedSpriteLabel = imageSelector.selectedLabel;
+			}
+
+			for (obj in images) {
+				if (obj.label == selectedSpriteLabel) {
+					spriteData = obj;
+					break;
+				}
+			}
+
+			if (spriteData != null && Reflect.hasField(spriteData, "animations") && animationDropdown.selectedLabel != "") {
+				var animNameToRemove = animationDropdown.selectedLabel;
+				var updatedAnimations: Array<Dynamic> = [];
+				var animationFound = false;
+				var animData:Array<Dynamic> = spriteData.animations;
+
+					// Filter out the animation to be removed
+					for (animation in animData) {
+						if (animation[0] != animNameToRemove) {
+							updatedAnimations.push(animation);
+						} else {
+							animationFound = true;
+					}
+				}
+
+				if (animationFound) {
+					// Update the sprite data with the filtered animations
+					spriteData.animations = updatedAnimations;
+
+					// Clear the animation input fields
+					var animNameInput:InputTextFix = objMap.get("animNameInput");
+					var prefixInput:InputTextFix = objMap.get("prefixInput");
+					var fpsStepper:FlxCustomStepper = stepperMap.get("fpsStepper");
+					var loop_check:FlxUICheckBox = checkMap.get("loop_check");
+
+					animNameInput.text = "";
+					prefixInput.text = "";
+					fpsStepper.value = 24; // Reset to default
+					loop_check.checked = false; // Reset to default
+
+					// Update the animation dropdowns
+					var animLabels:Array<String> = [''];
+					for (anim in updatedAnimations) {
+						animLabels.push(anim[0]);
+					}
+					animationDropdown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animLabels, true));
+					startAnimDrop.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animLabels, true));
+
+					animationDropdown.selectedLabel = "";
+					startAnimDrop.selectedLabel = "";
+					if (Reflect.hasField(spriteData, "startAnim") && spriteData.startAnim == animNameToRemove) {
+						spriteData.startAnim = null; // Clear start anim if it was the one removed
+					}
+
+					if(selectedSprite != null)
+						selectedSprite.animation.stop();
+					
+					trace('Animation "${animNameToRemove}" removed from sprite "${selectedSpriteLabel}".');
+				} else {
+					trace('Animation "${animNameToRemove}" not found for sprite "${selectedSpriteLabel}".');
+				}
+			} else {
+				trace('No sprite or animation selected for removal, or sprite has no animations.');
+			}
 		});
 		removeAnimBtn.resize(removeAnimBtn.width + 30, removeAnimBtn.height);
 		objMap.set("removeAnimBtn",addAnimBtn);
-		var startAnimDrop = new FlxUIDropDownMenuCustom(15, 130, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(anim:String)
+		startAnimDrop = new FlxUIDropDownMenuCustom(15, 130, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(anim:String)
 		{
-			
+			if(startAnimDrop.selectedLabel != ""){
+				var selectedLabel:String = "";
+				var data:Dynamic = null;
+				if (imageSelector2.selectedLabel != "") {
+					selectedLabel = imageSelector2.selectedLabel;
+				} else if (imageSelector.selectedLabel != "") {
+					selectedLabel = imageSelector.selectedLabel;
+				}
+				for (obj in images) {
+					if (obj.label == selectedLabel) {
+						data = obj;
+						break;
+					}
+				}
+				Reflect.setField(data, "startAnim", startAnimDrop.selectedLabel);
+				trace(data);
+			}
 		},new FlxUIDropDownHeader(200));
 		dropMap.set("startAnimDrop",startAnimDrop);
 		var animNameInput = new InputTextFix(15, 170, 150, '', 8);
@@ -633,8 +810,9 @@ class StageEditor extends MusicBeatState
 		stepperMap.get("scrollXStepper").value = 1;
 		stepperMap.get("scrollYStepper").value = 1;
 		stepperMap.get("fpsStepper").value = 24;
-		var textInput:InputTextFix = cast objMap.get("XMLInput");
-		textInput.text = "";
+		var textInputs:Array<InputTextFix> = [cast objMap.get("XMLInput"), cast objMap.get("animNameInput"),cast objMap.get("prefixInput"), imgNameInput];
+		for(text in textInputs)
+			text.text = "";
 		reloadImageList();
 	}
 
@@ -683,9 +861,9 @@ class StageEditor extends MusicBeatState
 						count++;
 				}
 				if(count>1)
-					Reflect.setField(img, "label", nameInput.text + " " + count);
+					Reflect.setField(img, "label", imageInputText.text + " " + count);
 				else
-					Reflect.setField(img, "label", nameInput.text);
+					Reflect.setField(img, "label", imageInputText.text);
 				images.push(img);
 				reloadImageList();
 			}
@@ -824,26 +1002,26 @@ class StageEditor extends MusicBeatState
 
 	private function selectSprite(name:String){
 		if(name != ''){
-			var data = {"x":0.0, "y":0.0,
+			var data:Dynamic = {"x":0.0, "y":0.0,
 				"scrollX":1.0, "scrollY":1.0,
 				"scale":1.0, "antialiasing": false,
 				"image":"none", "zPos":0,
-				"index":-1, "label":""};
+				"index":-1, "label":"",
+				"animations":null};
 			for(obj in images){
 				if(obj.label == name){
 					data = obj;
 					break;
 				}
 			}
-			if(data.index > -1){
+			if(data.index > -1 && !Reflect.hasField(data,"layerName")){
 				if(selectedSprite != null){
 					selectedSprite.shader = null;
 					flixel.effects.FlxFlicker.stopFlickering(selectedSprite);
 				}
-				var solidColorShader = new shaders.SolidColorShader();
 				selectedSprite = cast layerBGs[data.zPos].members[data.index];
 				selectedSprite.shader = cast solidColorShader;
-				solidColorShader.setColor(50,50,255);
+				
 				flixel.effects.FlxFlicker.flicker(selectedSprite,0.75,0.08,true,true,function(flicker){
 					selectedSprite.shader = null;
 				});
@@ -854,6 +1032,20 @@ class StageEditor extends MusicBeatState
 				checkMap.get("anti_check").checked = data.antialiasing;
 				checkMap.get("asLayer_check").checked = false;
 				stepperMap.get("scaleStepper").value = data.scale;
+				var animLabels:Array<String> = [''];
+				var animData:Array<Dynamic> = data.animations;
+				if(animData != null){
+					trace(animData);
+					for(anim in animData)
+						animLabels.push(anim[0]);
+				}
+				if(Reflect.hasField(data, "spriteName"))
+					imgNameInput.text = "" + data.spriteName;
+				animationDropdown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animLabels, true));
+				startAnimDrop.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animLabels, true));
+				startAnimDrop.selectedLabel = animationDropdown.selectedLabel = "";
+				if(Reflect.hasField(data, "startAnim"))
+					startAnimDrop.selectedLabel = "" + data.startAnim;
 			}else{
 				for(step in stepperMap)
 					step.value = 0;
@@ -864,7 +1056,18 @@ class StageEditor extends MusicBeatState
 				stepperMap.get("scrollXStepper").value = 1;
 				stepperMap.get("scrollYStepper").value = 1;
 				stepperMap.get("fpsStepper").value = 24;
+				for(step in stepperMap)
+				step.value = 0;
+				for(checkBox in checkMap)
+					checkBox.checked = false;
+				for(dropdown in dropMap){
+					dropdown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true));
+					dropdown.selectedLabel = "";
+				}
+				var textInput:InputTextFix = cast objMap.get("XMLInput");
+				textInput.text = "";
 			}
+			imgNameInput.text = "";
 		}
 	}
 }

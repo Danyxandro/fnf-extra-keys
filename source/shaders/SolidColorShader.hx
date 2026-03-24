@@ -6,23 +6,33 @@ class SolidColorShader extends FlxShader
 {
     @:glFragmentSource('
         #pragma header
-        
-        uniform float iGreen = 0.2;
-        uniform float iRed = 0.3;
-        uniform float iBlue = 0.1;
+
+        uniform vec4 uColor;
+
         void main()
         {
-            vec4 texColor = texture2D(bitmap, openfl_TextureCoordv);
-            gl_FragColor = vec4(iRed*texColor.a,iGreen*texColor.a,iBlue*texColor.a,texColor.a);
+            // Samplea la textura original para obtener el alpha
+            vec4 tex = flixel_texture2D(bitmap, openfl_TextureCoordv);
+
+            // Si el pixel es completamente transparente, descartarlo
+            if (tex.a == 0.0)
+            {
+                gl_FragColor = vec4(0.0);
+                return;
+            }
+
+            // Aplica el color solido conservando el alpha original del sprite
+            gl_FragColor = vec4(uColor.r * tex.a, uColor.g * tex.a, uColor.b * tex.a, uColor.a * tex.a);
         }
     ')
-    
+
     public function new()
     {
         super();
     }
 
-    public function setColor(red:Int,green:Int,blue:Int){
+    public function setColor(red:Int, green:Int, blue:Int):Void
+    {
         var rgb:Array<Float> = [1.0,1.0,1.0];
         rgb[0] = red / 255;
         rgb[1] = green / 255;
@@ -39,8 +49,6 @@ class SolidColorShader extends FlxShader
             rgb[2] = 1;
         if(blue < 0)
             rgb[2] = 0;
-        iRed.value = [rgb[0]];
-        iGreen.value = [rgb[1]];
-        iBlue.value = [rgb[2]];
+        uColor.value = [rgb[0], rgb[1], rgb[2],1.0];
     }
 }
